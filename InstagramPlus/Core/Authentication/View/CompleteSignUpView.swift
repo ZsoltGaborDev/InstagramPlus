@@ -1,5 +1,5 @@
 //
-//  CreatePasswordView.swift
+//  CompleteSignUpView.swift
 //  InstagramPlus
 //
 //  Created by Zsolt Gabor on 10/09/2026.
@@ -7,30 +7,32 @@
 
 import SwiftUI
 
-struct CreatePasswordView: View {
-    @State private var password = ""
+struct CompleteSignUpView: View {
+    @EnvironmentObject var viewModel: RegistrationViewModel
     
     var body: some View {
         VStack(spacing: 12) {
-            Text("Create a password")
-                .font(.title2)
-                .fontWeight(.bold)
-                .padding(.top)
+            VStack {
+                Text("Welcome to Instagram,")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.top)
+                
+                Text(viewModel.username)
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
             
-            Text("Your password must be at least 5 characters in lenght")
+            Text("Click below to complete registration and start using Instagram")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            SecureField("Password", text: $password)
-                .autocapitalization(.none)
-                .modifier(IGPTextFieldModifier())
-            
-            NavigationLink {
-                CompleteSignUpView()
+            Button {
+                Task { try await viewModel.createUser() }
             } label: {
-                Text("Next")
+                Text("Complete Sign Up")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(Color(.white))
@@ -39,12 +41,10 @@ struct CreatePasswordView: View {
                     .cornerRadius(8)
             }
             .padding(.vertical)
-            
-            Spacer()
         }
     }
 }
 
 #Preview {
-    CreatePasswordView()
+    CompleteSignUpView()
 }

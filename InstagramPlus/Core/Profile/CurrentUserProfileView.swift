@@ -15,21 +15,25 @@ struct CurrentUserProfileView: View {
     }
     
     var body: some View {
-        ScrollView {
-            //header
-            ProfileView(user: user)
-            
-            //post grid view
-            GridView(posts: posts)
-        }
-        .navigationTitle("Profile")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "line.horizontal.3")
+        NavigationStack {
+            ScrollView {
+                //header
+                ProfileView(user: user)
+                
+                //post grid view
+                GridView(posts: posts)
+            }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        Task {
+                            try? await AuthService.shared.signOut()
+                        }
+                    } label: {
+                        Image(systemName: "line.horizontal.3")
+                    }
                 }
             }
         }
