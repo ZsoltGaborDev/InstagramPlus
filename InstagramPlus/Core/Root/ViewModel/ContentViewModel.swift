@@ -16,4 +16,8 @@ class ContentViewModel {
     var userSession: FirebaseAuth.User? {
         service.userSession
     }
+    
+    var currentUser: User? {
+        service.currentUser
+    }
 }
