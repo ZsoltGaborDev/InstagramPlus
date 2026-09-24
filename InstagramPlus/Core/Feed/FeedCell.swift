@@ -8,26 +8,30 @@
 import SwiftUI
 
 struct FeedCell: View {
+    let post: Post
+    
     var body: some View {
         VStack {
             //image + username
             HStack {
-                Image("instagramPlus4")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
-                
-                Text("venom")
-                    .font(.footnote)
-                    .fontWeight(.semibold)
+                if let user = post.user {
+                    Image(user.profileImageUrl ?? "")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                    
+                    Text(user.username)
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                }
                 
                 Spacer()
             }
             .padding(.leading, 8)
             
             //post image
-            Image("instagramPlus2")
+            Image(post.imageUrl)
                 .resizable()
                 .scaledToFill()
                 .frame(height: 400)
@@ -65,16 +69,18 @@ struct FeedCell: View {
             .padding(.top, 4)
             
             //likes label
-            Text("23 likes")
-                .font(.footnote)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 10)
-                .padding(.top, 1)
+            if let likes = post.likes {
+                Text("\(likes) likes")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 10)
+                    .padding(.top, 1)
+            }
             
             //caption label
             HStack {
-                Text("venom \(Text("Spider-man is no match for my wit and speed").fontWeight(.regular))").fontWeight(.semibold)
+                Text("\(post.user?.username ?? "") \(Text(post.caption).fontWeight(.regular))").fontWeight(.semibold)
             }
             .font(.footnote)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -82,7 +88,7 @@ struct FeedCell: View {
             .padding(.top, 1)
             
             //timestamp label
-            Text("6h ago")
+            Text("\(post.timestamp.instagramTimeString)")
                 .foregroundColor(.gray)
                 .font(.footnote)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -93,5 +99,5 @@ struct FeedCell: View {
 }
 
 #Preview {
-    FeedCell()
+    FeedCell(post: Post.MOCK_POSTS[0])
 }

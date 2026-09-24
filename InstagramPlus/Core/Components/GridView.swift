@@ -8,11 +8,39 @@
 import SwiftUI
 
 struct GridView: View {
+    
+    var posts: [Post]
+    private let gridItems: [GridItem] = [
+        .init(.flexible(), spacing: 1),
+        .init(.flexible(), spacing: 1),
+        .init(.flexible(), spacing: 1)
+    ]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader { proxy in
+            let width = proxy.size.width
+            let itemSize = (width / 3) - 1
+            let count = posts.count
+            let rows = (count + 2) / 3 // integer ceil(count/3)
+            let totalHeight = CGFloat(rows) * itemSize + CGFloat(rows - 1) * 1
+
+            VStack(spacing: 0) {
+                LazyVGrid(columns: gridItems, spacing: 1) {
+                    ForEach(posts) { post in
+                        Image(post.imageUrl)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: itemSize, height: itemSize)
+                            .clipped()
+                    }
+                }
+                .frame(width: width)
+            }
+            .frame(height: totalHeight, alignment: .top)
+        }
     }
 }
 
 #Preview {
-    GridView()
+    GridView(posts: Post.MOCK_POSTS)
 }
