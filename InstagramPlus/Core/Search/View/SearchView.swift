@@ -27,7 +27,7 @@ struct SearchView: View {
                                     Text(user.username)
                                         .fontWeight(.semibold)
                                     
-                                    if let fullname = user.fullName {
+                                    if let fullname = user.fullname {
                                         Text(fullname)
                                     }
                                 }
