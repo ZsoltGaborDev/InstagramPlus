@@ -19,8 +19,16 @@ class EditProfileViewModel {
     var fullname: String = ""
     var bio: String = ""
     
+    private var uiImage: UIImage?
+    
     init(user: User) {
         self.user = user
+        if let fullname = user.fullname {
+            self.fullname = fullname
+        }
+        if let bio = user.bio {
+            self.bio = bio
+        }
     }
     
     func loadImage(fromItem item: PhotosPickerItem?) async {
@@ -28,12 +36,18 @@ class EditProfileViewModel {
         
         guard let data = try? await item.loadTransferable(type: Data.self) else { return }
         guard let uiImage = UIImage(data: data) else { return }
+        self.uiImage = uiImage
         self.profileImage = Image(uiImage: uiImage)
     }
     
-    func updateUserdata() async throws {
-        //update profile image if changed
+    func updateUserData() async throws {
         var data = [String: Any]()
+        
+        //update profile image if changed
+        if let uiImage = uiImage {
+            let imageUrl = try? await ImageUploader.uploadProfileImage(uiImage)
+            data["profileImageUrl"] = imageUrl
+        }
         
         //update name if changed
         !fullname.isEmpty && user.fullname != fullname ? data["fullname"] = fullname : ()
