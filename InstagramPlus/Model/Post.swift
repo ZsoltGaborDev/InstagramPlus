@@ -15,12 +15,21 @@ struct Post: Identifiable, Hashable, Codable {
     var likes: Int?
     let imageUrl: String
     let timestamp: Timestamp
+
     var user: User?
+    var didLike: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id, ownerUid, caption, likes, imageUrl, timestamp
+    }
 }
 
 extension Post {
+    
+    static var MOCK_IMAGE_URL = "https://res.cloudinary.com/lkx9igck/image/upload/v1790347449/profile_images/g3ao8ytl6mgh3rpuvj1x.jpg"
+    
     static var MOCK_POSTS: [Post] = [
-        .init(id: UUID().uuidString, ownerUid: UUID().uuidString, caption: "Venom is hungry, time to eat.", likes: Int.random(in: 100...10_000), imageUrl: "instagramPlus4", timestamp: Timestamp(), user: User.MOCK_USER[1]),
+        .init(id: UUID().uuidString, ownerUid: UUID().uuidString, caption: "Venom is hungry, time to eat.", likes: Int.random(in: 100...10_000), imageUrl: MOCK_IMAGE_URL, timestamp: Timestamp(), user: User.MOCK_USER[1]),
         .init(id: UUID().uuidString, ownerUid: UUID().uuidString, caption: "Morning coffee and a fresh start.", likes: Int.random(in: 20...2_000), imageUrl: "instagramPlus1", timestamp: Timestamp(), user: User.MOCK_USER[0]),
         .init(id: UUID().uuidString, ownerUid: UUID().uuidString, caption: "Small moments, big memories.", likes: Int.random(in: 50...5_000), imageUrl: "instagramPlus12", timestamp: Timestamp(), user: User.MOCK_USER[2]),
         .init(id: UUID().uuidString, ownerUid: UUID().uuidString, caption: "Weekend mode activated.", likes: Int.random(in: 100...8_000), imageUrl: "instagramPlus7", timestamp: Timestamp(), user: User.MOCK_USER[3]),
