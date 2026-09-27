@@ -14,6 +14,6 @@ class LoginViewModel {
     var password = ""
     
     func signIn() async throws {
-        try? await AuthService.shared.login(withEmail: email, password: password)
+        try await AuthService.shared.login(withEmail: email, password: password)
     }
 }

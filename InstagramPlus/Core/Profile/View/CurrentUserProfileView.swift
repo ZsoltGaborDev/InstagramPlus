@@ -18,10 +18,10 @@ struct CurrentUserProfileView: View {
         NavigationStack {
             ScrollView {
                 //header
-                ProfileView(user: user)
+                ProfileHeaderView(user: user)
                 
                 //post grid view
-                GridView(posts: posts)
+                PostGridView(user: user)
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
