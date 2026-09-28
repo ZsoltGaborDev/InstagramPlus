@@ -14,19 +14,42 @@ class FeedCellViewModel {
     
     init (post: Post) {
         self.post = post
+        Task { try await checkIfUserLikedPost()}
     }
     
     func like() async throws {
-        post.didLike = true
-        if let likes = post.likes {
-            post.likes! += 1
+        do {
+            let postCopy = post
+            post.didLike = true
+            if let _ = post.likes {
+                post.likes! += 1
+            }
+            try await PostService.likePost(post: postCopy)
+        } catch {
+            post.didLike = false
+            if post.likes ?? 0 > 0 {
+                post.likes! -= 1
+            }
         }
     }
     
     func unlike() async throws {
-        post.didLike = false
-        if post.likes ?? 0 > 0 {
-            post.likes! -= 1
+        do {
+            let postCopy = post
+            post.didLike = false
+            if post.likes ?? 0 > 0 {
+                post.likes! -= 1
+            }
+            try await PostService.unlikePost(post: postCopy)
+        } catch {
+            post.didLike = true
+            if let _ = post.likes {
+                post.likes! += 1
+            }
         }
+    }
+    
+    private func checkIfUserLikedPost() async throws {
+        self.post.didLike = try await PostService.checkIfUserLikedPost(post: post)
     }
 }

@@ -15,6 +15,10 @@ struct FeedCell: View {
         return viewModel.post
     }
     
+    private var likes: Int {
+        post.likes ?? 0
+    }
+    
     private var didLike: Bool {
         return post.didLike ?? false
     }
@@ -78,8 +82,8 @@ struct FeedCell: View {
             .padding(.top, 4)
             
             //likes label
-            if let likes = post.likes {
-                Text("\(likes) likes")
+            if likes > 0 {
+                Text("\(likes) \(likes == 1 ? "like" : "likes")")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity, alignment: .leading)
