@@ -14,8 +14,6 @@ class ProfileViewModel {
     
     init(user: User) {
         self.user = user
-        self.checkIfUserIsFollowed()
-        self.fetchUserStats()
     }
 }
 
