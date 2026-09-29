@@ -15,6 +15,7 @@ class ProfileViewModel {
     init(user: User) {
         self.user = user
         self.checkIfUserIsFollowed()
+        self.fetchUserStats()
     }
 }
 
@@ -33,6 +34,12 @@ extension ProfileViewModel {
     func checkIfUserIsFollowed() {
         Task {
             self.user.isFollowed = try await UserService.checkIfUserIsFollowed(uid: user.id)
+        }
+    }
+    
+    func fetchUserStats() {
+        Task {
+            self.user.stats = try await UserService.fetchUserStats(uid: user.id)
         }
     }
 }
