@@ -56,7 +56,9 @@ class EditProfileViewModel {
         !bio.isEmpty && user.bio != bio ? data["bio"] = bio : ()
         
         if !data.isEmpty {
-            let userRef = Firestore.firestore().collection("users").document(user.id)
+            let userRef = FirebaseConstant
+                .UsersCollection
+                .document(user.id)
             try await userRef.updateData(data)
         }
     }

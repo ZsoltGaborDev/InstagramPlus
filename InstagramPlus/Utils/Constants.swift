@@ -1,0 +1,16 @@
+//
+//  Constants.swift
+//  InstagramPlus
+//
+//  Created by Zsolt Gabor on 29/09/2026.
+//
+
+import Firebase
+
+struct FirebaseConstant {
+    
+    static let Root = Firestore.firestore()
+    static let UsersCollection = Root.collection("users")
+    static let PostsCollection = Root.collection("posts")
+    
+}

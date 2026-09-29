@@ -102,7 +102,7 @@ struct FeedCell: View {
             .padding(.top, 1)
             
             //timestamp label
-            Text("\(post.timestamp)")
+            Text("\(post.timestamp.timestampString())")
                 .foregroundColor(.gray)
                 .font(.footnote)
                 .frame(maxWidth: .infinity, alignment: .leading)
