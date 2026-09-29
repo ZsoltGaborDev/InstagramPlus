@@ -38,3 +38,52 @@ class UserService {
             .getDocument(as: User.self)
     }
 }
+
+// MARK: - Following
+extension UserService {
+    static func follow(uid: String) async throws {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        async let _ = FirebaseConstant
+            .FollowingCollection
+            .document(currentUid)
+            .collection("user-following")
+            .document(uid)
+            .setData([:])
+        
+        async let _ = FirebaseConstant
+            .FollowersCollection
+            .document(uid)
+            .collection("user-followers")
+            .document(currentUid)
+            .setData([:])
+    }
+    
+    static func unfollow(uid: String) async throws {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        async let _ = FirebaseConstant
+            .FollowingCollection
+            .document(currentUid)
+            .collection("user-following")
+            .document(uid)
+            .delete()
+        
+        async let _ = FirebaseConstant
+            .FollowersCollection
+            .document(uid)
+            .collection("user-followers")
+            .document(currentUid)
+            .delete()
+    }
+    
+    static func checkIfUserIsFollowed(uid: String) async throws -> Bool {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return false }
+        return try await FirebaseConstant
+            .FollowingCollection
+            .document(currentUid)
+            .collection("user-following")
+            .document(uid)
+            .getDocument()
+            .exists
+    }
+}

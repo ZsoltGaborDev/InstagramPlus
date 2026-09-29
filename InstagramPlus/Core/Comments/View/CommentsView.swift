@@ -17,7 +17,7 @@ struct CommentsView: View {
     }
     
     init(post: Post) {
-        self._viewModel = State(wrappedValue: CommentViewModel(post: post))
+        self._viewModel = State(initialValue: CommentViewModel(post: post))
     }
     
     var body: some View {

@@ -16,7 +16,7 @@ struct ProfileHeaderView: View {
     }
     
     private var isFollowed: Bool {
-        return user.isFollowed ?? true
+        return user.isFollowed ?? false
     }
     
     private var buttonTitle: String {
