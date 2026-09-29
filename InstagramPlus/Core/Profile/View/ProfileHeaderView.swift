@@ -8,8 +8,46 @@
 import SwiftUI
 
 struct ProfileHeaderView: View {
-    var user: User
+    @State var viewModel: ProfileViewModel
     @State private var isEditing: Bool = false
+    
+    private var user: User {
+        return viewModel.user
+    }
+    
+    private var isFollowed: Bool {
+        return user.isFollowed ?? true
+    }
+    
+    private var buttonTitle: String {
+        if user.isCurrentUser {
+            return "Edit Profile"
+        } else {
+            return isFollowed ? "Unfollow" : "Follow"
+        }
+    }
+    
+    private var backgroundColor: Color {
+        user.isCurrentUser || isFollowed ?
+            .white :
+            .black
+    }
+    
+    private var foregroundColor: Color {
+        user.isCurrentUser || isFollowed ?
+            .black :
+            .white
+    }
+    
+    private var buttonBorderColor: Color {
+        user.isCurrentUser || isFollowed ?
+            .gray :
+            .clear
+    }
+    
+    init(user: User) {
+        self.viewModel = ProfileViewModel(user: user)
+    }
     
     var body: some View {
         VStack(spacing: 10) {
@@ -50,18 +88,18 @@ struct ProfileHeaderView: View {
                 if user.isCurrentUser {
                     isEditing.toggle()
                 } else {
-                    
+                    handleFollowTapped()
                 }
             } label: {
-                Text(user.isCurrentUser ? "Edit Profile" :  "Follow")
+                Text(buttonTitle)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .frame(width: 360, height: 32)
-                    .background(user.isCurrentUser ? .white : .black)
-                    .foregroundColor(user.isCurrentUser ? .black : .white)
+                    .background(backgroundColor)
+                    .foregroundColor(foregroundColor)
                     .cornerRadius(6)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6).stroke(user.isCurrentUser ? Color.gray : .clear, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 6).stroke(buttonBorderColor, lineWidth: 1)
                     )
             }
             Divider()
@@ -69,6 +107,12 @@ struct ProfileHeaderView: View {
         .fullScreenCover(isPresented: $isEditing) {
             EditProfileView(user: user)
         }
+    }
+    
+    func handleFollowTapped() {
+        isFollowed ?
+        viewModel.unfollow() :
+        viewModel.follow()
     }
 }
 

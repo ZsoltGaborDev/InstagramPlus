@@ -1,0 +1,33 @@
+//
+//  ProfileViewModel.swift
+//  InstagramPlus
+//
+//  Created by Zsolt Gabor on 29/09/2026.
+//
+
+import Foundation
+
+@Observable
+class ProfileViewModel {
+
+    var user: User
+    
+    init(user: User) {
+        self.user = user
+    }
+}
+
+//MARK: - Following
+extension ProfileViewModel {
+    func follow() {
+        user.isFollowed = true
+    }
+    
+    func unfollow() {
+        user.isFollowed = false
+    }
+    
+    func checkIfUserIsFollowed() {
+        
+    }
+}
