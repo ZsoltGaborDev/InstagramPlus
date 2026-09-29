@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct CommentsCell: View {
+    let comment: Comment
     
-    private var user: User {
-        return User.MOCK_USER[0]
+    private var user: User? {
+        return comment.user
     }
     
     var body: some View {
@@ -19,14 +20,14 @@ struct CommentsCell: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 2) {
-                    Text(user.username)
+                    Text(user?.username ?? "")
                         .fontWeight(.semibold)
                     
                     Text("6d")
                         .foregroundStyle(.gray)
                 }
                 
-                Text("You're looking just gorgeous today!")
+                Text(comment.text)
             }
             .font(.caption)
             
@@ -37,5 +38,5 @@ struct CommentsCell: View {
 }
 
 #Preview {
-    CommentsCell()
+    CommentsCell(comment: dev.comment)
 }

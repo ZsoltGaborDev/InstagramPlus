@@ -27,8 +27,8 @@ struct CommentsView: View {
             
             ScrollView {
                 LazyVStack(spacing: 24) {
-                    ForEach(0...15, id: \.self) { comment in
-                        CommentsCell()
+                    ForEach(viewModel.comments, id: \.self) { comment in
+                        CommentsCell(comment: comment)
                     }
                 }
             }
@@ -49,7 +49,10 @@ struct CommentsView: View {
                                 .stroke(Color(.systemGray5), lineWidth: 1)
                         }
                     Button {
-                        Task { try await viewModel.uploadComment(text: commentText)}
+                        Task {
+                            try await viewModel.uploadComment(text: commentText)
+                            commentText = ""
+                        }
                         } label: {
                             Text("Post")
                                 .font(.subheadline)

@@ -14,9 +14,13 @@ class CommentViewModel {
     var comments = [Comment]()
     
     private let post: Post
+    private let service: CommentService
     
     init(post: Post) {
         self.post = post
+        self.service = CommentService(postId: post.id)
+        
+        Task { try await fetchComments() }
     }
     
     func uploadComment(text: String) async throws {
@@ -24,6 +28,21 @@ class CommentViewModel {
         
         let comment = Comment(ownerUid: uid, text: text, postId: post.id, postOwnerUid: post.ownerUid, timestamp: Timestamp())
         
-        try await CommentService.uploadComment(comment, postId: post.id)
+        try await service.uploadComment(comment)
+        try await fetchComments()
+    }
+    
+    func fetchComments() async throws {
+        self.comments = try await service.fetchComments()
+        try await fetchDataForComments()
+    }
+    
+    private func fetchDataForComments() async throws {
+        for i in 0 ..< comments.count {
+            let comment = comments[i]
+            let user = try await UserService.fetchUser(withUid: comment.ownerUid)
+            comments[i].user = user
+        }
     }
 }
+
