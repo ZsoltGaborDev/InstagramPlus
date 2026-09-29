@@ -112,13 +112,13 @@ struct ProfileHeaderView: View {
             }
             Divider()
         }
-        .navigationDestination(for: UserListConfig.self, destination: { config in
-            Text(config.navigationTitle)
-        })
         .onAppear {
             viewModel.checkIfUserIsFollowed()
             viewModel.fetchUserStats()
         }
+        .navigationDestination(for: UserListConfig.self, destination: { config in
+            UserListView(config: config)
+        })
         .fullScreenCover(isPresented: $isEditing) {
             EditProfileView(user: user)
         }

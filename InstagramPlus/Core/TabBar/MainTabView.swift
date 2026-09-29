@@ -20,7 +20,7 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "house.fill")
                 }.tag(0)
-            SearchView()
+            SearchView(config: .explore)
                 .onAppear {
                     selectedIndex = 1
                 }

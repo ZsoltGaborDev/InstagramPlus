@@ -36,6 +36,7 @@ extension ProfileViewModel {
     }
     
     func fetchUserStats() {
+        guard user.stats == nil else { return }
         Task {
             self.user.stats = try await UserService.fetchUserStats(uid: user.id)
         }

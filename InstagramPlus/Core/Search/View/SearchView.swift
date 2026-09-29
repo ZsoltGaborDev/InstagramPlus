@@ -8,37 +8,12 @@
 import SwiftUI
 
 struct SearchView: View {
-    @State private var searchText = ""
-    @State var viewModel = SearchViewModel()
+    
+    init(config: UserListConfig) {}
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-                    ForEach(viewModel.users) { user in
-                        NavigationLink(value: user) {
-                            HStack {
-                                CircularProfileImageView(user: user, size: .xSmall)
-                                VStack(alignment: .leading) {
-                                    Text(user.username)
-                                        .fontWeight(.semibold)
-                                    
-                                    if let fullname = user.fullname {
-                                        Text(fullname)
-                                    }
-                                }
-                                .font(.footnote)
-                                .foregroundStyle(.black)
-                                
-                                Spacer()
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                .padding(.top, 8)
-                .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search...")
-            }
+            UserListView(config: .explore)
             .navigationDestination(for: User.self, destination: { user in
                 ProfileView(user: user)
             })
@@ -49,5 +24,5 @@ struct SearchView: View {
 }
 
 #Preview {
-    SearchView()
+    SearchView(config: .explore)
 }
