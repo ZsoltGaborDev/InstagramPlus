@@ -18,6 +18,6 @@ class ContentViewModel {
     }
     
     var currentUser: User? {
-        service.currentUser
+        UserService.shared.currentUser
     }
 }

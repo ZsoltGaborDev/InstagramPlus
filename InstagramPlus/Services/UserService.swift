@@ -7,8 +7,13 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
-struct UserService {
+@Observable
+class UserService {
+    
+    var currentUser: User?
+    static let shared = UserService()
     
     static func fetchUser(withUid uid: String) async throws -> User {
         let snapshot = try await Firestore.firestore().collection("users").document(uid).getDocument()
@@ -18,5 +23,14 @@ struct UserService {
     static func fetchAllUsers() async throws -> [User] {
         let snapshot = try await Firestore.firestore().collection("users").getDocuments()
         return snapshot.documents.compactMap({ try? $0.data(as: User.self) })
+    }
+    
+    func fetchCurrentuser() async throws {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        self.currentUser = try await Firestore
+            .firestore()
+            .collection("users")
+            .document(uid)
+            .getDocument(as: User.self)
     }
 }
