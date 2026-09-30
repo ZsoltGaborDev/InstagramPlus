@@ -30,6 +30,8 @@ class CommentViewModel {
         
         try await service.uploadComment(comment)
         try await fetchComments()
+        
+        IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
     }
     
     func fetchComments() async throws {

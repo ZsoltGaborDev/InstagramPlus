@@ -22,6 +22,8 @@ extension ProfileViewModel {
     func follow() {
         Task { try await UserService.follow(uid: user.id) }
         user.isFollowed = true
+        
+        IGNotificationsManager.shared.uploadFollowNotification(to: user.id)
     }
     
     func unfollow() {

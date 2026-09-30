@@ -25,6 +25,7 @@ class FeedCellViewModel {
                 post.likes! += 1
             }
             try await PostService.likePost(post: postCopy)
+            IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
         } catch {
             post.didLike = false
             if post.likes ?? 0 > 0 {
