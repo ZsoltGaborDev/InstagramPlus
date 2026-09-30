@@ -6,24 +6,25 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct NotificationsCell: View {
     let notification: IGNotification
     
     var body: some View {
-        let username = Text("yuki")
+        let username = Text(notification.user?.username ?? "")
             .font(.subheadline)
             .fontWeight(.semibold)
         
         let message = Text(" \(notification.type.notificationMessage)")
             .font(.subheadline)
         
-        let timestamp = Text("3w")
+        let timestamp = Text(" \(notification.timestamp.timestampString())")
             .foregroundStyle(Color(.gray))
             .fontWeight(.semibold)
         
         HStack() {
-            CircularProfileImageView(size:.xSmall)
+            CircularProfileImageView(user: notification.user, size:.xSmall)
             
             //notification message
             HStack {
@@ -47,7 +48,7 @@ struct NotificationsCell: View {
                 }
 
             } else {
-                Image(systemName: "person.circle")
+                KFImage(URL(string: notification.post?.imageUrl ?? ""))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)

@@ -12,12 +12,18 @@ import FirebaseFirestore
 class IGNotificationService {
     
     func fetchNotifications() async throws -> [IGNotification] {
-        return DeveloperPreview.shared.notifications
+        guard let currentUid = Auth.auth().currentUser?.uid else { return [] }
+        
+        let snapshot = try await FirebaseConstant
+            .UserNotificationCollection(uid: currentUid)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap({ try? $0.data(as: IGNotification.self) })
     }
     
     func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post? = nil) {
         guard let currentUid = Auth.auth().currentUser?.uid, currentUid != uid else { return }
-        let ref = FirebaseConstant.IGNotificationCollection.document(uid).collection("user-notifications").document()
+        let ref = FirebaseConstant.UserNotificationCollection(uid: currentUid).document()
         let notification = IGNotification(id: ref.documentID,
                                           postId: post?.id,
                                           timestamp: Timestamp(),

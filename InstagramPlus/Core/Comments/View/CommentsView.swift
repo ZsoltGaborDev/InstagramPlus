@@ -17,7 +17,7 @@ struct CommentsView: View {
     }
     
     init(post: Post) {
-        self._viewModel = State(initialValue: CommentViewModel(post: post))
+        self._viewModel = State(initialValue: CommentViewModel(post: post, service: CommentService(postId: post.id)))
     }
     
     var body: some View {

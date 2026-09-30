@@ -33,6 +33,12 @@ struct PostService {
             .getDocuments()
         return try snapshot.documents.compactMap({ try $0.data(as: Post.self)})
     }
+    
+    static func fetchPost(_ postId: String) async throws -> Post {
+        return try await FirebaseConstant
+            .PostsCollection.document(postId)
+            .getDocument(as: Post.self)
+    }
 }
 
 // MARK: - Likes

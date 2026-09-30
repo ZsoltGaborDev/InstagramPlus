@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @State var viewModel = IGNotificationsViewModel()
+    @State var viewModel = IGNotificationsViewModel(service: IGNotificationService())
     
     var body: some View {
         NavigationStack {

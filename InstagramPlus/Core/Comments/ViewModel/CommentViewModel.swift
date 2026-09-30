@@ -16,9 +16,9 @@ class CommentViewModel {
     private let post: Post
     private let service: CommentService
     
-    init(post: Post) {
+    init(post: Post, service: CommentService) {
         self.post = post
-        self.service = CommentService(postId: post.id)
+        self.service = service
         
         Task { try await fetchComments() }
     }
