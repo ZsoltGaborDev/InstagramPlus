@@ -46,7 +46,6 @@ struct PostService {
 extension PostService {
     static func likePost(post: Post) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let likes = post.likes else { return }
         async let _ = try await FirebaseConstant
             .PostsCollection
             .document(post.id)
@@ -55,7 +54,7 @@ extension PostService {
         async let _ = try await FirebaseConstant
             .PostsCollection
             .document(post.id)
-            .updateData(["likes" : likes + 1])
+            .updateData(["likes": post.likes ?? 0 + 1])
         async let _ = Firestore.firestore().collection("users").document(uid).collection("user-likes").document(post.id).setData([:])
     }
     

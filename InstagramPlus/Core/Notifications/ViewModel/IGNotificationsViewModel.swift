@@ -13,10 +13,12 @@ class IGNotificationsViewModel {
     var notifications = [IGNotification]()
     
     private let service: IGNotificationService
+    private var currentUser: User?
     
     init(service: IGNotificationService) {
         self.service = service
         Task { await fetchNotifications() }
+        self.currentUser = UserService.shared.currentUser
     }
     
     func fetchNotifications() async {
@@ -48,6 +50,7 @@ class IGNotificationsViewModel {
 
             notification.user = user
             notification.post = post
+            notification.post?.user = self.currentUser
 
             notifications[index] = notification
         }

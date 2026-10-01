@@ -23,7 +23,7 @@ class IGNotificationService {
     
     func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post? = nil) {
         guard let currentUid = Auth.auth().currentUser?.uid, currentUid != uid else { return }
-        let ref = FirebaseConstant.UserNotificationCollection(uid: currentUid).document()
+        let ref = FirebaseConstant.UserNotificationCollection(uid: uid).document()
         let notification = IGNotification(id: ref.documentID,
                                           postId: post?.id,
                                           timestamp: Timestamp(),

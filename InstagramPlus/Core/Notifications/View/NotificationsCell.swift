@@ -21,10 +21,13 @@ struct NotificationsCell: View {
         
         let timestamp = Text(" \(notification.timestamp.timestampString())")
             .foregroundStyle(Color(.gray))
+            .font(.subheadline)
             .fontWeight(.semibold)
         
         HStack() {
-            CircularProfileImageView(user: notification.user, size:.xSmall)
+            NavigationLink(value: notification.user) {
+                CircularProfileImageView(user: notification.user, size:.xSmall)
+            }
             
             //notification message
             HStack {
@@ -48,14 +51,20 @@ struct NotificationsCell: View {
                 }
 
             } else {
-                KFImage(URL(string: notification.post?.imageUrl ?? ""))
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .clipped()
-                    .background(Color(.gray))
-                    .foregroundStyle(Color(.white))
-                    .padding(.leading, 2)
+                if let post = notification.post {
+                    NavigationLink {
+                        FeedCell(post: post)
+                    } label: {
+                        KFImage(URL(string: notification.post?.imageUrl ?? ""))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 40, height: 40)
+                            .clipped()
+                            .background(Color(.gray))
+                            .foregroundStyle(Color(.white))
+                            .padding(.leading, 2)
+                    }
+                }
             }
         }
         .padding(.horizontal)
