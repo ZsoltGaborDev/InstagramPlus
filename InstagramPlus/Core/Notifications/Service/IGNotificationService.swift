@@ -17,6 +17,7 @@ class IGNotificationService {
         
         let snapshot = try await FirebaseConstant
             .UserNotificationCollection(uid: currentUid)
+            .order(by: "timestamp", descending: true)
             .getDocuments()
         
         return snapshot.documents.compactMap({ try? $0.data(as: IGNotification.self) })
