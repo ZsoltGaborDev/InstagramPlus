@@ -42,6 +42,7 @@ class FeedCellViewModel {
                 post.likes! -= 1
             }
             try await PostService.unlikePost(post: postCopy)
+            await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
         } catch {
             post.didLike = true
             if let _ = post.likes {

@@ -27,8 +27,11 @@ extension ProfileViewModel {
     }
     
     func unfollow() {
-        Task { try await UserService.unfollow(uid: user.id) }
-        user.isFollowed = false
+        Task { try await UserService.unfollow(uid: user.id)
+            user.isFollowed = false
+        
+            await IGNotificationsManager.shared.deleteFollowNotification(notificationOwnerUid: user.id)
+        }
     }
     
     func checkIfUserIsFollowed() {

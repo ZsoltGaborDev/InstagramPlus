@@ -23,4 +23,20 @@ class IGNotificationsManager {
     func uploadFollowNotification(to uid: String) {
         service.uploadNotifications(toUid: uid, type: .follow)
     }
+    
+    func deleteLikeNotification(notificationOwnerUid: String, post: Post) async {
+        do {
+            try await service.deleteNotification(toUid: notificationOwnerUid, type: .like, post: post)
+        } catch {
+            print("DEBUG: Failed to delete like notification")
+        }
+    }
+    
+    func deleteFollowNotification(notificationOwnerUid: String) async {
+        do {
+            try await service.deleteNotification(toUid: notificationOwnerUid, type: .follow)
+        } catch {
+            print("DEBUG: Failed to delete follow notification")
+        }
+    }
 }
