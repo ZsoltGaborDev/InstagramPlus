@@ -45,6 +45,7 @@ playground.xcworkspace
 ### Swift
 # Xcode user settings
 xcuserdata/
+*.xcuserstate
 
 # Xcode build data
 DerivedData/
