@@ -13,7 +13,7 @@ struct CommentsView: View {
     @State var viewModel: CommentViewModel
     
     private var currentUser: User? {
-        return UserService.shared.currentUser
+        return nil
     }
     
     init(post: Post) {

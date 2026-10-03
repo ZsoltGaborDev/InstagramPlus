@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct CurrentUserProfileView: View {
-    @EnvironmentObject var authManager: AuthManager
-    
-    var user: User
+    @EnvironmentObject private var authManager: AuthManager
+    @EnvironmentObject private var userManager: UserManager
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                //header
-                ProfileHeaderView(user: user)
-                
-                //post grid view
-                PostGridView(user: user)
+                if let user = userManager.currentUser {
+                    ProfileHeaderView(user: user)
+                    
+                    PostGridView(user: user)
+                }
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -37,5 +36,5 @@ struct CurrentUserProfileView: View {
 }
 
 #Preview {
-    CurrentUserProfileView(user: User.MOCK_USER[0])
+    CurrentUserProfileView()
 }

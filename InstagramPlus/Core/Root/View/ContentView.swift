@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var authManager: AuthManager
+    @EnvironmentObject private var userManager: UserManager
     
     @State var registrationViewModel = RegistrationViewModel()
     
@@ -17,11 +18,13 @@ struct ContentView: View {
             if authManager.userSession == nil {
                 LoginView()
                     .environment(registrationViewModel)
-            } else if let currentUser = authManager.currentUser {
-                MainTabView(user: currentUser)
             } else {
-                Text("User logged in..")
+                MainTabView()
             }
+        }
+        .task(id: authManager.userSession) {
+            guard authManager.userSession != nil else { return }
+            await userManager.fetchCurrentUser()
         }
     }
 }

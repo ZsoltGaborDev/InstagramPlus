@@ -9,19 +9,16 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-@Observable
 class UserService {
     
     var currentUser: User?
-    static let shared = UserService()
     
-    func fetchCurrentuser() async throws -> User? {
+    func fetchCurrentUser() async throws -> User? {
         guard let uid = Auth.auth().currentUser?.uid else { return nil }
-        self.currentUser = try await FirebaseConstant
+        return try await FirebaseConstant
             .UsersCollection
             .document(uid)
             .getDocument(as: User.self)
-        return currentUser
     }
     
     static func fetchUser(withUid uid: String) async throws -> User {
