@@ -14,14 +14,14 @@ import UIKit
 class AuthManager {
     
     var userSession: String?
-    private let service: AuthService?
+    private let service: AuthService
     
     init(service: AuthService) {
         self.service = service
     }
     
     func login(with email: String, password: String) async throws {
-        
+        self.userSession = try await service.login(withEmail: email, password: password)
     }
     
     func createUser(withEmail email: String, password: String, usermame: String) async throws -> User? {

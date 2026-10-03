@@ -9,9 +9,11 @@ import SwiftUI
 
 struct AddEmailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var viewModel: RegistrationViewModel
+    @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         VStack(spacing: 12) {
             Text("Add your email")
                 .font(.title2)

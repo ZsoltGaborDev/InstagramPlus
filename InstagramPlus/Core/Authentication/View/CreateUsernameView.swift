@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct CreateUsernameView: View {
-    @EnvironmentObject var viewModel: RegistrationViewModel
+    @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         VStack(spacing: 12) {
             Text("Create username")
                 .font(.title2)

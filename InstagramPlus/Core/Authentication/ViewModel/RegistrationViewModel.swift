@@ -9,14 +9,25 @@ import Foundation
 import Combine
 
 @Observable
-class RegistrationViewModel: ObservableObject {
+class RegistrationViewModel {
     
     var username: String = ""
     var email: String = ""
     var password: String = ""
+    var error: Error?
     
-    func createUser() async throws {
-        //try await AuthService.shared.createUser(email: email, password: password, username: username)
+    func createUser(with authManager: AuthManager) async -> User? {
+        do {
+            let user = try await authManager.createUser(withEmail: email, password: password, usermame: username)
+            reset()
+            return user
+        } catch {
+            self.error = error
+            return nil
+        }
+    }
+    
+    private func reset() {
         username = ""
         email = ""
         password = ""

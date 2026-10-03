@@ -12,8 +12,13 @@ class LoginViewModel {
     
     var email = ""
     var password = ""
+    var error: Error?
     
-    func signIn() async throws {
-        //try await AuthService.shared.login(withEmail: email, password: password)
+    func login(with authManager: AuthManager) async {
+        do {
+            try await authManager.login(with: email, password: password)
+        } catch {
+            self.error = error
+        }
     }
 }

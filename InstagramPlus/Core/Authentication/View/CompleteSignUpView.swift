@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CompleteSignUpView: View {
-    @EnvironmentObject var viewModel: RegistrationViewModel
+    @Environment(AuthManager.self) var authManager
+    @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {
         VStack(spacing: 12) {
@@ -30,7 +31,7 @@ struct CompleteSignUpView: View {
                 .padding(.horizontal, 24)
             
             Button {
-                Task { try await viewModel.createUser() }
+                Task { await viewModel.createUser(with: authManager) }
             } label: {
                 Text("Complete Sign Up")
                     .font(.subheadline)

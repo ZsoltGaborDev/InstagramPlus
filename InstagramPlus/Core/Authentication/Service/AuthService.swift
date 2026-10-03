@@ -5,25 +5,18 @@
 //  Created by Zsolt Gabor on 24/09/2026.
 //
 
-import Foundation
 import FirebaseAuth
-import SwiftUI
 import FirebaseFirestore
 
-@Observable
-final class AuthService {
+struct AuthService {
     
-    init() {
-        Task { try? await loadUserData() }
-    }
-    
-    func login(withEmail email: String, password: String) async throws {
+    func login(withEmail email: String, password: String) async throws -> String {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
-            try await loadUserData()
+            return result.user.uid
         } catch {
-            print("password: \(password)")
             print("DEBUG: Failed to log in user with error \(error.localizedDescription)")
+            throw error
         }
     }
     
