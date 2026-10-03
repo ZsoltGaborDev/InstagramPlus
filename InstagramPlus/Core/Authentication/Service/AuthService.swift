@@ -13,9 +13,6 @@ import FirebaseFirestore
 @Observable
 final class AuthService {
     
-    var userSession: FirebaseAuth.User?    
-    static let shared = AuthService()
-    
     init() {
         Task { try? await loadUserData() }
     }
@@ -23,7 +20,6 @@ final class AuthService {
     func login(withEmail email: String, password: String) async throws {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
-            self.userSession = result.user
             try await loadUserData()
         } catch {
             print("password: \(password)")
@@ -34,7 +30,6 @@ final class AuthService {
     func createUser(email: String, password: String, username: String) async throws {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
-            self.userSession = result.user
             try await uploadUserData(uid: result.user.uid, username: username, email: email)
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
@@ -42,13 +37,11 @@ final class AuthService {
     }
     
     func loadUserData() async throws {
-        self.userSession = Auth.auth().currentUser
         try await UserService.shared.fetchCurrentuser()
     }
     
     func signOut() async throws {
         try? Auth.auth().signOut()
-        self.userSession = nil
         UserService.shared.currentUser = nil
     }
     

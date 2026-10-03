@@ -19,9 +19,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct InstagramPlusApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @State private var authManager = AuthManager(service: AuthService())
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(authManager)
         }
     }
 }
