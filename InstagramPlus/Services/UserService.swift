@@ -15,6 +15,15 @@ class UserService {
     var currentUser: User?
     static let shared = UserService()
     
+    func fetchCurrentuser() async throws -> User? {
+        guard let uid = Auth.auth().currentUser?.uid else { return nil }
+        self.currentUser = try await FirebaseConstant
+            .UsersCollection
+            .document(uid)
+            .getDocument(as: User.self)
+        return currentUser
+    }
+    
     static func fetchUser(withUid uid: String) async throws -> User {
         let snapshot = try await FirebaseConstant
             .UsersCollection
@@ -76,13 +85,6 @@ class UserService {
             users.append(try await fetchUser(withUid: doc.documentID))
         }
         return users
-    }
-    func fetchCurrentuser() async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        self.currentUser = try await FirebaseConstant
-            .UsersCollection
-            .document(uid)
-            .getDocument(as: User.self)
     }
 }
 

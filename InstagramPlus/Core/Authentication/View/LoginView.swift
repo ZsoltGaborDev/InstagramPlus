@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
-    @Environment(AuthManager.self) private var authManager
+    @EnvironmentObject private var authManager: AuthManager
     @State var viewModel = LoginViewModel()
     
     var body: some View {

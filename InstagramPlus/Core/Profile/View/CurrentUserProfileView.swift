@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct CurrentUserProfileView: View {
+    @EnvironmentObject var authManager: AuthManager
     
     var user: User
-    var posts: [Post] {
-        return Post.MOCK_POSTS.filter({ $0.user?.username == user.username})
-    }
     
     var body: some View {
         NavigationStack {
@@ -28,9 +26,7 @@ struct CurrentUserProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        Task {
-                            //try? await AuthService.shared.signOut()
-                        }
+                        Task { try await authManager.signOut() }
                     } label: {
                         Image(systemName: "line.horizontal.3")
                     }

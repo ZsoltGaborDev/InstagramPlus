@@ -20,12 +20,13 @@ struct AuthService {
         }
     }
     
-    func createUser(email: String, password: String, username: String) async throws {
+    func createUser(email: String, password: String, username: String) async throws -> User {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
-            try await uploadUserData(uid: result.user.uid, username: username, email: email)
+            return User(id: result.user.uid, username: username, email: email)
         } catch {
             print("DEBUG: Failed to register user with error \(error.localizedDescription)")
+            throw error
         }
     }
     
@@ -34,8 +35,12 @@ struct AuthService {
     }
     
     func signOut() async throws {
-        try? Auth.auth().signOut()
+        try Auth.auth().signOut()
         UserService.shared.currentUser = nil
+    }
+    
+    func getUserSession() -> String? {
+        return Auth.auth().currentUser?.uid
     }
     
     private func uploadUserData(uid: String, username: String, email: String) async throws {
