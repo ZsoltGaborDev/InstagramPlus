@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CreatePasswordView: View {
     @Environment(RegistrationViewModel.self) var viewModel
+    @Environment(AuthenticationRouter.self) var router
     
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -29,8 +30,8 @@ struct CreatePasswordView: View {
                 .autocapitalization(.none)
                 .modifier(IGPTextFieldModifier())
             
-            NavigationLink {
-                CompleteSignUpView()
+            Button {
+                router.navigate()
             } label: {
                 Text("Next")
                     .font(.subheadline)

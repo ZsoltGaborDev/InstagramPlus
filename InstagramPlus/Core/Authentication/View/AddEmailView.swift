@@ -10,6 +10,7 @@ import SwiftUI
 struct AddEmailView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(RegistrationViewModel.self) var viewModel
+    @Environment(AuthenticationRouter.self) var router
     
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -30,8 +31,8 @@ struct AddEmailView: View {
                 .autocapitalization(.none)
                 .modifier(IGPTextFieldModifier())
             
-            NavigationLink {
-                CreateUsernameView()
+            Button {
+                router.navigate()
             } label: {
                 Text("Next")
                     .font(.subheadline)
