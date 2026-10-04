@@ -40,10 +40,19 @@ struct CreateUsernameView: View {
                     .background(Color(.systemBlue))
                     .cornerRadius(8)
             }
+            .disabled(!formIsValid)
+            .opacity(formIsValid ? 1.0 : 0.5)
             .padding(.vertical)
             
             Spacer()
         }
+    }
+}
+
+private extension CreateUsernameView {
+    var formIsValid: Bool {
+        return viewModel.username
+            .isValidUsername()
     }
 }
 

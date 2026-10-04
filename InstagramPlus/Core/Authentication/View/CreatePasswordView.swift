@@ -40,10 +40,18 @@ struct CreatePasswordView: View {
                     .background(Color(.systemBlue))
                     .cornerRadius(8)
             }
+            .disabled(!formIsValid)
+            .opacity(formIsValid ? 1.0 : 0.5)
             .padding(.vertical)
             
             Spacer()
         }
+    }
+}
+
+private extension CreatePasswordView {
+    var formIsValid: Bool {
+        return viewModel.password.isValidPassword()
     }
 }
 

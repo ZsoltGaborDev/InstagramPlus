@@ -56,6 +56,8 @@ struct LoginView: View {
                             .background(Color(.systemBlue))
                             .cornerRadius(8)
                     }
+                    .disabled(!formIsValid)
+                    .opacity(formIsValid ? 1.0 : 0.5)
                     .padding(.vertical)
                     
                     GeometryReader { proxy in
@@ -114,6 +116,12 @@ struct LoginView: View {
                 .padding(.vertical, 16)
             }
         }
+    }
+}
+
+private extension LoginView {
+    var formIsValid: Bool {
+        return viewModel.email.isValidEmail() && viewModel.password.isValidPassword()
     }
 }
 
