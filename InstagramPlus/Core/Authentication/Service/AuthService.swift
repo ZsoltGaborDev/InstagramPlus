@@ -7,6 +7,7 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import Firebase
 
 struct AuthService {
     
@@ -15,8 +16,8 @@ struct AuthService {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             return result.user.uid
         } catch {
-            print("DEBUG: Failed to log in user with error \(error.localizedDescription)")
-            throw error
+            let authErrorCode = (error as NSError).code
+            throw AuthenticationError(rawValue: authErrorCode)
         }
     }
     
@@ -25,8 +26,8 @@ struct AuthService {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             return result.user.uid
         } catch {
-            print("DEBUG: Failed to register user with error \(error.localizedDescription)")
-            throw error
+            let authErrorCode = (error as NSError).code
+            throw AuthenticationError(rawValue: authErrorCode)
         }
     }
     

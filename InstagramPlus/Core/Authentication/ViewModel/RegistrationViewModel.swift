@@ -14,14 +14,18 @@ class RegistrationViewModel {
     var username: String = ""
     var email: String = ""
     var password: String = ""
-    var error: Error?
+    var showError = false
+    var error: AuthenticationError? {
+        didSet { showError = error != nil }
+    }
+    
     
     func createUser(with authManager: AuthManager) async {
         do {
             try await authManager.createUser(withEmail: email, password: password, usermame: username)
             reset()
         } catch {
-            self.error = error
+            self.error = error as? AuthenticationError ?? .unknows
         }
     }
     

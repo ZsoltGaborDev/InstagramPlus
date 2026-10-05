@@ -12,6 +12,8 @@ struct CompleteSignUpView: View {
     @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         VStack(spacing: 12) {
             VStack {
                 Text("Welcome to Instagram,")
@@ -42,6 +44,9 @@ struct CompleteSignUpView: View {
                     .cornerRadius(8)
             }
             .padding(.vertical)
+        }
+        .alert("Ooops", isPresented: $viewModel.showError, actions: {}) {
+            Text(viewModel.error?.localizedDescription ?? "An unknown error occurred")
         }
     }
 }

@@ -115,6 +115,9 @@ struct LoginView: View {
                 }
                 .padding(.vertical, 16)
             }
+            .alert("Ooops", isPresented: $viewModel.showError, actions: {}) {
+                Text(viewModel.error?.localizedDescription ?? "An unknown error occurred")
+            }
             .navigationDestination(for: RegistrationSteps.self) { step in
                 Group {
                     switch step {
@@ -137,7 +140,7 @@ struct LoginView: View {
 
 private extension LoginView {
     var formIsValid: Bool {
-        return viewModel.email.isValidEmail() && viewModel.password.isValidPassword()
+        return viewModel.email.isValidEmail() //&& viewModel.password.isValidPassword()
     }
 }
 
