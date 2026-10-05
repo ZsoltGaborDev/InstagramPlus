@@ -10,7 +10,7 @@ import SwiftUI
 struct AddEmailView: View {
     @Environment(\.dismiss) var dismiss
     
-    @EnvironmentObject var authManager: AuthManager
+    @Environment(AuthManager.self) var authManager
     @Environment(AuthenticationRouter.self) var router
     @Environment(RegistrationViewModel.self) var viewModel
     

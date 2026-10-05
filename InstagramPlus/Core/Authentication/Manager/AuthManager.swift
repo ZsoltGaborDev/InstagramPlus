@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import Combine
 
 // is responsible for state management
-class AuthManager: ObservableObject {
+@Observable
+class AuthManager {
     
-    @Published var userSession: String?
+    var userSession: String?
     private let service: AuthServiceProtocol
     
     init(service: AuthServiceProtocol) {

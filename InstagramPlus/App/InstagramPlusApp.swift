@@ -9,25 +9,29 @@ import SwiftUI
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-    return true
-  }
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
+    }
 }
 
 @main
 struct InstagramPlusApp: App {
-    @StateObject private var authManager = AuthManager(service: AuthService())
-    @StateObject private var userManager = UserManager(service: UserService())
+    @State private var authManager: AuthManager
+    @State private var userManager: UserManager
     
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    init() {
+        FirebaseApp.configure()
+        _authManager = State(wrappedValue: AuthManager(service: AuthService()))
+        _userManager = State(wrappedValue: UserManager(service: UserService()))
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(authManager)
-                .environmentObject(userManager)
+                .environment(authManager)
+                .environment(userManager)
         }
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CompleteSignUpView: View {
-    @EnvironmentObject var authManager: AuthManager
+    @Environment(AuthManager.self) var authManager
     @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {

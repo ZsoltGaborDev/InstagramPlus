@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import Combine
 
-class UserManager: ObservableObject {
-    @Published var currentUser: User?
+@Observable
+class UserManager {
+    var currentUser: User?
     
     private let service: UserServiceProtocol
     

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct CurrentUserProfileView: View {
-    @EnvironmentObject private var authManager: AuthManager
-    @EnvironmentObject private var userManager: UserManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     
     var body: some View {
         NavigationStack {
