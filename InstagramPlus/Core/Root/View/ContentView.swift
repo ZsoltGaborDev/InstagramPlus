@@ -31,4 +31,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(AuthManager(service: MockAuthService()))
+        .environment(UserManager(service: MockUserService()))   
 }

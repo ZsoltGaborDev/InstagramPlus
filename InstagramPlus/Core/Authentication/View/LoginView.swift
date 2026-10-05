@@ -139,4 +139,5 @@ private extension LoginView {
 
 #Preview {
     LoginView()
+        .environment(AuthManager(service: MockAuthService()))
 }

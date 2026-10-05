@@ -9,6 +9,6 @@ import Foundation
 
 class MockUserService: UserServiceProtocol {
     func fetchCurrentUser() async throws -> User? {
-        return nil
+        return User.MOCK_USER[0]
     }
 }

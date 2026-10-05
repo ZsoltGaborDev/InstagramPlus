@@ -37,4 +37,6 @@ struct CurrentUserProfileView: View {
 
 #Preview {
     CurrentUserProfileView()
+        .environment(AuthManager(service: MockAuthService()))
+        .environment(UserManager(service: MockUserService()))
 }
