@@ -31,6 +31,24 @@ struct AuthService {
         }
     }
     
+    func validateEmail(_ email: String) async throws -> Bool {
+        let snapshot = try await FirebaseConstant
+            .UsersCollection
+            .whereField("email", isEqualTo: email)
+            .getDocuments()
+        
+        return snapshot.isEmpty
+    }
+    
+    func validateUsername(_ username: String) async throws -> Bool {
+        let snapshot = try await FirebaseConstant
+            .UsersCollection
+            .whereField("username", isEqualTo: username)
+            .getDocuments()
+        
+        return snapshot.isEmpty
+    }
+    
     func signOut() async throws {
         try Auth.auth().signOut()
     }

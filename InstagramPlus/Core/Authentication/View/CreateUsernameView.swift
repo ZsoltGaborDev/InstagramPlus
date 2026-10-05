@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CreateUsernameView: View {
-    @Environment(RegistrationViewModel.self) var viewModel
+    @EnvironmentObject var authManager: AuthManager
     @Environment(AuthenticationRouter.self) var router
+    @Environment(RegistrationViewModel.self) var viewModel
     
     var body: some View {
         @Bindable var viewModel = viewModel
@@ -31,7 +32,7 @@ struct CreateUsernameView: View {
                 .modifier(IGPTextFieldModifier())
             
             Button {
-                router.navigate()
+                onNext()
             } label: {
                 Text("Next")
                     .font(.subheadline)
@@ -54,6 +55,17 @@ private extension CreateUsernameView {
     var formIsValid: Bool {
         return viewModel.username
             .isValidUsername()
+    }
+    
+    func onNext() {
+        Task {
+            let usernameIsValid =  try await authManager.validateUsername(viewModel.username)
+            if usernameIsValid {
+                router.navigate()
+            } else {
+                print("DEBUG: Username validation failed...")
+            }
+        }
     }
 }
 

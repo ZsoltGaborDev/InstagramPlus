@@ -40,6 +40,14 @@ class AuthManager: ObservableObject {
         
     }
     
+    func validateEmail(_ email: String) async throws -> Bool {
+        return try await service.validateEmail(email)
+    }
+    
+    func validateUsername(_ username: String) async throws -> Bool {
+        return try await service.validateUsername(username)
+    }
+    
     func signOut() async throws {
         try await service.signOut() // signs out on BE
         userSession = nil // signs out on client and updates state
