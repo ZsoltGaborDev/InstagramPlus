@@ -29,7 +29,7 @@ class RegistrationViewModel {
         }
     }
     
-    private func reset() {
+    func reset() {
         username = ""
         email = ""
         password = ""

@@ -15,6 +15,7 @@ final class AuthManagerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        
         mockService = MockAuthService()
         authManager = AuthManager(service: mockService)
     }
@@ -22,6 +23,7 @@ final class AuthManagerTests: XCTestCase {
     override func tearDown() {
         mockService = nil
         authManager = nil
+        
         super.tearDown()
     }
     
