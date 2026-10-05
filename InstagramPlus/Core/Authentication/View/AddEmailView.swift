@@ -29,6 +29,11 @@ struct AddEmailView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
+            IGTextField("Enter your email", text: $viewModel.email)
+                .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
+                .autocapitalization(.none)
+            
             TextField("Email", text: $viewModel.email)
                 .autocapitalization(.none)
                 .modifier(IGPTextFieldModifier())

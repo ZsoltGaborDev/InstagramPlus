@@ -162,8 +162,6 @@ extension UserService {
             .getDocuments()
             .count
         
-        print("DEBUG: \(#function)")
-        
         return try await UserStats(
             followingCount: followingCount,
             followersCount: followersCount,

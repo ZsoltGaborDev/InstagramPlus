@@ -25,9 +25,10 @@ struct LoginView: View {
                 
                 //text fields
                 VStack {
-                    TextField("Enter your  email", text: $viewModel.email)
+                    IGTextField("Enter your email", text: $viewModel.email)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
-                        .modifier(IGPTextFieldModifier())
                     
                     SecureField("Enter your password", text: $viewModel.password)
                         .modifier(IGPTextFieldModifier())
