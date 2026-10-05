@@ -9,7 +9,18 @@ import FirebaseAuth
 import FirebaseFirestore
 import Firebase
 
-struct AuthService {
+protocol AuthServiceProtocol {
+    func createUser(email: String, password: String, username: String) async throws -> String
+    func deleteAccount() async throws
+    func login(withEmail email: String, password: String) async throws -> String
+    func validateEmail(_ email: String) async throws -> Bool
+    func validateUsername(_ username: String) async throws -> Bool
+    func signOut() async throws
+    func getUserSession() -> String?
+    func sendResetPasswordLink(toEmail email: String) async throws
+}
+
+struct AuthService: AuthServiceProtocol {
     
     func login(withEmail email: String, password: String) async throws -> String {
         do {
@@ -53,8 +64,16 @@ struct AuthService {
         try Auth.auth().signOut()
     }
     
+    func deleteAccount() async throws {
+        //TODO: implement delete account functionality
+    }
+    
     func getUserSession() -> String? {
         return Auth.auth().currentUser?.uid
+    }
+    
+    func sendResetPasswordLink(toEmail email: String) async throws {
+        
     }
     
 //    private func uploadUserData(uid: String, username: String, email: String) async throws {
@@ -68,3 +87,4 @@ struct AuthService {
 //    }
     
 }
+

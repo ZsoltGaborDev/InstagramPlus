@@ -11,9 +11,9 @@ import Combine
 class UserManager: ObservableObject {
     @Published var currentUser: User?
     
-    private let service: UserService
+    private let service: UserServiceProtocol
     
-    init(service: UserService) {
+    init(service: UserServiceProtocol) {
         self.service = service
     }
     

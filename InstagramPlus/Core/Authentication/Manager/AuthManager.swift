@@ -12,9 +12,9 @@ import Combine
 class AuthManager: ObservableObject {
     
     @Published var userSession: String?
-    private let service: AuthService
+    private let service: AuthServiceProtocol
     
-    init(service: AuthService) {
+    init(service: AuthServiceProtocol) {
         self.service = service
         self.userSession = service.getUserSession()
     }
@@ -33,11 +33,11 @@ class AuthManager: ObservableObject {
     }
     
     func deleteAccount() async throws {
-        
+        try await service.deleteAccount()
     }
     
-    func sendresetPasswordLink(toEmail email: String) async throws {
-        
+    func sendResetPasswordLink(toEmail email: String) async throws {
+        try await service.sendResetPasswordLink(toEmail: email)
     }
     
     func validateEmail(_ email: String) async throws -> Bool {

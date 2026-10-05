@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RegistrationSteps: Int {
+enum RegistrationSteps: Int, CaseIterable {
     case email
     case username
     case password

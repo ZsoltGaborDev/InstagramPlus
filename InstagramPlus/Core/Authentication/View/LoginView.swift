@@ -103,7 +103,7 @@ struct LoginView: View {
                 Divider()
                 
                 Button {
-                    router.startRegostration()
+                    router.startRegistration()
                 } label: {
                     HStack(spacing: 3) {
                         Text("Don't have an account?")

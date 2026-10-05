@@ -13,7 +13,7 @@ class AuthenticationRouter {
     
     private(set) var currentStep: RegistrationSteps?
     
-    func startRegostration() {
+    func startRegistration() {
         guard let initialStep = RegistrationSteps.init(rawValue: 0) else { return }
         navigationPath.append(initialStep)
         currentStep = initialStep

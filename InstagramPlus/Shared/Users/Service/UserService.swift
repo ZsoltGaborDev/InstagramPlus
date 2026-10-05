@@ -9,7 +9,11 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-class UserService {
+protocol UserServiceProtocol {
+    func fetchCurrentUser() async throws -> User?
+}
+
+class UserService: UserServiceProtocol {
     
     var currentUser: User?
     

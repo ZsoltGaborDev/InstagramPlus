@@ -14,19 +14,62 @@
 		D7A85B2C3062EB8D00BB691F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D7A85B2B3062EB8D00BB691F /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D7B010C43073E90E003FE471 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7B55BDB3051760C00C286BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D7B55BE23051760C00C286BB;
+			remoteInfo = InstagramPlus;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		D7B010C03073E90E003FE471 /* InstagramPlusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagramPlusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B55BE33051760C00C286BB /* InstagramPlus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramPlus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D7B010CD3073E99E003FE471 /* Exceptions for "InstagramPlus" folder in "InstagramPlusTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Authentication/Tests/AuthenticationRouterTests.swift,
+				Core/Authentication/Tests/AuthManagerTests.swift,
+				Core/Authentication/Tests/LoginViewModelTests.swift,
+			);
+			target = D7B010BF3073E90E003FE471 /* InstagramPlusTests */;
+		};
+		D7B010CE3073E9FC003FE471 /* Exceptions for "InstagramPlus" folder in "InstagramPlus" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Authentication/Tests/AuthenticationRouterTests.swift,
+				Core/Authentication/Tests/AuthManagerTests.swift,
+				Core/Authentication/Tests/LoginViewModelTests.swift,
+			);
+			target = D7B55BE23051760C00C286BB /* InstagramPlus */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D7B55BE53051760C00C286BB /* InstagramPlus */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D7B010CE3073E9FC003FE471 /* Exceptions for "InstagramPlus" folder in "InstagramPlus" target */,
+				D7B010CD3073E99E003FE471 /* Exceptions for "InstagramPlus" folder in "InstagramPlusTests" target */,
+			);
 			path = InstagramPlus;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D7B010BD3073E90E003FE471 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D7B55BE03051760C00C286BB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -54,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				D7B55BE33051760C00C286BB /* InstagramPlus.app */,
+				D7B010C03073E90E003FE471 /* InstagramPlusTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +105,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D7B010BF3073E90E003FE471 /* InstagramPlusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7B010C63073E90E003FE471 /* Build configuration list for PBXNativeTarget "InstagramPlusTests" */;
+			buildPhases = (
+				D7B010BC3073E90E003FE471 /* Sources */,
+				D7B010BD3073E90E003FE471 /* Frameworks */,
+				D7B010BE3073E90E003FE471 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D7B010C53073E90E003FE471 /* PBXTargetDependency */,
+			);
+			name = InstagramPlusTests;
+			packageProductDependencies = (
+			);
+			productName = InstagramPlusTests;
+			productReference = D7B010C03073E90E003FE471 /* InstagramPlusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		D7B55BE23051760C00C286BB /* InstagramPlus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D7B55BEE3051760D00C286BB /* Build configuration list for PBXNativeTarget "InstagramPlus" */;
@@ -98,6 +162,11 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					D7B010BF3073E90E003FE471 = {
+						CreatedOnToolsVersion = 26.6;
+						LastSwiftMigration = 2660;
+						TestTargetID = D7B55BE23051760C00C286BB;
+					};
 					D7B55BE23051760C00C286BB = {
 						CreatedOnToolsVersion = 26.6;
 					};
@@ -123,11 +192,19 @@
 			projectRoot = "";
 			targets = (
 				D7B55BE23051760C00C286BB /* InstagramPlus */,
+				D7B010BF3073E90E003FE471 /* InstagramPlusTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D7B010BE3073E90E003FE471 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D7B55BE13051760C00C286BB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -138,6 +215,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D7B010BC3073E90E003FE471 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D7B55BDF3051760C00C286BB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -147,7 +231,60 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		D7B010C53073E90E003FE471 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D7B55BE23051760C00C286BB /* InstagramPlus */;
+			targetProxy = D7B010C43073E90E003FE471 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		D7B010C73073E90E003FE471 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UGX74299AN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ZsoltGabor.InstagramPlusTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstagramPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/InstagramPlus";
+			};
+			name = Debug;
+		};
+		D7B010C83073E90E003FE471 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UGX74299AN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ZsoltGabor.InstagramPlusTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstagramPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/InstagramPlus";
+			};
+			name = Release;
+		};
 		D7B55BEC3051760D00C286BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -338,6 +475,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D7B010C63073E90E003FE471 /* Build configuration list for PBXNativeTarget "InstagramPlusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7B010C73073E90E003FE471 /* Debug */,
+				D7B010C83073E90E003FE471 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D7B55BDE3051760C00C286BB /* Build configuration list for PBXProject "InstagramPlus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
