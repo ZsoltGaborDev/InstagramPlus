@@ -30,21 +30,11 @@ struct CreatePasswordView: View {
                 .autocapitalization(.none)
                 .modifier(IGPTextFieldModifier())
             
-            Button {
-                router.navigate()
-            } label: {
-                Text("Next")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color(.white))
-                    .frame(width: 360, height: 40)
-                    .background(Color(.systemBlue))
-                    .cornerRadius(8)
-            }
+            IGButton("Next", action: onNext)
             .disabled(!formIsValid)
             .opacity(formIsValid ? 1.0 : 0.5)
             .padding(.vertical)
-            
+                
             Spacer()
         }
     }
@@ -53,6 +43,10 @@ struct CreatePasswordView: View {
 private extension CreatePasswordView {
     var formIsValid: Bool {
         return viewModel.password.isValidPassword()
+    }
+    
+    func onNext() {
+        router.navigate()
     }
 }
 

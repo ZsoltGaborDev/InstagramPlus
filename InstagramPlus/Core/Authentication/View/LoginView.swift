@@ -43,23 +43,10 @@ struct LoginView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing )
                     
-                    
-                    Button {
-                        Task {
-                            await viewModel.login(with: authManager)
-                        }
-                    } label: {
-                        Text("Login")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color(.white))
-                            .frame(width: 360, height: 40)
-                            .background(Color(.systemBlue))
-                            .cornerRadius(8)
-                    }
-                    .disabled(!formIsValid)
-                    .opacity(formIsValid ? 1.0 : 0.5)
-                    .padding(.vertical)
+                    IGButton("Login", isLoading: viewModel.isLoading, action: onLoginTapped)
+                        .disabled(!formIsValid)
+                        .opacity(formIsValid ? 1.0 : 0.5)
+                        .padding(.vertical)
                     
                     GeometryReader { proxy in
                         let totalWidth = proxy.size.width
@@ -141,6 +128,12 @@ struct LoginView: View {
 private extension LoginView {
     var formIsValid: Bool {
         return viewModel.email.isValidEmail() //&& viewModel.password.isValidPassword()
+    }
+    
+    func onLoginTapped() {
+        Task {
+            await viewModel.login(with: authManager)
+        }
     }
 }
 

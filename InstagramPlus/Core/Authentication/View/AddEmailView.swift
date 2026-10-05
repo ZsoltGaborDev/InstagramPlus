@@ -33,20 +33,10 @@ struct AddEmailView: View {
                 .autocapitalization(.none)
                 .modifier(IGPTextFieldModifier())
             
-            Button {
-                onNext()
-            } label: {
-                Text("Next")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color(.white))
-                    .frame(width: 360, height: 40)
-                    .background(Color(.systemBlue))
-                    .cornerRadius(8)
-            }
-            .disabled(!formIsValid)
-            .opacity(formIsValid ? 1.0 : 0.5)
-            .padding(.vertical)
+            IGButton("next", action: onNext)
+                .disabled(!formIsValid)
+                .opacity(formIsValid ? 1.0 : 0.5)
+                .padding(.vertical)
             
             Spacer()
         }

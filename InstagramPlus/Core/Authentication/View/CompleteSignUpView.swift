@@ -32,22 +32,20 @@ struct CompleteSignUpView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            Button {
-                Task { await viewModel.createUser(with: authManager) }
-            } label: {
-                Text("Complete Sign Up")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color(.white))
-                    .frame(width: 360, height: 40)
-                    .background(Color(.systemBlue))
-                    .cornerRadius(8)
-            }
-            .padding(.vertical)
+            IGButton("Complete Sign Up", isLoading: viewModel.isLoading, action: onCompleteSignUpTapped)
+                .padding(.vertical)
+            
+            Spacer()
         }
         .alert("Ooops", isPresented: $viewModel.showError, actions: {}) {
             Text(viewModel.error?.localizedDescription ?? "An unknown error occurred")
         }
+    }
+}
+
+extension CompleteSignUpView {
+    func onCompleteSignUpTapped() {
+        Task { await viewModel.createUser(with: authManager) }
     }
 }
 

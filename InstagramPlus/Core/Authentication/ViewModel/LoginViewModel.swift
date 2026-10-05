@@ -12,12 +12,16 @@ class LoginViewModel {
     
     var email = ""
     var password = ""
+    var isLoading = false
     var showError = false
     var error: AuthenticationError? {
         didSet { showError = error != nil }
     }
     
     func login(with authManager: AuthManager) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await authManager.login(with: email, password: password)
         } catch {

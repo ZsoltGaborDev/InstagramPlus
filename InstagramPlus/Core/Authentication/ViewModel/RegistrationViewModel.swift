@@ -14,6 +14,7 @@ class RegistrationViewModel {
     var username: String = ""
     var email: String = ""
     var password: String = ""
+    var isLoading = false
     var showError = false
     var error: AuthenticationError? {
         didSet { showError = error != nil }
@@ -21,6 +22,9 @@ class RegistrationViewModel {
     
     
     func createUser(with authManager: AuthManager) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await authManager.createUser(withEmail: email, password: password, usermame: username)
             reset()
