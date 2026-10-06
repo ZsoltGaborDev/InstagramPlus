@@ -25,10 +25,18 @@ class CommentViewModel {
         Task { try await fetchComments() }
     }
     
-    func uploadComment(text: String) async throws {
-        try await commentService.uploadComment(commentText: text, postOwnerUid: post.ownerUid)
-        try await fetchComments()
-        IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
+    func uploadComment(text: String, currentUser: User) async throws {
+        var comment = try await commentService.uploadComment(
+            commentText: text,
+            postOwnerUid: post.ownerUid
+        )
+        
+        comment.user = currentUser
+        comments.insert(comment, at: 0)
+        
+        Task {
+            IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
+        }
     }
     
     func fetchComments() async throws {

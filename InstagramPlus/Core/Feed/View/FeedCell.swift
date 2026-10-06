@@ -9,8 +9,9 @@ import SwiftUI
 import Kingfisher
 
 struct FeedCell: View {
-    let viewModel: FeedCellViewModel
     @State private var showComments = false
+    
+    let viewModel: FeedCellViewModel
     
     private var post: Post {
         return viewModel.post

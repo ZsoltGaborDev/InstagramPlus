@@ -8,13 +8,10 @@
 import SwiftUI
 
 struct CommentsView: View {
+    @Environment(UserManager.self) private var userManager
     
     @State private var commentText = ""
     @State var viewModel: CommentViewModel
-    
-    private var currentUser: User? {
-        return nil
-    }
     
     init(post: Post) {
         self._viewModel = State(
@@ -47,7 +44,7 @@ struct CommentsView: View {
             Divider()
             
             HStack(spacing: 12) {
-                CircularProfileImageView(user: currentUser, size: .xSmall)
+                CircularProfileImageView(user: userManager.currentUser, size: .xSmall)
                 
                 ZStack(alignment: .trailing) {
                     TextField("Add a comments...", text: $commentText, axis: .vertical)
@@ -59,23 +56,32 @@ struct CommentsView: View {
                                 .stroke(Color(.systemGray5), lineWidth: 1)
                         }
                     Button {
-                        Task {
-                            try await viewModel.uploadComment(text: commentText)
-                            commentText = ""
-                        }
-                        } label: {
-                            Text("Post")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color(.systemBlue))
-                        }
-                        .padding(.horizontal)
+                        uploadComment()
+                    } label: {
+                        Text("Post")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color(.systemBlue))
+                    }
+                    .padding(.horizontal)
                 }
             }
             .padding()
         }
     }
 }
+
+private extension CommentsView {
+    func uploadComment() {
+        Task {
+            guard let currentuser = userManager.currentUser else { return }
+            let tempCommenText = commentText
+            commentText = ""
+            try await viewModel.uploadComment(text: tempCommenText, currentUser: currentuser)
+        }
+    }
+}
+    
 
 #Preview {
     CommentsView(post: Post.MOCK_POSTS[0])
