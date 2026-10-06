@@ -26,19 +26,8 @@ class CommentViewModel {
     }
     
     func uploadComment(text: String) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        let comment = Comment(
-            id: UUID().uuidString,
-            ownerUid: uid,
-            text: text,
-            postId: post.id,
-            postOwnerUid: post.ownerUid,
-            timestamp: Date())
-        
-        try await commentService.uploadComment(comment)
+        try await commentService.uploadComment(commentText: text, postOwnerUid: post.ownerUid)
         try await fetchComments()
-        
         IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
     }
     
@@ -50,7 +39,7 @@ class CommentViewModel {
     private func fetchDataForComments() async throws {
         for i in 0 ..< comments.count {
             let comment = comments[i]
-            let user = try await userService.fetchUser(withUid: comment.ownerUid)
+            let user = try await userService.fetchUser(withUid: comment.commentOwnerUid)
             comments[i].user = user
         }
     }

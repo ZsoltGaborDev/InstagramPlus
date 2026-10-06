@@ -9,7 +9,7 @@ import Foundation
 
 struct Comment: Identifiable, Hashable, Codable {
     let id: String
-    let ownerUid: String
+    let commentOwnerUid: String
     let text: String
     let postId: String
     let postOwnerUid: String
@@ -20,7 +20,7 @@ struct Comment: Identifiable, Hashable, Codable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case ownerUid = "commentOwnerUid"
+        case commentOwnerUid
         case text = "commentText"
         case postId
         case postOwnerUid

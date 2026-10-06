@@ -8,9 +8,10 @@
 import Foundation
 import FirebaseFirestore
 import Firebase
+import FirebaseAuth
 
 protocol CommentServiceProtocol {
-    func uploadComment(_ comment: Comment) async throws
+    func uploadComment(commentText: String, postOwnerUid: String) async throws
     func fetchComments() async throws -> [Comment]
     
     var postId: String { get }
@@ -20,14 +21,25 @@ struct CommentService: CommentServiceProtocol {
     
     let postId: String
     
-    func uploadComment(_ comment: Comment) async throws {
-        guard let commentData = try? Firestore.Encoder().encode(comment) else { return }
+    func uploadComment(commentText: String, postOwnerUid: String) async throws {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        try await FirebaseConstant
+        let ref = FirebaseConstant
             .PostsCollection
             .document(postId)
             .collection("post-comments")
-            .addDocument(data: commentData)
+            .document()
+        
+        let comment = Comment(
+            id: ref.documentID,
+            commentOwnerUid: currentUid,
+            text: commentText,
+            postId: postId,
+            postOwnerUid: postOwnerUid,
+            timestamp: Date())
+        
+        let commentData = try Firestore.Encoder().encode(comment)
+        try await ref.setData(commentData)
     }
     
     func fetchComments() async throws -> [Comment] {
