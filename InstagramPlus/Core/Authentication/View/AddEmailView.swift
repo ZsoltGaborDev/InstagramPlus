@@ -29,22 +29,20 @@ struct AddEmailView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            IGTextField("Enter your email", text: $viewModel.email, error: $viewModel.error, isLoading: false)
+            IGTextField("Enter your email", text: $viewModel.email, error: $viewModel.validationError, isLoading: viewModel.isValidating)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
                 .autocapitalization(.none)
-                
-            
-            TextField("Email", text: $viewModel.email)
-                .autocapitalization(.none)
-                .modifier(IGPTextFieldModifier())
             
             IGButton("next", action: onNext)
-                .disabled(!formIsValid)
+                .disabled(!formIsValid || viewModel.isValidating)
                 .opacity(formIsValid ? 1.0 : 0.5)
                 .padding(.vertical)
             
             Spacer()
+        }
+        .onAppear {
+            viewModel.validationError = nil
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -60,17 +58,14 @@ struct AddEmailView: View {
 
 private extension AddEmailView {
     var formIsValid: Bool {
-        return viewModel.email
-            .isValidEmail()
+        return viewModel.email.isValidEmail()
     }
     
     func onNext() {
         Task {
-            let emailIsValid =  try await viewModel.validateEmail()
+            let emailIsValid = await viewModel.validateEmail()
             if emailIsValid {
                 router.navigate()
-            } else {
-                print("DEBUG: Email validation failed...")
             }
         }
     }

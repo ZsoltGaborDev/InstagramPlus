@@ -27,33 +27,31 @@ struct CreateUsernameView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            IGTextField("Enter your email", text: $viewModel.email, error: $viewModel.error, isLoading: false)
+            IGTextField("Username", text: $viewModel.username, error: $viewModel.validationError, isLoading: viewModel.isValidating)
                 .autocapitalization(.none)
                 .textInputAutocapitalization(.never)
             
-            TextField("Username", text: $viewModel.username)
-                .autocapitalization(.none)
-                .modifier(IGPTextFieldModifier())
-            
             IGButton("Next", action: onNext)
-                .disabled(!formIsValid)
+                .disabled(!formIsValid || viewModel.isValidating)
                 .opacity(formIsValid ? 1.0 : 0.5)
                 .padding(.vertical)
             
             Spacer()
+        }
+        .onAppear {
+            viewModel.validationError = nil
         }
     }
 }
 
 private extension CreateUsernameView {
     var formIsValid: Bool {
-        return viewModel.username
-            .isValidUsername()
+        return viewModel.username.isValidUsername()
     }
     
     func onNext() {
         Task {
-            let usernameIsValid =  try await viewModel.validateUsername()
+            let usernameIsValid = await viewModel.validateUsername()
             if usernameIsValid {
                 router.navigate()
             } else {

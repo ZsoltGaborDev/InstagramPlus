@@ -34,11 +34,9 @@ struct CompleteSignUpView: View {
             
             IGButton("Complete Sign Up", isLoading: viewModel.isLoading, action: onCompleteSignUpTapped)
                 .padding(.vertical)
-            
-            Spacer()
         }
         .alert("Ooops", isPresented: $viewModel.showError, actions: {}) {
-            Text(viewModel.error?.localizedDescription ?? "An unknown error occurred")
+            Text(viewModel.authError?.localizedDescription ?? "An unknown error occurred")
         }
     }
 }

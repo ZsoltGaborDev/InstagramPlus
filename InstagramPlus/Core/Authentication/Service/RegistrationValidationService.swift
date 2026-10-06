@@ -19,7 +19,12 @@ struct RegistrationValidationService: RegistrationValidationProtocol {
         let snapshot = try await FirebaseConstant
             .UsersCollection
             .whereField("email", isEqualTo: email)
+            .limit(to: 1)
             .getDocuments()
+        
+        if !snapshot.isEmpty {
+            throw RegistrationValidationError.emailValidationFailed
+        }
         
         return snapshot.isEmpty
     }
@@ -29,6 +34,10 @@ struct RegistrationValidationService: RegistrationValidationProtocol {
             .UsersCollection
             .whereField("username", isEqualTo: username)
             .getDocuments()
+        
+        if !snapshot.isEmpty {
+            throw RegistrationValidationError.emailValidationFailed
+        }
         
         return snapshot.isEmpty
     }
