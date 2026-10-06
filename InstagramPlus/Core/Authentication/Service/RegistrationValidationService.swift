@@ -16,29 +16,31 @@ protocol RegistrationValidationProtocol {
 struct RegistrationValidationService: RegistrationValidationProtocol {
     
     func validateEmail(_ email: String) async throws -> Bool {
-        let snapshot = try await FirebaseConstant
-            .UsersCollection
-            .whereField("email", isEqualTo: email)
-            .limit(to: 1)
-            .getDocuments()
+        let isUnique = try await checkUniqueness(forKey: "email", value: email)
         
-        if !snapshot.isEmpty {
+        if !isUnique {
             throw RegistrationValidationError.emailValidationFailed
         }
         
-        return snapshot.isEmpty
+        return isUnique
     }
     
     func validateUsername(_ username: String) async throws -> Bool {
-        let snapshot = try await FirebaseConstant
-            .UsersCollection
-            .whereField("username", isEqualTo: username)
-            .getDocuments()
+        let isUnique = try await checkUniqueness(forKey: "username", value: username)
         
-        if !snapshot.isEmpty {
+        if !isUnique {
             throw RegistrationValidationError.emailValidationFailed
         }
         
+        return isUnique
+    }
+    
+    private func checkUniqueness(forKey key: String, value: String) async throws -> Bool {
+        let snapshot = try await FirebaseConstant
+            .UsersCollection
+            .whereField(key, isEqualTo: value)
+            .limit(to: 1)
+            .getDocuments()
         return snapshot.isEmpty
     }
 }

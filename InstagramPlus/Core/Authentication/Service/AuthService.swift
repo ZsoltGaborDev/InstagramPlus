@@ -33,6 +33,7 @@ struct AuthService: AuthServiceProtocol {
     func createUser(email: String, password: String, username: String) async throws -> String {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            try await uploadUserData(uid: result.user.uid, username: username, email: email)
             return result.user.uid
         } catch {
             let authErrorCode = (error as NSError).code
@@ -56,15 +57,15 @@ struct AuthService: AuthServiceProtocol {
         
     }
     
-//    private func uploadUserData(uid: String, username: String, email: String) async throws {
-//        let user = User(id: uid, username: username, email: email)
-//        guard let encodedUser = try? Firestore.Encoder().encode(user) else {return}
-//        
-//        try? await FirebaseConstant
-//            .UsersCollection
-//            .document(user.id)
-//            .setData(encodedUser)
-//    }
+    private func uploadUserData(uid: String, username: String, email: String) async throws {
+        let user = User(id: uid, username: username, email: email)
+        guard let encodedUser = try? Firestore.Encoder().encode(user) else {return}
+        
+        try? await FirebaseConstant
+            .UsersCollection
+            .document(user.id)
+            .setData(encodedUser)
+    }
     
 }
 

@@ -54,8 +54,6 @@ private extension CreateUsernameView {
             let usernameIsValid = await viewModel.validateUsername()
             if usernameIsValid {
                 router.navigate()
-            } else {
-                print("DEBUG: Username validation failed...")
             }
         }
     }

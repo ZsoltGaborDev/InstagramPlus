@@ -38,7 +38,7 @@ final class RegistrationViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.password, "")
         XCTAssertEqual(viewModel.username, "")
         XCTAssertFalse(viewModel.showError)
-        XCTAssertNil(viewModel.error)
+        XCTAssertNil(viewModel.authError)
     }
     
     func testReset() {
@@ -52,7 +52,7 @@ final class RegistrationViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.password, "")
         XCTAssertEqual(viewModel.username, "")
         XCTAssertFalse(viewModel.showError)
-        XCTAssertNil(viewModel.error)
+        XCTAssertNil(viewModel.authError)
     }
     
     func testCreateUserSuccess() async {
@@ -66,7 +66,7 @@ final class RegistrationViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.password, "")
         XCTAssertEqual(viewModel.username, "")
         XCTAssertFalse(viewModel.showError)
-        XCTAssertNil(viewModel.error)
+        XCTAssertNil(viewModel.authError)
     }
     
     func testCreateUserFailure() async {
@@ -77,45 +77,29 @@ final class RegistrationViewModelTests: XCTestCase {
         await viewModel.createUser(with: authManager)
         
         XCTAssertTrue(viewModel.showError)
-        XCTAssertNotNil(viewModel.error)
+        XCTAssertNotNil(viewModel.authError)
     }
     
     func testValidationEmailSuccess() async {
         viewModel.email = "test@example.com"
-        do {
-            let isValid = try await viewModel.validateEmail()
-            XCTAssertTrue(isValid)
-        } catch {
-            XCTFail("Email validation failed with valid email address")
-        }
+        let isValid = await viewModel.validateEmail()
+        XCTAssertTrue(isValid)
     }
     
     func testValidationEmailFailure() async {
         viewModel.email = "invalidEmail.com"
-        do {
-            let isValid = try await viewModel.validateEmail()
-            XCTAssertFalse(isValid)
-        } catch {
-            XCTFail("Validation email failure failed with invalid email")
-        }
+        let isValid = await viewModel.validateEmail()
+        XCTAssertFalse(isValid)
     }
     
     func testValidationUsernameSuccess() async {
         viewModel.username = "validUsername"
-        do {
-            let isValid = try await viewModel.validateUsername()
-            XCTAssertTrue(isValid)
-        } catch {
-            XCTFail("Username validation failed with valid username")
-        }
+        let isValid = await viewModel.validateUsername()
+        XCTAssertTrue(isValid)
     }
     
     func testValidationUsernameFailure() async {
-        do {
-            let isValid = try await viewModel.validateUsername()
-            XCTAssertFalse(isValid)
-        } catch {
-            XCTFail("Username validation failure failed with invalid username")
-        }
+        let isValid = await viewModel.validateUsername()
+        XCTAssertFalse(isValid)
     }
 }
