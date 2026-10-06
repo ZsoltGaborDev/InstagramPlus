@@ -26,7 +26,13 @@ class CommentViewModel {
     func uploadComment(text: String) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let comment = Comment(ownerUid: uid, text: text, postId: post.id, postOwnerUid: post.ownerUid, timestamp: Timestamp())
+        let comment = Comment(
+            id: UUID().uuidString,
+            ownerUid: uid,
+            text: text,
+            postId: post.id,
+            postOwnerUid: post.ownerUid,
+            timestamp: Date())
         
         try await service.uploadComment(comment)
         try await fetchComments()

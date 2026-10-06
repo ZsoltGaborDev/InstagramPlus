@@ -14,7 +14,7 @@ let dev = DeveloperPreview.shared
 class DeveloperPreview {
     static let shared = DeveloperPreview()
     
-    let comment = Comment(ownerUid: "123", text: "Test comment", postId: "321", postOwnerUid: "123456789", timestamp: Timestamp())
+    let comment = Comment(id: "8888", ownerUid: "123", text: "Test comment", postId: "321", postOwnerUid: "123456789", timestamp: Date())
     
     let notifications: [IGNotification] = [
         .init(id: NSUUID().uuidString, timestamp: Timestamp(), notificationSenderUid: "123", type: .like),

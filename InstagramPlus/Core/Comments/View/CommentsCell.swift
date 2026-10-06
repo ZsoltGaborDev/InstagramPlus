@@ -23,7 +23,7 @@ struct CommentsCell: View {
                     Text(user?.username ?? "")
                         .fontWeight(.semibold)
                     
-                    Text(comment.timestamp.timestampString())
+                    Text(comment.timestamp.instagramTimeString)
                         .foregroundStyle(.gray)
                 }
                 
