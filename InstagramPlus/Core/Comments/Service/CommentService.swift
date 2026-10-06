@@ -9,7 +9,14 @@ import Foundation
 import FirebaseFirestore
 import Firebase
 
-struct CommentService {
+protocol CommentServiceProtocol {
+    func uploadComment(_ comment: Comment) async throws
+    func fetchComments() async throws -> [Comment]
+    
+    var postId: String { get }
+}
+
+struct CommentService: CommentServiceProtocol {
     
     let postId: String
     

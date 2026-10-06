@@ -11,6 +11,7 @@ import FirebaseAuth
 
 protocol UserServiceProtocol {
     func fetchCurrentUser() async throws -> User?
+    func fetchUser(withUid uid: String) async throws -> User
 }
 
 class UserService: UserServiceProtocol {
@@ -25,7 +26,7 @@ class UserService: UserServiceProtocol {
             .getDocument(as: User.self)
     }
     
-    static func fetchUser(withUid uid: String) async throws -> User {
+    func fetchUser(withUid uid: String) async throws -> User {
         let snapshot = try await FirebaseConstant
             .UsersCollection
             .document(uid)
@@ -80,12 +81,13 @@ class UserService: UserServiceProtocol {
     }
     
     private static func fetchUsers(_ snapshot: QuerySnapshot) async throws -> [User] {
-        var users = [User]()
-        
-        for doc in snapshot.documents {
-            users.append(try await fetchUser(withUid: doc.documentID))
-        }
-        return users
+//        var users = [User]()
+//        
+//        for doc in snapshot.documents {
+//            users.append(try await fetchUser(withUid: doc.documentID))
+//        }
+//        return users
+        return []
     }
 }
 

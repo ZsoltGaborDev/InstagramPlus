@@ -14,11 +14,13 @@ class CommentViewModel {
     var comments = [Comment]()
     
     private let post: Post
-    private let service: CommentService
+    private let commentService: CommentServiceProtocol
+    private let userService: UserServiceProtocol
     
-    init(post: Post, service: CommentService) {
+    init(post: Post, commentService: CommentServiceProtocol, userService: UserServiceProtocol) {
         self.post = post
-        self.service = service
+        self.userService = userService
+        self.commentService = commentService
         
         Task { try await fetchComments() }
     }
@@ -34,21 +36,21 @@ class CommentViewModel {
             postOwnerUid: post.ownerUid,
             timestamp: Date())
         
-        try await service.uploadComment(comment)
+        try await commentService.uploadComment(comment)
         try await fetchComments()
         
         IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
     }
     
     func fetchComments() async throws {
-        self.comments = try await service.fetchComments()
+        self.comments = try await commentService.fetchComments()
         try await fetchDataForComments()
     }
     
     private func fetchDataForComments() async throws {
         for i in 0 ..< comments.count {
             let comment = comments[i]
-            let user = try await UserService.fetchUser(withUid: comment.ownerUid)
+            let user = try await userService.fetchUser(withUid: comment.ownerUid)
             comments[i].user = user
         }
     }

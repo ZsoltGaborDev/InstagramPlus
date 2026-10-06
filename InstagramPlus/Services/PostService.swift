@@ -11,6 +11,8 @@ import FirebaseAuth
 
 struct PostService {
     
+    private static let userService = UserService()
+    
     static func fetchFeedPosts() async throws -> [Post] {
         let snapshot = try await FirebaseConstant
             .PostsCollection
@@ -20,7 +22,7 @@ struct PostService {
         for i in 0..<posts.count {
             let post = posts[i]
             let ownerUid = post.ownerUid
-            let postUser = try await UserService.fetchUser(withUid: ownerUid)
+            let postUser = try await userService.fetchUser(withUid: ownerUid)
             posts[i].user = postUser
         }
         return posts
