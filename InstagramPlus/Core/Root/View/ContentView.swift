@@ -11,7 +11,7 @@ struct ContentView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     
-    @State var registrationViewModel = RegistrationViewModel()
+    @State var registrationViewModel = RegistrationViewModel(service: RegistrationValidationService())
     
     var body: some View {
         Group {

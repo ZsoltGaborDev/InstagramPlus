@@ -27,7 +27,7 @@ struct CreateUsernameView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            IGTextField("Enter your email", text: $viewModel.email)
+            IGTextField("Enter your email", text: $viewModel.email, error: $viewModel.error, isLoading: false)
                 .autocapitalization(.none)
                 .textInputAutocapitalization(.never)
             
@@ -53,7 +53,7 @@ private extension CreateUsernameView {
     
     func onNext() {
         Task {
-            let usernameIsValid =  try await authManager.validateUsername(viewModel.username)
+            let usernameIsValid =  try await viewModel.validateUsername()
             if usernameIsValid {
                 router.navigate()
             } else {

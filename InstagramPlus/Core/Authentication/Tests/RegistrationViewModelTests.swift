@@ -12,6 +12,7 @@ import XCTest
 final class RegistrationViewModelTests: XCTestCase {
 
     var mockService: MockAuthService!
+    var mockValidationService: MockRegistrationValidationService!
     var authManager: AuthManager!
     var viewModel: RegistrationViewModel!
     
@@ -19,12 +20,14 @@ final class RegistrationViewModelTests: XCTestCase {
         super.setUp()
         
         mockService = MockAuthService()
+        mockValidationService = MockRegistrationValidationService()
         authManager = AuthManager(service: mockService)
-        viewModel = RegistrationViewModel()
+        viewModel = RegistrationViewModel(service: mockValidationService)
     }
     
     override func tearDown() {
         mockService = nil
+        mockValidationService = nil
         authManager = nil
         
         super.tearDown()
@@ -75,5 +78,44 @@ final class RegistrationViewModelTests: XCTestCase {
         
         XCTAssertTrue(viewModel.showError)
         XCTAssertNotNil(viewModel.error)
+    }
+    
+    func testValidationEmailSuccess() async {
+        viewModel.email = "test@example.com"
+        do {
+            let isValid = try await viewModel.validateEmail()
+            XCTAssertTrue(isValid)
+        } catch {
+            XCTFail("Email validation failed with valid email address")
+        }
+    }
+    
+    func testValidationEmailFailure() async {
+        viewModel.email = "invalidEmail.com"
+        do {
+            let isValid = try await viewModel.validateEmail()
+            XCTAssertFalse(isValid)
+        } catch {
+            XCTFail("Validation email failure failed with invalid email")
+        }
+    }
+    
+    func testValidationUsernameSuccess() async {
+        viewModel.username = "validUsername"
+        do {
+            let isValid = try await viewModel.validateUsername()
+            XCTAssertTrue(isValid)
+        } catch {
+            XCTFail("Username validation failed with valid username")
+        }
+    }
+    
+    func testValidationUsernameFailure() async {
+        do {
+            let isValid = try await viewModel.validateUsername()
+            XCTAssertFalse(isValid)
+        } catch {
+            XCTFail("Username validation failure failed with invalid username")
+        }
     }
 }

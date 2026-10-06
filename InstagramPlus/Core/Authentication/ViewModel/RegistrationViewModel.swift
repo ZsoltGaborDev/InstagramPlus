@@ -20,6 +20,12 @@ class RegistrationViewModel {
         didSet { showError = error != nil }
     }
     
+    private let service: RegistrationValidationProtocol
+    
+    init(service: RegistrationValidationProtocol) {
+        self.service = service
+    }
+    
     
     func createUser(with authManager: AuthManager) async {
         isLoading = true
@@ -31,6 +37,14 @@ class RegistrationViewModel {
         } catch {
             self.error = error as? AuthenticationError ?? .unknows
         }
+    }
+    
+    func validateEmail() async throws -> Bool {
+        return try await service.validateEmail(email)
+    }
+    
+    func validateUsername() async throws -> Bool {
+        return try await service.validateUsername(username)
     }
     
     func reset() {

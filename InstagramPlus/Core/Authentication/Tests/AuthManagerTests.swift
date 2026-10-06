@@ -91,42 +91,6 @@ final class AuthManagerTests: XCTestCase {
         XCTAssertNil(authManager.userSession)
     }
     
-    func testValidationEmailSuccess() async {
-        do {
-            let isValid = try await authManager.validateEmail("valid@email.com")
-            XCTAssertTrue(isValid)
-        } catch {
-            XCTFail("Email validation failed with valid email address")
-        }
-    }
-    
-    func testValidationEmailFailure() async {
-        do {
-            let isValid = try await authManager.validateEmail("invalidemail")
-            XCTAssertFalse(isValid)
-        } catch {
-            XCTFail("Validation email failure failed with invalid email")
-        }
-    }
-    
-    func testValidationUsernameSuccess() async {
-        do {
-            let isValid = try await authManager.validateUsername("validusername")
-            XCTAssertTrue(isValid)
-        } catch {
-            XCTFail("Username validation failed with valid username")
-        }
-    }
-    
-    func testValidationUsernameFailure() async {
-        do {
-            let isValid = try await authManager.validateUsername("invalid username")
-            XCTAssertFalse(isValid)
-        } catch {
-            XCTFail("Username validation failure failed with invalid username")
-        }
-    }
-    
     func testDeleteAccountSuccess() async {
         do {
             try await authManager.deleteAccount()

@@ -13,8 +13,6 @@ protocol AuthServiceProtocol {
     func createUser(email: String, password: String, username: String) async throws -> String
     func deleteAccount() async throws
     func login(withEmail email: String, password: String) async throws -> String
-    func validateEmail(_ email: String) async throws -> Bool
-    func validateUsername(_ username: String) async throws -> Bool
     func signOut() async throws
     func getUserSession() -> String?
     func sendResetPasswordLink(toEmail email: String) async throws
@@ -40,24 +38,6 @@ struct AuthService: AuthServiceProtocol {
             let authErrorCode = (error as NSError).code
             throw AuthenticationError(rawValue: authErrorCode)
         }
-    }
-    
-    func validateEmail(_ email: String) async throws -> Bool {
-        let snapshot = try await FirebaseConstant
-            .UsersCollection
-            .whereField("email", isEqualTo: email)
-            .getDocuments()
-        
-        return snapshot.isEmpty
-    }
-    
-    func validateUsername(_ username: String) async throws -> Bool {
-        let snapshot = try await FirebaseConstant
-            .UsersCollection
-            .whereField("username", isEqualTo: username)
-            .getDocuments()
-        
-        return snapshot.isEmpty
     }
     
     func signOut() async throws {

@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct IGTextField: View {
+struct IGTextField<E: Error>: View {
     @Binding private var text: String
-    @Binding private var error: Error?
+    @Binding private var error: E?
     
     private let isLoading: Bool
     private let placeholder: String
     
-    init(_ placeholder: String, text: Binding<String>) {
+    init(_ placeholder: String, text: Binding<String>) where E == Never {
         self.placeholder = placeholder
         self.isLoading = false
         
@@ -22,7 +22,7 @@ struct IGTextField: View {
         _error = .constant(nil)
     }
     
-    init(_ placeholder: String, text: Binding<String>, error: Binding<Error?>, isLoading: Bool) {
+    init(_ placeholder: String, text: Binding<String>, error: Binding<E?>, isLoading: Bool) {
         self.placeholder = placeholder
         self.isLoading = isLoading
         
@@ -77,7 +77,7 @@ struct IGTextField: View {
         IGTextField(
             "Loading",
             text: .constant(""),
-            error: .constant(nil),
+            error: .constant(AuthenticationError.invalidCredential),
             isLoading: true)
         .padding(.bottom, 24)
         

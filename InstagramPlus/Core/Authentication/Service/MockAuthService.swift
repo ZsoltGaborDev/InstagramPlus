@@ -28,14 +28,6 @@ class MockAuthService: AuthServiceProtocol {
         return UUID().uuidString
     }
     
-    func validateEmail(_ email: String) async throws -> Bool {
-        return email.isValidEmail()
-    }
-    
-    func validateUsername(_ username: String) async throws -> Bool {
-        return username.isValidUsername()
-    }
-    
     func signOut() async throws {
         didCallSignOut = true
     }

@@ -29,10 +29,11 @@ struct AddEmailView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
             
-            IGTextField("Enter your email", text: $viewModel.email)
+            IGTextField("Enter your email", text: $viewModel.email, error: $viewModel.error, isLoading: false)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
                 .autocapitalization(.none)
+                
             
             TextField("Email", text: $viewModel.email)
                 .autocapitalization(.none)
@@ -65,7 +66,7 @@ private extension AddEmailView {
     
     func onNext() {
         Task {
-            let emailIsValid =  try await authManager.validateEmail(viewModel.email)
+            let emailIsValid =  try await viewModel.validateEmail()
             if emailIsValid {
                 router.navigate()
             } else {
