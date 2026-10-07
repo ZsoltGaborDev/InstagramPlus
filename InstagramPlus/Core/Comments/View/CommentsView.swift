@@ -88,12 +88,12 @@ private extension CommentsView {
             guard let currentuser = userManager.currentUser else { return }
             let tempCommenText = commentText
             commentText = ""
-            try await viewModel.uploadComment(text: tempCommenText, currentUser: currentuser)
+            await viewModel.uploadComment(text: tempCommenText, currentUser: currentuser)
         }
     }
 }
     
 
 #Preview {
-    CommentsView(post: Post.MOCK_POSTS[0])
+    CommentsView(post: MockData.posts[0])
 }

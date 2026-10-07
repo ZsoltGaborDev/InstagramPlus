@@ -37,6 +37,7 @@
 				Core/Authentication/Tests/AuthManagerTests.swift,
 				Core/Authentication/Tests/LoginViewModelTests.swift,
 				Core/Authentication/Tests/RegistrationViewModelTests.swift,
+				Core/Comments/Tests/CommentsViewModelTests.swift,
 			);
 			target = D7B010BF3073E90E003FE471 /* InstagramPlusTests */;
 		};
@@ -47,6 +48,7 @@
 				Core/Authentication/Tests/AuthManagerTests.swift,
 				Core/Authentication/Tests/LoginViewModelTests.swift,
 				Core/Authentication/Tests/RegistrationViewModelTests.swift,
+				Core/Comments/Tests/CommentsViewModelTests.swift,
 			);
 			target = D7B55BE23051760C00C286BB /* InstagramPlus */;
 		};

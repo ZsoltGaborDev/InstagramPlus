@@ -24,21 +24,25 @@ class CommentViewModel {
         self.commentService = commentService
     }
     
-    func uploadComment(text: String, currentUser: User) async throws {
-        var comment = try await commentService.uploadComment(
-            commentText: text,
-            postOwnerUid: post.ownerUid
-        )
-        
-        comment.user = currentUser
-        comments.insert(comment, at: 0)
-        
-        if loadingState == .empty {
-            loadingState = .complete
-        }
-        
-        Task {
-            IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
+    func uploadComment(text: String, currentUser: User) async {
+        do {
+            var comment = try await commentService.uploadComment(
+                commentText: text,
+                postOwnerUid: post.ownerUid
+            )
+            
+            comment.user = currentUser
+            comments.insert(comment, at: 0)
+            
+            if loadingState == .empty {
+                loadingState = .complete
+            }
+            
+            Task {
+                IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
+            }
+        } catch {
+            loadingState = .error
         }
     }
     

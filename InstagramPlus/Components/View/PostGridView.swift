@@ -30,5 +30,5 @@ struct PostGridView: View {
 }
 
 #Preview {
-    PostGridView(user: User.MOCK_USER[0])
+    PostGridView(user: MockData.users[0])
 }

@@ -132,5 +132,5 @@ struct ProfileHeaderView: View {
 }
 
 #Preview {
-    ProfileHeaderView(user: User.MOCK_USER[0])
+    ProfileHeaderView(user: MockData.users[0])
 }

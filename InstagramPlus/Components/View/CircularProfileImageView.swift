@@ -50,5 +50,5 @@ struct CircularProfileImageView: View {
 }
 
 #Preview {
-    CircularProfileImageView(user: User.MOCK_USER[0], size: .large)
+    CircularProfileImageView(user: MockData.users[0], size: .large)
 }

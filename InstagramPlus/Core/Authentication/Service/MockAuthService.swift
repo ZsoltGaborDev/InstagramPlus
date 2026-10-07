@@ -37,7 +37,7 @@ class MockAuthService: AuthServiceProtocol {
     }
     
     func getUserSession() -> String? {
-        return User.MOCK_USER[0].id
+        return MockData.users[0].id
     }
     
     func sendResetPasswordLink(toEmail email: String) async throws {
