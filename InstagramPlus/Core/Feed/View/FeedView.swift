@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct FeedView: View {
-    @State var viewModel = FeedViewModel()
+    @State var viewModel = FeedViewModel(
+        feedService: FeedService(),
+        userService: UserService())
     
     var body: some View {
         NavigationStack {
