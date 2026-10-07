@@ -6,12 +6,11 @@
 //
 
 import Foundation
-import Firebase
 
 struct IGNotification: Identifiable, Codable {
     let id: String
     var postId: String?
-    let timestamp: Timestamp
+    let timestamp: Date
     let notificationSenderUid: String
     let type: IGNotificationType
     

@@ -28,7 +28,7 @@ class IGNotificationService {
         let ref = FirebaseConstant.UserNotificationCollection(uid: uid).document()
         let notification = IGNotification(id: ref.documentID,
                                           postId: post?.id,
-                                          timestamp: Timestamp(),
+                                          timestamp: Date(),
                                           notificationSenderUid: currentUid,
                                           type: type)
         guard let notificationData = try? Firestore.Encoder().encode(notification) else { return }

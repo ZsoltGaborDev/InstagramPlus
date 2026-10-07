@@ -19,10 +19,10 @@ struct NotificationsCell: View {
         let message = Text(" \(notification.type.notificationMessage)")
             .font(.subheadline)
         
-        let timestamp = Text(" \(notification.timestamp.timestampString())")
-            .foregroundStyle(Color(.gray))
-            .font(.subheadline)
-            .fontWeight(.semibold)
+//        let timestamp = Text(" \(notification.timestamp.timestampString())")
+//            .foregroundStyle(Color(.gray))
+//            .font(.subheadline)
+//            .fontWeight(.semibold)
         
         HStack() {
             NavigationLink(value: notification.user) {
@@ -31,7 +31,7 @@ struct NotificationsCell: View {
             
             //notification message
             HStack {
-                Text("\(username) \(message) \(timestamp)")
+                Text("\(username) \(message) \("timestamp")")
             }
             
             Spacer()
