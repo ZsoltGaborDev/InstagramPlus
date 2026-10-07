@@ -15,9 +15,9 @@ class FeedViewModel {
     var loadingState: ContentLoadingState = .loading
     
     private let feedService: FeedServiceProtocol
-    private let userService: UserService
+    private let userService: UserServiceProtocol
     
-    init(feedService: FeedServiceProtocol, userService: UserService) {
+    init(feedService: FeedServiceProtocol, userService: UserServiceProtocol) {
         self.feedService = feedService
         self.userService = userService
         Task { await fetchPosts() }
@@ -52,5 +52,57 @@ class FeedViewModel {
         }
         
         return result
+    }
+}
+
+extension FeedViewModel {
+    
+    func like(_ post: Post) async throws {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+        
+        do {
+            if let likes = self.posts[index].likes {
+                self.posts[index].likes = likes + 1
+            } else {
+                self.posts[index].likes = 1
+            }
+            self.posts[index].didLike = true
+            try await PostService.likePost(post: posts[index])
+            IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
+        } catch {
+            posts[index].didLike = false
+            if posts[index].likes ?? 0 > 0 {
+                posts[index].likes! -= 1
+            }
+        }
+    }
+    
+    func unlike(_ post: Post) async throws {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+        
+        do {
+            if posts[index].likes ?? 0 > 0 {
+                posts[index].likes! -= 1
+            }
+            try await PostService.unlikePost(post: post)
+            await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
+            self.posts[index].didLike = false
+        } catch {
+            posts[index].didLike = true
+            if let _ = post.likes {
+                posts[index].likes! += 1
+            }
+        }
+    }
+    
+    func checkIfUserLikedPost(_ post: Post) async  {
+        guard post.didLike != nil else {return}
+        
+        do {
+            guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+            self.posts[index].didLike = try await PostService.checkIfUserLikedPost(post: post)
+        } catch {
+            print("DEBUG: Failed check if user liked the post with error \(error)")
+        }
     }
 }

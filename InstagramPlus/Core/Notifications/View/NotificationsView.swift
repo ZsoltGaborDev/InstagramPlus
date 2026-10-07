@@ -27,7 +27,7 @@ struct NotificationsView: View {
                 Task { await viewModel.fetchNotifications() }
             }
             .navigationDestination(for: Post.self, destination: { post in
-                FeedCell(post: post)
+                // TODO: FeedCell(post: post)
             })
             .navigationDestination(for: User.self, destination: { user in
                 ProfileView(user: user)

@@ -9,25 +9,16 @@ import SwiftUI
 import Kingfisher
 
 struct FeedCell: View {
+    let viewModel: FeedViewModel
+    
     @State private var showComments = false
     @State private var showPostOptionsMenu = false
+
+    private let post: Post
     
-    let viewModel: FeedCellViewModel
-    
-    private var post: Post {
-        return viewModel.post
-    }
-    
-    private var likes: Int {
-        post.likes ?? 0
-    }
-    
-    private var didLike: Bool {
-        return post.didLike ?? false
-    }
-    
-    init(post: Post) {
-        self.viewModel = FeedCellViewModel(post: post)
+    init(post: Post, viewModel: FeedViewModel) {
+        self.post = post
+        self.viewModel = viewModel
     }
     
     var body: some View {
@@ -119,6 +110,9 @@ struct FeedCell: View {
                 .padding(.leading, 10)
                 .padding(.top, 1)
         }
+        .task {
+            await viewModel.checkIfUserLikedPost(post)
+        }
         .confirmationDialog("Post Options", isPresented: $showPostOptionsMenu, titleVisibility: .visible) {
             Button("Report", role: .destructive) {
                 print("DEBUG: Show report sheet here..")
@@ -130,14 +124,41 @@ struct FeedCell: View {
         })
     }
     
+
+}
+
+private extension FeedCell {
+    
+    var postIndex: Int? {
+        return viewModel.posts.firstIndex(where: { $0.id == post.id })
+    }
+    
+    private var likes: Int {
+        post.likes ?? 0
+    }
+    
+    private var didLike: Bool {
+        return post.didLike ?? false
+    }
+    
     private func handleLikeTapped() {
-        Task { didLike ?
-            try await viewModel.unlike() :
-            try await viewModel.like()
+        guard let postIndex else {return}
+        Task {
+            if viewModel.posts[postIndex].didLike ?? false {
+                try await viewModel.unlike(post)
+            } else {
+                try await viewModel.like(post)
+            }
         }
     }
 }
 
 #Preview {
-    FeedCell(post: MockData.posts[0])
+    FeedCell(
+        post: MockData.posts[0],
+        viewModel: FeedViewModel(
+            feedService: FeedService(),
+            userService: MockUserService()
+        )
+    )
 }

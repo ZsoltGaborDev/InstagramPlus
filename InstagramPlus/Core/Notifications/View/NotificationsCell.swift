@@ -53,7 +53,7 @@ struct NotificationsCell: View {
             } else {
                 if let post = notification.post {
                     NavigationLink {
-                        FeedCell(post: post)
+                        // TODO: FeedCell(post: post)
                     } label: {
                         KFImage(URL(string: notification.post?.imageUrl ?? ""))
                             .resizable()
