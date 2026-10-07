@@ -45,10 +45,19 @@ class CommentViewModel {
     }
     
     private func fetchDataForComments() async throws {
-        for i in 0 ..< comments.count {
-            let comment = comments[i]
-            let user = try await userService.fetchUser(withUid: comment.commentOwnerUid)
-            comments[i].user = user
+        try await withThrowingTaskGroup(of: (Int, User).self) { [weak self] group in
+            guard let self = self else {return}
+            
+            for (index, comment) in comments.enumerated() {
+                group.addTask {
+                    let user = try await self.userService.fetchUser(withUid: comment.commentOwnerUid)
+                    return (index, user)
+                }
+            }
+            
+            for try await (index, user) in group {
+                self.comments[index].user = user
+            }
         }
     }
 }
