@@ -36,9 +36,11 @@ struct FeedCell: View {
                 if let user = post.user {
                     CircularProfileImageView(user: user, size: .xSmall)
                     
-                    Text(user.username)
-                        .font(.footnote)
-                        .fontWeight(.semibold)
+                    NavigationLink(value: FeedRouter.profile(user)) {
+                        Text(user.username)
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+                    }
                 }
                 
                 Spacer()

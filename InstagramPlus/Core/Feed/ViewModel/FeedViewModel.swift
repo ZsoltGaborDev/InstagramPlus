@@ -12,12 +12,18 @@ import SwiftUI
 class FeedViewModel {
 
     var posts = [Post]()
+    var loadingState: ContentLoadingState = .loading
     
     init() {
-        Task { try await fetchPosts() }
+        Task { await fetchPosts() }
     }
     
-    func fetchPosts() async throws {
-        self.posts = try await PostService.fetchFeedPosts()
+    func fetchPosts() async {
+        do {
+            self.posts = try await PostService.fetchFeedPosts()
+            self.loadingState = posts.isEmpty ? .empty : .complete
+        } catch {
+            self.loadingState = .error
+        }
     }
 }

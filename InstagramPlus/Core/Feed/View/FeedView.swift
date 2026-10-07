@@ -12,16 +12,30 @@ struct FeedView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 32) {
-                    ForEach(viewModel.posts) { post in
-                        FeedCell(post: post)
+            Group {
+                switch viewModel.loadingState {
+                case .empty:
+                    Text("Empty state goes here...")
+                case .error:
+                    Text("An error occured..")
+                case .loading:
+                    ProgressView()
+                case .complete:
+                    ScrollView {
+                        LazyVStack(spacing: 32) {
+                            ForEach(viewModel.posts) { post in
+                                FeedCell(post: post)
+                            }
+                        }
+                        .padding(.top, 8)
                     }
                 }
-                .padding(.top, 8)
             }
             .navigationTitle("Feed")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: FeedRouter.self, destination: { route in
+                route.view
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Image("instagram")
@@ -32,8 +46,10 @@ struct FeedView: View {
                 .sharedBackgroundVisibility(.hidden)
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Image(systemName: "paperplane")
-                        .imageScale(.large)
+                    NavigationLink(value: FeedRouter.inbox) {
+                        Image(systemName: "paperplane")
+                            .imageScale(.large)
+                    }
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
