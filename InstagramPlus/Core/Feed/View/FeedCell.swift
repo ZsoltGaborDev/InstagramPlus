@@ -10,6 +10,7 @@ import Kingfisher
 
 struct FeedCell: View {
     @State private var showComments = false
+    @State private var showPostOptionsMenu = false
     
     let viewModel: FeedCellViewModel
     
@@ -44,15 +45,21 @@ struct FeedCell: View {
                 }
                 
                 Spacer()
+                
+                Button {
+                    showPostOptionsMenu.toggle()
+                } label: {
+                    Image(systemName: "ellipsis")
+                }
             }
-            .padding(.leading, 8)
+            .padding(.horizontal, 8)
             
             //post image
             KFImage(URL(string: post.imageUrl))
                 .resizable()
                 .scaledToFill()
                 .frame(height: 400)
-                .clipShape(Rectangle())
+                .clipShape(.rect)
             
             //action buttons
             HStack(spacing:16) {
@@ -111,6 +118,11 @@ struct FeedCell: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 10)
                 .padding(.top, 1)
+        }
+        .confirmationDialog("Post Options", isPresented: $showPostOptionsMenu, titleVisibility: .visible) {
+            Button("Report", role: .destructive) {
+                print("DEBUG: Show report sheet here..")
+            }
         }
         .sheet(isPresented: $showComments, content: {
             CommentsView(post: post)
