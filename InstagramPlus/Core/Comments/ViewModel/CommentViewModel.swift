@@ -12,6 +12,7 @@ import Firebase
 @Observable
 class CommentViewModel {
     var comments = [Comment]()
+    var loadingState: ContentLoadingState = .loading
     
     private let post: Post
     private let commentService: CommentServiceProtocol
@@ -32,6 +33,10 @@ class CommentViewModel {
         comment.user = currentUser
         comments.insert(comment, at: 0)
         
+        if loadingState == .empty {
+            loadingState = .complete
+        }
+        
         Task {
             IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
         }
@@ -42,7 +47,9 @@ class CommentViewModel {
             let tempComments = try await commentService.fetchComments()
             let result = try await fetchDataForComments(tempComments)
             self.comments = result
+            loadingState = comments.isEmpty ? .empty : .complete
         } catch {
+            loadingState = .error
             print("DEBUG: Failed to fetch comments with error \(error)")
         }
     }
