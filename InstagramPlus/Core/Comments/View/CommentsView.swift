@@ -68,6 +68,7 @@ struct CommentsView: View {
             }
             .padding()
         }
+        .task { await viewModel.fetchComments() }
     }
 }
 

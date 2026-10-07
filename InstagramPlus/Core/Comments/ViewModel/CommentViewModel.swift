@@ -21,8 +21,6 @@ class CommentViewModel {
         self.post = post
         self.userService = userService
         self.commentService = commentService
-        
-        Task { try await fetchComments() }
     }
     
     func uploadComment(text: String, currentUser: User) async throws {
@@ -39,12 +37,19 @@ class CommentViewModel {
         }
     }
     
-    func fetchComments() async throws {
-        self.comments = try await commentService.fetchComments()
-        try await fetchDataForComments()
+    func fetchComments() async {
+        do {
+            let tempComments = try await commentService.fetchComments()
+            let result = try await fetchDataForComments(tempComments)
+            self.comments = result
+        } catch {
+            print("DEBUG: Failed to fetch comments with error \(error)")
+        }
     }
     
-    private func fetchDataForComments() async throws {
+    private func fetchDataForComments(_ comments: [Comment]) async throws -> [Comment] {
+        var result = comments
+        
         try await withThrowingTaskGroup(of: (Int, User).self) { [weak self] group in
             guard let self = self else {return}
             
@@ -56,9 +61,10 @@ class CommentViewModel {
             }
             
             for try await (index, user) in group {
-                self.comments[index].user = user
+                result[index].user = user
             }
         }
+        return result
     }
 }
 
