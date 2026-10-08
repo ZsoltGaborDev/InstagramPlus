@@ -64,13 +64,13 @@ final class UploadPostViewModel {
         for document in followersSnapshot.documents {
             try await FirebaseConstant
                 .UserFeedCollection(uid: document.documentID)
-                .document()
+                .document(postId)
                 .setData([:])
         }
         
         try await FirebaseConstant
             .UserFeedCollection(uid: uid)
-            .document()
+            .document(postId)
             .setData([:])
     }
 }
