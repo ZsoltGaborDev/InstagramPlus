@@ -22,12 +22,8 @@ protocol FeedServiceProtocol {
 struct FeedService: FeedServiceProtocol {
     
     func fetchFeedPosts() async throws -> [Post] {
-        let snapshot = try await FirebaseConstant
-            .PostsCollection
-            .getDocuments()
-        let posts = try snapshot.documents.compactMap({ try $0.data(as: Post.self)})
-
-        return posts
+        let postIDs = try await fetchPostIDs()
+        return try await fetchPosts(with: postIDs)
     }
     
     func like(_ post: Post) async throws {
@@ -61,5 +57,35 @@ struct FeedService: FeedServiceProtocol {
             .document(post.id)
             .getDocument()
             .exists
+    }
+}
+
+
+private extension FeedService {
+    
+    func fetchPostIDs() async throws -> [String] {
+        guard let uid = Auth.auth().currentUser?.uid else { return [] }
+        
+        let snapshot = try await FirebaseConstant
+            .UserFeedCollection(uid: uid)
+            .getDocuments()
+        return snapshot.documents.map({ $0.documentID })
+    }
+    
+    func fetchPosts(with postIDs: [String]) async throws -> [Post] {
+        var result = [Post]()
+        
+        try await withThrowingTaskGroup(of: Post.self) { group in
+            for id in postIDs {
+                group.addTask {
+                    return try await PostService.fetchPost(id)
+                }
+            }
+            
+            for try await post in group {
+                result.append(post)
+            }
+        }
+        return result.sorted(by: { $0.timestamp > $1.timestamp})
     }
 }
