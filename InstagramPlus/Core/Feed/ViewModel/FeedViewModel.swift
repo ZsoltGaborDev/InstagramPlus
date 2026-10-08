@@ -67,8 +67,7 @@ extension FeedViewModel {
                 self.posts[index].likes = 1
             }
             self.posts[index].didLike = true
-            try await PostService.likePost(post: posts[index])
-            IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
+            try await feedService.like(post)
         } catch {
             posts[index].didLike = false
             if posts[index].likes ?? 0 > 0 {
@@ -84,9 +83,8 @@ extension FeedViewModel {
             if posts[index].likes ?? 0 > 0 {
                 posts[index].likes! -= 1
             }
-            try await PostService.unlikePost(post: post)
-            await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
             self.posts[index].didLike = false
+            try await feedService.unlike(post)
         } catch {
             posts[index].didLike = true
             if let _ = post.likes {
@@ -100,7 +98,7 @@ extension FeedViewModel {
         
         do {
             guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-            self.posts[index].didLike = try await PostService.checkIfUserLikedPost(post: post)
+            self.posts[index].didLike = try await feedService.checkIfUserLikedPost(post)
         } catch {
             print("DEBUG: Failed check if user liked the post with error \(error)")
         }
