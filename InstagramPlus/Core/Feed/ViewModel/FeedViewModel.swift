@@ -34,6 +34,18 @@ class FeedViewModel {
         }
     }
     
+    func refreshPosts() async {
+        do {
+            self.posts.removeAll()
+            self.posts = try await feedService.fetchFeedPosts()
+            let result = try await fetchPostUserData(posts: posts)
+            self.posts = result
+            self.loadingState = posts.isEmpty ? .empty : .complete
+        } catch {
+            self.loadingState = .error
+        }
+    }
+    
     private func fetchPostUserData(posts: [Post]) async throws -> [Post] {
         var result = posts
         

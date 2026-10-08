@@ -11,6 +11,7 @@ import FirebaseAuth
 
 protocol FeedServiceProtocol {
     func fetchFeedPosts() async throws -> [Post]
+    func refreshPosts() async throws -> [Post]
     func like(_ post: Post) async throws
     func unlike(_ post: Post) async throws
     func save(_ post: Post) async throws
@@ -24,6 +25,10 @@ struct FeedService: FeedServiceProtocol {
     func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()
         return try await fetchPosts(with: postIDs)
+    }
+    
+    func refreshPosts() async throws -> [Post] {
+        return try await fetchFeedPosts()
     }
     
     func like(_ post: Post) async throws {

@@ -33,6 +33,9 @@ struct FeedView: View {
                     }
                 }
             }
+            .refreshable {
+                await viewModel.refreshPosts()
+            }
             .navigationTitle("Feed")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: FeedRouter.self, destination: { route in
