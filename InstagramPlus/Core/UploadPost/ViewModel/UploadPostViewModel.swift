@@ -44,7 +44,7 @@ final class UploadPostViewModel {
             ownerUid: uid,
             caption: caption,
             imageUrl: imageUrl,
-            timestamp: Date()
+            timestamp: Date(), 
         )
         let encodedPost = try Firestore.Encoder().encode(post)
         try await postRef.setData(encodedPost)

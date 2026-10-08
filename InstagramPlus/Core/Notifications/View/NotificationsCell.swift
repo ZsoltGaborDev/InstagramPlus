@@ -51,7 +51,7 @@ struct NotificationsCell: View {
                 }
 
             } else {
-                if let post = notification.post {
+                if let _ = notification.post {
                     NavigationLink {
                         // TODO: FeedCell(post: post)
                     } label: {

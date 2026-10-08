@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 protocol FeedServiceProtocol {
     func fetchFeedPosts() async throws -> [Post]
@@ -40,19 +41,25 @@ struct FeedService: FeedServiceProtocol {
     }
     
     func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
-        guard post.didLike != nil else { return false }
         return try await PostService.checkIfUserLikedPost(post: post)
     }
     
     func save(_ post: Post) async throws {
-        print("DEBUG: save post tapped..")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        try await FirebaseConstant.UserSavedPostCollection(uid: uid).document(post.id).setData([:])
     }
     
     func unsave(_ post: Post) async throws {
-        print("DEBUG: unsave post tapped..")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        try await FirebaseConstant.UserSavedPostCollection(uid: uid).document(post.id).delete()
     }
     
     func checkIfUserSavedPost(_ post: Post) async throws -> Bool {
-        return Bool.random()
+        guard let uid = Auth.auth().currentUser?.uid else { return false }
+        return try await FirebaseConstant
+            .UserSavedPostCollection(uid: uid)
+            .document(post.id)
+            .getDocument()
+            .exists
     }
 }

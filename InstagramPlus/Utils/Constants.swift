@@ -23,4 +23,10 @@ struct FirebaseConstant {
     static func UserNotificationCollection(uid: String) -> CollectionReference {
         return IGNotificationCollection.document(uid).collection("user-notifications")
     }
+    
+    static func UserSavedPostCollection(uid: String) -> CollectionReference {
+        return UsersCollection.document(uid).collection("saved-posts")
+    }
+    
+    static let MessageCollection = Root.collection("messages")
 }

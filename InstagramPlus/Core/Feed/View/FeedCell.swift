@@ -57,9 +57,9 @@ struct FeedCell: View {
                 Button {
                     handleLikeTapped()
                 } label: {
-                    Image(systemName: didLike ? "heart.fill" : "heart")
+                    Image(systemName: post.didLike ? "heart.fill" : "heart")
                         .imageScale(.large)
-                        .foregroundColor(didLike ? .red : .black)
+                        .foregroundColor(post.didLike ? .red : .black)
                 }
                 
                 Button {
@@ -79,8 +79,16 @@ struct FeedCell: View {
                 }
 
                 Spacer()
+                
+                Button {
+                    handlePostSaveTapped()
+                } label: {
+                    Image(systemName: post.didSave ? "bookmark.fill" : "bookmark")
+                        .imageScale(.large)
+                        .foregroundColor(.black)
+                }
             }
-            .padding(.leading, 8)
+            .padding(.horizontal, 8)
             .padding(.top, 4)
             
             //likes label
@@ -110,9 +118,8 @@ struct FeedCell: View {
                 .padding(.leading, 10)
                 .padding(.top, 1)
         }
-        .task {
-            await viewModel.checkIfUserLikedPost(post)
-        }
+        .task { await viewModel.checkIfUserLikedPost(post) }
+        .task { await viewModel.checkIfUserSavedPost(post) }
         .confirmationDialog("Post Options", isPresented: $showPostOptionsMenu, titleVisibility: .visible) {
             Button("Report", role: .destructive) {
                 print("DEBUG: Show report sheet here..")
@@ -137,17 +144,24 @@ private extension FeedCell {
         post.likes ?? 0
     }
     
-    private var didLike: Bool {
-        return post.didLike ?? false
-    }
-    
     private func handleLikeTapped() {
         guard let postIndex else {return}
         Task {
-            if viewModel.posts[postIndex].didLike ?? false {
+            if viewModel.posts[postIndex].didLike {
                 try await viewModel.unlike(post)
             } else {
                 try await viewModel.like(post)
+            }
+        }
+    }
+    
+    private func handlePostSaveTapped() {
+        guard let postIndex else {return}
+        Task {
+            if viewModel.posts[postIndex].didSave {
+                await viewModel.unsave(post)
+            } else {
+                await viewModel.save(post)
             }
         }
     }

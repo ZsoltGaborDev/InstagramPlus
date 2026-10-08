@@ -94,13 +94,46 @@ extension FeedViewModel {
     }
     
     func checkIfUserLikedPost(_ post: Post) async  {
-        guard post.didLike != nil else {return}
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
         
         do {
-            guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
             self.posts[index].didLike = try await feedService.checkIfUserLikedPost(post)
         } catch {
             print("DEBUG: Failed check if user liked the post with error \(error)")
+        }
+    }
+    
+    func save(_ post: Post) async {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+        
+        do {
+            self.posts[index].didSave = true
+            try await feedService.save(post)
+        } catch {
+            self.posts[index].didSave = false
+            print("DEBUG: Failed save post with error: \(error)")
+        }
+    }
+    
+    func unsave(_ post: Post) async {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+        
+        do {
+            self.posts[index].didSave = false
+            try await feedService.unsave(post)
+        } catch {
+            self.posts[index].didSave = true
+            print("DEBUG: Failed unsave post with error: \(error)")
+        }
+    }
+    
+    func checkIfUserSavedPost(_ post: Post) async {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
+        
+        do {
+            self.posts[index].didSave = try await feedService.checkIfUserSavedPost(post)
+        } catch {
+            print("DEBUG: Failed check if user saved the post with error \(error)")
         }
     }
 }
