@@ -12,6 +12,9 @@ struct FeedView: View {
         feedService: FeedService(),
         userService: UserService())
     
+    @State private var activeScrollId: String?
+    @State private var paginating = false
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -28,10 +31,18 @@ struct FeedView: View {
                             ForEach(viewModel.posts) { post in
                                 FeedCell(post: post, viewModel: viewModel)
                             }
+                            if paginating {
+                                ProgressView()
+                            }
                         }
+                        .scrollTargetLayout()
                         .padding(.top, 8)
                     }
+                    .scrollPosition(id: $activeScrollId, anchor: .bottom)
                 }
+            }
+            .onChange(of: activeScrollId) { oldValue, newValue in
+                loadMorePost(newValue)
             }
             .refreshable {
                 await viewModel.refreshPosts()
@@ -62,6 +73,16 @@ struct FeedView: View {
     }
 }
 
+private extension FeedView {
+    func loadMorePost(_ activeScrollId: String?) {
+        Task {
+            guard activeScrollId == viewModel.posts.last?.id else { return }
+            paginating = true
+            await viewModel.fetchPosts()
+            paginating = false
+        }
+    }
+}
 #Preview {
     FeedView()
 }

@@ -20,7 +20,11 @@ protocol FeedServiceProtocol {
     func checkIfUserSavedPost(_ post: Post) async throws -> Bool
 }
 
-struct FeedService: FeedServiceProtocol {
+class FeedService: FeedServiceProtocol {
+    
+    private var lastDoc: QueryDocumentSnapshot?
+    private var shouldLoadMoreData = true
+    private var fetchLimit = 2
     
     func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()
@@ -69,11 +73,30 @@ struct FeedService: FeedServiceProtocol {
 private extension FeedService {
     
     func fetchPostIDs() async throws -> [String] {
-        guard let uid = Auth.auth().currentUser?.uid else { return [] }
+        guard let uid = Auth.auth().currentUser?.uid, shouldLoadMoreData else { return [] }
         
-        let snapshot = try await FirebaseConstant
+        let query = FirebaseConstant
             .UserFeedCollection(uid: uid)
-            .getDocuments()
+            .limit(to: fetchLimit)
+        
+        let snapshot: QuerySnapshot
+        
+        if let lastDoc {
+            // fetch next batch posts
+            let next = query.start(afterDocument: lastDoc)
+            snapshot = try await next.getDocuments()
+            shouldLoadMoreData = snapshot.documents.last != nil
+            
+            if let lastId = snapshot.documents.last {
+                self.lastDoc = lastId
+            }
+        } else {
+            // first time fetching
+            snapshot = try await query.getDocuments()
+            shouldLoadMoreData = snapshot.documents.count == fetchLimit
+            lastDoc = snapshot.documents.last
+        }
+        
         return snapshot.documents.map({ $0.documentID })
     }
     

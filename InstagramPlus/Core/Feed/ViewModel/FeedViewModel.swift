@@ -25,9 +25,10 @@ class FeedViewModel {
     
     func fetchPosts() async {
         do {
-            self.posts = try await feedService.fetchFeedPosts()
-            let result = try await fetchPostUserData(posts: posts)
-            self.posts = result
+            let result = try await feedService.fetchFeedPosts()
+            self.posts.append(contentsOf: result)
+            let resultWithUserdata = try await fetchPostUserData(posts: posts)
+            self.posts = resultWithUserdata
             self.loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             self.loadingState = .error
