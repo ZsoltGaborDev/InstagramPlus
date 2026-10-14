@@ -48,29 +48,5 @@ final class UploadPostViewModel {
         )
         let encodedPost = try Firestore.Encoder().encode(post)
         try await postRef.setData(encodedPost)
-        try await updateUserFeedAfterPost(postId: post.id)
-    }
-    
-    private func updateUserFeedAfterPost(postId: String) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        //fetch followers of post owner
-        let followersSnapshot = try await FirebaseConstant
-            .FollowersCollection
-            .document(uid)
-            .collection("user-followers")
-            .getDocuments()
-        
-        for document in followersSnapshot.documents {
-            try await FirebaseConstant
-                .UserFeedCollection(uid: document.documentID)
-                .document(postId)
-                .setData([:])
-        }
-        
-        try await FirebaseConstant
-            .UserFeedCollection(uid: uid)
-            .document(postId)
-            .setData([:])
     }
 }

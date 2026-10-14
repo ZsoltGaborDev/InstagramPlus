@@ -45,6 +45,34 @@ exports.updateUserFeedAfterUnfollow = onDocumentDeleted("/following/{currentUid}
     }
 })
 
+exports.updateUserFeedAfterPost = onDocumentCreated("/posts/{postId}",async (event) => {
+        const postId = event.params.postId;
+        const db = getFirestore();
+
+        try {
+            
+            const data = event.data.data();
+            const ownerUid = data.ownerUid;
+
+            const ownerFeedRef = db.collection("users")
+                .doc(ownerUid).collection("user-feed").doc(postId);
+
+            await ownerFeedRef.set({});
+
+            const followerSnapshot = await db.collection("followers")
+                .doc(ownerUid).collection("user-followers").get();
+
+            await Promise.all(followerSnapshot.docs.map((doc) =>
+                db.collection("users").doc(doc.id)
+                    .collection("user-feed").doc(postId).set({})
+            ));
+        } catch (err) {
+            logger.error("Error updating user feed after post", err);
+            throw err;
+        }
+    }
+);
+
 
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Firestore under the path /messages/:documentId/original
