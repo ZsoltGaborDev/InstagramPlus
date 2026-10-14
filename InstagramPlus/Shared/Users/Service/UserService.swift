@@ -108,8 +108,6 @@ extension UserService {
             .collection("user-followers")
             .document(currentUid)
             .setData([:])
-        
-        try await updateUserFeedAfterFollow(followedUid: uid)
     }
     
     static func unfollow(uid: String) async throws {
@@ -141,23 +139,6 @@ extension UserService {
             .document(uid)
             .getDocument()
             .exists
-    }
-    
-    private static func updateUserFeedAfterFollow(followedUid: String) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        
-        //get users posts
-        let snapshot = try await FirebaseConstant
-            .PostsCollection
-            .whereField("ownerUid", isEqualTo: followedUid)
-            .getDocuments()
-        
-        for document in snapshot.documents {
-            try await FirebaseConstant
-                .UserFeedCollection(uid: uid)
-                .document(document.documentID)
-                .setData([:])
-        }
     }
     
     private static func updateUserFeedAfterUnollow(unfollowedUid: String) async throws {

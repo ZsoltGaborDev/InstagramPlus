@@ -26,12 +26,14 @@ class FeedService: FeedServiceProtocol {
     private var shouldLoadMoreData = true
     private var fetchLimit = 2
     
-    func fetchFeedPosts() async throws -> [Post] {
+    internal func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()
         return try await fetchPosts(with: postIDs)
     }
     
     func refreshPosts() async throws -> [Post] {
+        self.lastDoc = nil
+        shouldLoadMoreData = true
         return try await fetchFeedPosts()
     }
     
