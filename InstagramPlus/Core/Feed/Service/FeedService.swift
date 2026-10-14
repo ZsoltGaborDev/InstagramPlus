@@ -24,7 +24,7 @@ class FeedService: FeedServiceProtocol {
     
     private var lastDoc: QueryDocumentSnapshot?
     private var shouldLoadMoreData = true
-    private var fetchLimit = 2
+    private var fetchLimit = 5
     
     internal func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()

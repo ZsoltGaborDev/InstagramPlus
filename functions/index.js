@@ -18,7 +18,6 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
         const snapshot = await db.collection("posts").where("ownerUid", "==", followedUid).get();
         snapshot.forEach((doc) => {
             const postId = doc.id;
-            logger.log("Post id is", postId);
             const userFeedRef = db.collection("users").doc(currentUid).collection("user-feed").doc(postId);
             userFeedRef.set({});
         })
@@ -29,11 +28,21 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
 })
 
 exports.updateUserFeedAfterUnfollow = onDocumentDeleted("/following/{currentUid}/user-following/{unfollowedUid}", async (event) => {
-    
-})
+    const currentUid = event.params.currentUid;
+    const unfollowedUid = event.params.unfollowedUid;
+    const db = getFirestore();
 
-exports.updateUserFeedAfterPost = onDocumentCreated("/post/{postId}", async (event) => {
-    
+    try {
+        const snapshot = await db.collection("posts").where("ownerUid", "==", unfollowedUid).get();
+        snapshot.forEach((doc) => {
+            const postId = doc.id;
+            const userFeedRef = db.collection("users").doc(currentUid).collection("user-feed").doc(postId);
+            userFeedRef.delete();
+        })
+    } catch (err) {
+        logger.error("Error updating feed after unfollow");
+        throw err;
+    }
 })
 
 
