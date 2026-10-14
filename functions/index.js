@@ -16,11 +16,16 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
 
     try {
         const snapshot = await db.collection("posts").where("ownerUid", "==", followedUid).get();
+        const batch = db.batch();
+
         snapshot.forEach((doc) => {
             const postId = doc.id;
             const userFeedRef = db.collection("users").doc(currentUid).collection("user-feed").doc(postId);
-            userFeedRef.set({});
+            batch.set(userFeedRef, {});
         })
+
+        await batch.commit();
+        return null;
     } catch (err) {
         logger.error("Error updating feed after follow");
         throw err;
@@ -34,11 +39,15 @@ exports.updateUserFeedAfterUnfollow = onDocumentDeleted("/following/{currentUid}
 
     try {
         const snapshot = await db.collection("posts").where("ownerUid", "==", unfollowedUid).get();
+        const batch = db.batch();
+
         snapshot.forEach((doc) => {
             const postId = doc.id;
             const userFeedRef = db.collection("users").doc(currentUid).collection("user-feed").doc(postId);
-            userFeedRef.delete();
+            batch.delete(userFeedRef);
         })
+
+        await batch.commit();
     } catch (err) {
         logger.error("Error updating feed after unfollow");
         throw err;
@@ -50,22 +59,25 @@ exports.updateUserFeedAfterPost = onDocumentCreated("/posts/{postId}",async (eve
         const db = getFirestore();
 
         try {
-            
             const data = event.data.data();
             const ownerUid = data.ownerUid;
-
-            const ownerFeedRef = db.collection("users")
-                .doc(ownerUid).collection("user-feed").doc(postId);
-
-            await ownerFeedRef.set({});
+            const batch = db.batch();
 
             const followerSnapshot = await db.collection("followers")
                 .doc(ownerUid).collection("user-followers").get();
 
-            await Promise.all(followerSnapshot.docs.map((doc) =>
-                db.collection("users").doc(doc.id)
-                    .collection("user-feed").doc(postId).set({})
-            ));
+            followerSnapshot.docs.forEach((doc) => {
+                const usersFeedRef = db.collection("users").doc(doc.id)
+                    .collection("user-feed").doc(postId);
+
+                batch.set(usersFeedRef, {});
+            });
+
+            const ownerFeedRef = db.collection("users")
+                .doc(ownerUid).collection("user-feed").doc(postId);
+            batch.set(ownerFeedRef, {});
+
+            await batch.commit();
         } catch (err) {
             logger.error("Error updating user feed after post", err);
             throw err;
