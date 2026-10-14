@@ -26,6 +26,12 @@ class FeedService: FeedServiceProtocol {
     private var shouldLoadMoreData = true
     private var fetchLimit = 5
     
+    private let likePostService: LikePostServiceProtocol
+    
+    init(likePostService: LikePostServiceProtocol) {
+        self.likePostService = likePostService
+    }
+    
     internal func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()
         return try await fetchPosts(with: postIDs)
@@ -38,17 +44,17 @@ class FeedService: FeedServiceProtocol {
     }
     
     func like(_ post: Post) async throws {
-        try await PostService.likePost(post: post)
+        try await likePostService.likePost(post: post)
         IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
     }
     
     func unlike(_ post: Post) async throws {
-        try await PostService.unlikePost(post: post)
+        try await likePostService.unlikePost(post: post)
         await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
     }
     
     func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
-        return try await PostService.checkIfUserLikedPost(post: post)
+        return try await likePostService.checkIfUserLikedPost(post: post)
     }
     
     func save(_ post: Post) async throws {

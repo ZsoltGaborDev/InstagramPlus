@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedView: View {
     @State var viewModel = FeedViewModel(
-        feedService: FeedService(),
+        feedService: FeedService(likePostService: LikePostService()),
         userService: UserService())
     
     @State private var activeScrollId: String?

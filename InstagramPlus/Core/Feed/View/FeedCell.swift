@@ -171,7 +171,7 @@ private extension FeedCell {
     FeedCell(
         post: MockData.posts[0],
         viewModel: FeedViewModel(
-            feedService: FeedService(),
+            feedService: FeedService(likePostService: LikePostService()),
             userService: MockUserService()
         )
     )
