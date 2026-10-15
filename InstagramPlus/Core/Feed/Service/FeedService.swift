@@ -27,9 +27,11 @@ class FeedService: FeedServiceProtocol {
     private var fetchLimit = 5
     
     private let likePostService: LikePostServiceProtocol
+    private let savedPostService: SavedPostServiceProtocol
     
-    init(likePostService: LikePostServiceProtocol) {
+    init(likePostService: LikePostServiceProtocol, savedPostService: SavedPostServiceProtocol) {
         self.likePostService = likePostService
+        self.savedPostService = savedPostService
     }
     
     internal func fetchFeedPosts() async throws -> [Post] {
@@ -58,22 +60,15 @@ class FeedService: FeedServiceProtocol {
     }
     
     func save(_ post: Post) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        try await FirebaseConstant.UserSavedPostCollection(uid: uid).document(post.id).setData([:])
+        try await savedPostService.savePost(post)
     }
     
     func unsave(_ post: Post) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        try await FirebaseConstant.UserSavedPostCollection(uid: uid).document(post.id).delete()
+        try await savedPostService.unsavePost(post)
     }
     
     func checkIfUserSavedPost(_ post: Post) async throws -> Bool {
-        guard let uid = Auth.auth().currentUser?.uid else { return false }
-        return try await FirebaseConstant
-            .UserSavedPostCollection(uid: uid)
-            .document(post.id)
-            .getDocument()
-            .exists
+        return try await savedPostService.checkIfUserSavedPost(post)
     }
 }
 
