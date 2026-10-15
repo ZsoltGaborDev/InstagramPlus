@@ -1,21 +1,25 @@
 //
-//  SavedPostCache.swift
+//  UserActivityCache.swift
 //  InstagramPlus
 //
 //  Created by Zsolt Gabor on 15/10/2026.
 //
 
-import Foundation
-import FirebaseAuth
 import Firebase
+import FirebaseAuth
 
-class SavedPostCache {
+class UserActivityCache {
     private var cache = NSCache<NSString, NSArray>()
-    private var refreshInterval: TimeInterval = 60 * 60 * 24 //24 hours
     private var lastFetched = [String: Date]()
     
-    init() {
-        self.initializeCache()
+    private var refreshInterval: TimeInterval
+    private var cacheIdentifier: String // user-likes, saved-posts
+    
+    init(refreshInterval: TimeInterval, cacheIdentifier: String) {
+        self.refreshInterval = refreshInterval
+        self.cacheIdentifier = cacheIdentifier
+        
+        initializeCache()
     }
     
     func initializeCache() {
@@ -27,38 +31,41 @@ class SavedPostCache {
         loadCacheData()
     }
     
-    func set(_ savedPostIDs: [String]) {
+    func set(_ items: [String]) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        cache.setObject(savedPostIDs as NSArray, forKey: uid as NSString)
-        saveToDisk(savedPostIDs, for: uid)
+        cache.setObject(items as NSArray, forKey: uid as NSString)
+        saveToDisk(items, for: uid)
     }
     
-    func getValue(_ postId: String) -> Bool {
-        guard let uid = Auth.auth().currentUser?.uid else { return false }
-        guard let postIDs = cache.object(forKey: uid as NSString) else { return false }
-        return postIDs.contains(postId)
-    }
-    
-    func update(_ postId: String, didSave: Bool) {
+    func update(_ item: String, didAdd: Bool) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard var postIDs = cache.object(forKey: uid as NSString) as? [String] else { return }
+        guard var items = cache.object(forKey: uid as NSString) as? [String] else { return }
         
-        if didSave {
-            postIDs.append(postId)
+        if didAdd {
+            items.append(item)
         } else {
-            postIDs.removeAll(where: { $0 == postId })
+            items.removeAll(where: { $0 == item })
         }
-        set(postIDs)
+        set(items)
     }
     
+    func contains(_ item: String) -> Bool {
+        guard let uid = Auth.auth().currentUser?.uid else { return false }
+        guard let items = cache.object(forKey: uid as NSString) else { return false }
+        return items.contains(item)
+    }
+}
+
+private extension UserActivityCache {
     func loadCacheData() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         if needsRefresh {
             Task {
-                let snapshot = try await FirebaseConstant.UserSavedPostCollection(uid: uid).getDocuments()
-                let savedPostIDs = snapshot.documents.map { $0.documentID }
-                set(savedPostIDs)
+                let ref = FirebaseConstant.UsersCollection.document(uid).collection(cacheIdentifier)
+                let snapshot = try await ref.getDocuments()
+                let items = snapshot.documents.map { $0.documentID }
+                set(items)
                 saveLastFetched(for: uid, date: Date())
             }
         } else {
@@ -67,10 +74,10 @@ class SavedPostCache {
     }
 }
 
-private extension SavedPostCache {
+private extension UserActivityCache {
     func saveToDisk(_ item: [String], for uid: String) {
         do {
-            let fileName = "saved-posts_\(uid).json"
+            let fileName = fileName(for: uid)
             try DiskCache.save(item, to: fileName)
         } catch {
             print("Debug: Failed to save to disk: \(error.localizedDescription)")
@@ -79,23 +86,27 @@ private extension SavedPostCache {
     
     func loadCacheFromDisk(for uid: String) {
         do {
-            let fileName = "saved-posts_\(uid).json"
+            let fileName = fileName(for: uid)
             let items = try DiskCache.load(fileName, as: [String].self)
             set(items)
         } catch {
             print("Debug: Failed to load user saved posts from disk with error: \(error.localizedDescription)")
         }
     }
+    
+    func fileName(for uid: String) -> String {
+        return "\(cacheIdentifier)_\(uid).json"
+    }
 }
 
-private extension SavedPostCache {
+private extension UserActivityCache {
     func saveLastFetched(for uid: String, date: Date) {
-        UserDefaults.standard.set(date, forKey: "lastFetched_\(uid)_saved-posts")
+        UserDefaults.standard.set(date, forKey: "lastFetched_\(uid)_\(cacheIdentifier)")
         lastFetched[uid] = date
     }
     
     func loadLastFetched(for uid: String) -> Date? {
-        return UserDefaults.standard.object(forKey: "lastFetched_\(uid)_user-saved-posts") as? Date
+        return UserDefaults.standard.object(forKey: "lastFetched_\(uid)_\(cacheIdentifier)") as? Date
     }
     
     var needsRefresh: Bool {
@@ -104,4 +115,3 @@ private extension SavedPostCache {
         return Date().timeIntervalSince(lastFetched) > refreshInterval
     }
 }
-

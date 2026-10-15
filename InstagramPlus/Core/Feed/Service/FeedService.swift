@@ -27,11 +27,11 @@ class FeedService: FeedServiceProtocol {
     private var fetchLimit = 5
     
     private let likePostService: LikePostServiceProtocol
-    private let savedPostService: SavedPostServiceProtocol
+    private let savedPostsService: SavedPostsServiceProtocol
     
-    init(likePostService: LikePostServiceProtocol, savedPostService: SavedPostServiceProtocol) {
+    init(likePostService: LikePostServiceProtocol, savedPostsService: SavedPostsServiceProtocol) {
         self.likePostService = likePostService
-        self.savedPostService = savedPostService
+        self.savedPostsService = savedPostsService
     }
     
     internal func fetchFeedPosts() async throws -> [Post] {
@@ -60,15 +60,15 @@ class FeedService: FeedServiceProtocol {
     }
     
     func save(_ post: Post) async throws {
-        try await savedPostService.savePost(post)
+        try await savedPostsService.savePost(post)
     }
     
     func unsave(_ post: Post) async throws {
-        try await savedPostService.unsavePost(post)
+        try await savedPostsService.unsavePost(post)
     }
     
     func checkIfUserSavedPost(_ post: Post) async throws -> Bool {
-        return try await savedPostService.checkIfUserSavedPost(post)
+        return try await savedPostsService.checkIfUserSavedPost(post)
     }
 }
 

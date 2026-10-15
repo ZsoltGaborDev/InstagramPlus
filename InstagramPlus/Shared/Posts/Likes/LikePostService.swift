@@ -30,7 +30,7 @@ struct LikePostService: LikePostServiceProtocol {
         batch.updateData(["likes": FieldValue.increment(Int64(1))], forDocument: postRef)
         
         try await batch.commit()
-        cache.update(post.id, didLike: true)
+        cache.update(post.id, didAdd: true)
     }
     
     func unlikePost(post: Post) async throws {
@@ -46,10 +46,10 @@ struct LikePostService: LikePostServiceProtocol {
         batch.updateData(["likes": FieldValue.increment(Int64(-1))], forDocument: postRef)
         
         try await batch.commit()
-        cache.update(post.id, didLike: false)
+        cache.update(post.id, didAdd: false)
     }
     
     func checkIfUserLikedPost(post: Post) async throws -> Bool {
-        return cache.getValue(post.id)
+        return cache.contains(post.id)
     }
 }

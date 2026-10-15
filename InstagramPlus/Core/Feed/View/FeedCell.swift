@@ -173,7 +173,7 @@ private extension FeedCell {
         viewModel: FeedViewModel(
             feedService: FeedService(
                 likePostService: LikePostService(),
-                savedPostService: SavedPostService()),
+                savedPostsService: SavedPostsService()),
             userService: MockUserService()
         )
     )

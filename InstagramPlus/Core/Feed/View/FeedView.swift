@@ -11,7 +11,7 @@ struct FeedView: View {
     @State var viewModel = FeedViewModel(
         feedService: FeedService(
             likePostService: LikePostService(),
-            savedPostService: SavedPostService()),
+            savedPostsService: SavedPostsService()),
         userService: UserService())
     
     @State private var activeScrollId: String?
