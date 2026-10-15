@@ -9,15 +9,15 @@ import Firebase
 import FirebaseAuth
 
 protocol LikePostServiceProtocol {
-    func likePost(post: Post) async throws
-    func unlikePost(post: Post) async throws
-    func checkIfUserLikedPost(post: Post) async throws -> Bool
+    func likePost(_ post: Post) async throws
+    func unlikePost(_ post: Post) async throws
+    func checkIfUserLikedPost(_ post: Post) async throws -> Bool
 }
 
 struct LikePostService: LikePostServiceProtocol {
     private let cache = LikesCache()
     
-    func likePost(post: Post) async throws {
+    func likePost(_ post: Post) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let batch = Firestore.firestore().batch()
         
@@ -33,7 +33,7 @@ struct LikePostService: LikePostServiceProtocol {
         cache.update(post.id, didAdd: true)
     }
     
-    func unlikePost(post: Post) async throws {
+    func unlikePost(_ post: Post) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let batch = Firestore.firestore().batch()
         
@@ -49,7 +49,7 @@ struct LikePostService: LikePostServiceProtocol {
         cache.update(post.id, didAdd: false)
     }
     
-    func checkIfUserLikedPost(post: Post) async throws -> Bool {
+    func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
         return cache.contains(post.id)
     }
 }

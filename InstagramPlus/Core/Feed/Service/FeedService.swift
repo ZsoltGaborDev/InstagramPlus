@@ -9,15 +9,9 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-protocol FeedServiceProtocol {
+protocol FeedServiceProtocol: LikePostServiceProtocol, SavedPostsServiceProtocol {
     func fetchFeedPosts() async throws -> [Post]
     func refreshPosts() async throws -> [Post]
-    func like(_ post: Post) async throws
-    func unlike(_ post: Post) async throws
-    func save(_ post: Post) async throws
-    func unsave(_ post: Post) async throws
-    func checkIfUserLikedPost(_ post: Post) async throws -> Bool
-    func checkIfUserSavedPost(_ post: Post) async throws -> Bool
 }
 
 class FeedService: FeedServiceProtocol {
@@ -45,25 +39,25 @@ class FeedService: FeedServiceProtocol {
         return try await fetchFeedPosts()
     }
     
-    func like(_ post: Post) async throws {
-        try await likePostService.likePost(post: post)
+    func likePost(_ post: Post) async throws {
+        try await likePostService.likePost(post)
         IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
     }
     
-    func unlike(_ post: Post) async throws {
-        try await likePostService.unlikePost(post: post)
+    func unlikePost(_ post: Post) async throws {
+        try await likePostService.unlikePost(post)
         await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
     }
     
     func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
-        return try await likePostService.checkIfUserLikedPost(post: post)
+        return try await likePostService.checkIfUserLikedPost(post)
     }
     
-    func save(_ post: Post) async throws {
+    func savePost(_ post: Post) async throws {
         try await savedPostsService.savePost(post)
     }
     
-    func unsave(_ post: Post) async throws {
+    func unsavePost(_ post: Post) async throws {
         try await savedPostsService.unsavePost(post)
     }
     

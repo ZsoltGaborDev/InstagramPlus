@@ -80,7 +80,7 @@ extension FeedViewModel {
                 self.posts[index].likes = 1
             }
             self.posts[index].didLike = true
-            try await feedService.like(post)
+            try await feedService.likePost(post)
         } catch {
             posts[index].didLike = false
             if posts[index].likes ?? 0 > 0 {
@@ -97,7 +97,7 @@ extension FeedViewModel {
                 posts[index].likes! -= 1
             }
             self.posts[index].didLike = false
-            try await feedService.unlike(post)
+            try await feedService.unlikePost(post)
         } catch {
             posts[index].didLike = true
             if let _ = post.likes {
@@ -121,7 +121,7 @@ extension FeedViewModel {
         
         do {
             self.posts[index].didSave = true
-            try await feedService.save(post)
+            try await feedService.savePost(post)
         } catch {
             self.posts[index].didSave = false
             print("DEBUG: Failed save post with error: \(error)")
@@ -133,7 +133,7 @@ extension FeedViewModel {
         
         do {
             self.posts[index].didSave = false
-            try await feedService.unsave(post)
+            try await feedService.unsavePost(post)
         } catch {
             self.posts[index].didSave = true
             print("DEBUG: Failed unsave post with error: \(error)")
