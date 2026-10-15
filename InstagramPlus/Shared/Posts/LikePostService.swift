@@ -15,6 +15,8 @@ protocol LikePostServiceProtocol {
 }
 
 struct LikePostService: LikePostServiceProtocol {
+    private let cache = LikesCache()
+    
     func likePost(post: Post) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let batch = Firestore.firestore().batch()
@@ -28,6 +30,7 @@ struct LikePostService: LikePostServiceProtocol {
         batch.updateData(["likes": FieldValue.increment(Int64(1))], forDocument: postRef)
         
         try await batch.commit()
+        cache.update(post.id, didLike: true)
     }
     
     func unlikePost(post: Post) async throws {
@@ -43,16 +46,10 @@ struct LikePostService: LikePostServiceProtocol {
         batch.updateData(["likes": FieldValue.increment(Int64(-1))], forDocument: postRef)
         
         try await batch.commit()
+        cache.update(post.id, didLike: false)
     }
     
     func checkIfUserLikedPost(post: Post) async throws -> Bool {
-        guard let uid = Auth.auth().currentUser?.uid else { return false }
-        return try await FirebaseConstant
-            .UsersCollection
-            .document(uid)
-            .collection("user-likes")
-            .document(post.id)
-            .getDocument()
-            .exists
+        return cache.getValue(post.id)
     }
 }
