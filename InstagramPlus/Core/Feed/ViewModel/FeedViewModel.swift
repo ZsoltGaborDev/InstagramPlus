@@ -32,18 +32,18 @@ class FeedViewModel {
             self.loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             self.loadingState = .error
+            print("DEBUG: Failed to fetch posts with error: \(error)")
         }
     }
     
     func refreshPosts() async {
         do {
             self.posts.removeAll()
-            self.posts = try await feedService.fetchFeedPosts()
-            let result = try await fetchPostUserData(posts: posts)
-            self.posts = result
-            self.loadingState = posts.isEmpty ? .empty : .complete
+            let result = try await feedService.refreshPosts()
+            let resultWithUserdata = try await fetchPostUserData(posts: result)
+            self.posts = resultWithUserdata
         } catch {
-            self.loadingState = .error
+            print("DEBUG: Failed to refresh posts with error: \(error)")
         }
     }
     
@@ -70,7 +70,7 @@ class FeedViewModel {
 
 extension FeedViewModel {
     
-    func like(_ post: Post) async throws {
+    func like(_ post: Post) async {
         guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
         
         do {
@@ -89,7 +89,7 @@ extension FeedViewModel {
         }
     }
     
-    func unlike(_ post: Post) async throws {
+    func unlike(_ post: Post) async {
         guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
         
         do {

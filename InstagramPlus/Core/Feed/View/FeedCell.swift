@@ -148,9 +148,9 @@ private extension FeedCell {
         guard let postIndex else {return}
         Task {
             if viewModel.posts[postIndex].didLike {
-                try await viewModel.unlike(post)
+                await viewModel.unlike(post)
             } else {
-                try await viewModel.like(post)
+                await viewModel.like(post)
             }
         }
     }
