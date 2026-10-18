@@ -20,11 +20,15 @@ final class FeedViewModelTests: XCTestCase {
         super.setUp()
         mockLikeService = MockLikePostService()
         mockSavedPostService = MockSavedPostsService()
-        
-        mockFeedService = MockFeedService(likePostService: mockLikeService, savedPostsService: mockSavedPostService)
+        mockFeedService = MockFeedService()
         mockUserService = MockUserService()
         
-        viewModel = FeedViewModel(feedService: mockFeedService, userService: mockUserService)
+        viewModel = FeedViewModel(
+            feedService: mockFeedService,
+            userService: mockUserService,
+            likePostService: mockLikeService,
+            savePostsService: mockSavedPostService
+        )
     }
     
     override func tearDown() {

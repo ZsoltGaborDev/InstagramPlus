@@ -9,10 +9,10 @@ import SwiftUI
 
 struct FeedView: View {
     @State var viewModel = FeedViewModel(
-        feedService: FeedService(
-            likePostService: LikePostService(),
-            savedPostsService: SavedPostsService()),
-        userService: UserService())
+        feedService: FeedService(),
+        userService: UserService(),
+        likePostService: LikePostService(),
+        savePostsService: SavedPostsService())
     
     @State private var activeScrollId: String?
     @State private var paginating = false

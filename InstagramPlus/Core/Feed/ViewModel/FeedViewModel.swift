@@ -16,10 +16,20 @@ class FeedViewModel {
     
     private let feedService: FeedServiceProtocol
     private let userService: UserServiceProtocol
+    private let likePostService: LikePostServiceProtocol
+    let savePostsService: SavedPostsServiceProtocol
     
-    init(feedService: FeedServiceProtocol, userService: UserServiceProtocol) {
+    init(
+        feedService: FeedServiceProtocol,
+        userService: UserServiceProtocol,
+        likePostService: LikePostServiceProtocol,
+        savePostsService: SavedPostsServiceProtocol
+    ) {
         self.feedService = feedService
         self.userService = userService
+        self.likePostService = likePostService
+        self.savePostsService = savePostsService
+        
         Task { await fetchPosts() }
     }
     
@@ -80,7 +90,7 @@ extension FeedViewModel {
                 self.posts[index].likes = 1
             }
             self.posts[index].didLike = true
-            try await feedService.likePost(post)
+            try await likePostService.likePost(post)
         } catch {
             posts[index].didLike = false
             if posts[index].likes ?? 0 > 0 {
@@ -97,7 +107,7 @@ extension FeedViewModel {
                 posts[index].likes! -= 1
             }
             self.posts[index].didLike = false
-            try await feedService.unlikePost(post)
+            try await likePostService.unlikePost(post)
         } catch {
             posts[index].didLike = true
             if let _ = post.likes {
@@ -110,7 +120,7 @@ extension FeedViewModel {
         guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
         
         do {
-            self.posts[index].didLike = try await feedService.checkIfUserLikedPost(post)
+            self.posts[index].didLike = try await likePostService.checkIfUserLikedPost(post)
         } catch {
             print("DEBUG: Failed check if user liked the post with error \(error)")
         }
@@ -121,7 +131,7 @@ extension FeedViewModel {
         
         do {
             self.posts[index].didSave = true
-            try await feedService.savePost(post)
+            try await savePostsService.savePost(post)
         } catch {
             self.posts[index].didSave = false
             print("DEBUG: Failed save post with error: \(error)")
@@ -133,7 +143,7 @@ extension FeedViewModel {
         
         do {
             self.posts[index].didSave = false
-            try await feedService.unsavePost(post)
+            try await savePostsService.unsavePost(post)
         } catch {
             self.posts[index].didSave = true
             print("DEBUG: Failed unsave post with error: \(error)")
@@ -144,7 +154,7 @@ extension FeedViewModel {
         guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
         
         do {
-            self.posts[index].didSave = try await feedService.checkIfUserSavedPost(post)
+            self.posts[index].didSave = try await savePostsService.checkIfUserSavedPost(post)
         } catch {
             print("DEBUG: Failed check if user saved the post with error \(error)")
         }

@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-protocol FeedServiceProtocol: LikePostServiceProtocol, SavedPostsServiceProtocol {
+protocol FeedServiceProtocol {
     func fetchFeedPosts() async throws -> [Post]
     func refreshPosts() async throws -> [Post]
 }
@@ -20,15 +20,7 @@ class FeedService: FeedServiceProtocol {
     private var shouldLoadMoreData = true
     private var fetchLimit = 5
     
-    private let likePostService: LikePostServiceProtocol
-    private let savedPostsService: SavedPostsServiceProtocol
-    
-    init(likePostService: LikePostServiceProtocol, savedPostsService: SavedPostsServiceProtocol) {
-        self.likePostService = likePostService
-        self.savedPostsService = savedPostsService
-    }
-    
-    internal func fetchFeedPosts() async throws -> [Post] {
+    func fetchFeedPosts() async throws -> [Post] {
         let postIDs = try await fetchPostIDs()
         return try await fetchPosts(with: postIDs)
     }
@@ -38,34 +30,7 @@ class FeedService: FeedServiceProtocol {
         shouldLoadMoreData = true
         return try await fetchFeedPosts()
     }
-    
-    func likePost(_ post: Post) async throws {
-        try await likePostService.likePost(post)
-        IGNotificationsManager.shared.uploadLikeNotification(to: post.ownerUid, post: post)
-    }
-    
-    func unlikePost(_ post: Post) async throws {
-        try await likePostService.unlikePost(post)
-        await IGNotificationsManager.shared.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
-    }
-    
-    func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
-        return try await likePostService.checkIfUserLikedPost(post)
-    }
-    
-    func savePost(_ post: Post) async throws {
-        try await savedPostsService.savePost(post)
-    }
-    
-    func unsavePost(_ post: Post) async throws {
-        try await savedPostsService.unsavePost(post)
-    }
-    
-    func checkIfUserSavedPost(_ post: Post) async throws -> Bool {
-        return try await savedPostsService.checkIfUserSavedPost(post)
-    }
 }
-
 
 private extension FeedService {
     

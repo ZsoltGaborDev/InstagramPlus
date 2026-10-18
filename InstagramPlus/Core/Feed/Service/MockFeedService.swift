@@ -8,14 +8,6 @@
 import Foundation
 
 class MockFeedService: FeedServiceProtocol {
-    private let likePostService: LikePostServiceProtocol
-    private let savedPostsService: SavedPostsServiceProtocol
-    
-    init(likePostService: LikePostServiceProtocol, savedPostsService: SavedPostsServiceProtocol) {
-        self.likePostService = likePostService
-        self.savedPostsService = savedPostsService
-    }
-    
     
     func fetchFeedPosts() async throws -> [Post] {
         var result = [Post]()
@@ -31,29 +23,5 @@ class MockFeedService: FeedServiceProtocol {
     
     func refreshPosts() async throws -> [Post] {
         return try await fetchFeedPosts()
-    }
-    
-    func likePost(_ post: Post) async throws {
-        try await likePostService.likePost(post)
-    }
-    
-    func unlikePost(_ post: Post) async throws {
-        try await likePostService.unlikePost(post)
-    }
-    
-    func checkIfUserLikedPost(_ post: Post) async throws -> Bool {
-        return Bool.random()
-    }
-    
-    func savePost(_ post: Post) async throws {
-        try await savedPostsService.savePost(post)
-    }
-    
-    func unsavePost(_ post: Post) async throws {
-        try await savedPostsService.unsavePost(post)
-    }
-    
-    func checkIfUserSavedPost(_ post: Post) async throws -> Bool {
-        return Bool.random()
     }
 }
