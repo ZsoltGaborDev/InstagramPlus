@@ -64,7 +64,7 @@ struct SettingsView: View {
             case .savedPosts:
                 SavedPostsView()
             case .likedPosts:
-                Text("Liked posts view...")
+                LikedPostsView()
             }
         }
         .navigationTitle("Settings")
