@@ -11,7 +11,7 @@ struct SavedPostsView: View {
     @State private var gridViewModel = PostGridViewModel(service: SavedPostsGridService())
     
     var body: some View {
-        VStack {
+        ScrollView {
             PostGridView(viewModel: gridViewModel)
         }
         .navigationTitle("Saved Posts")

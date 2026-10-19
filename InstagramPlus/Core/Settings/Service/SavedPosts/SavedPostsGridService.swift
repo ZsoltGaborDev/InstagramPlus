@@ -6,10 +6,38 @@
 //
 
 import Foundation
+import FirebaseAuth
+import Firebase
 
 struct SavedPostsGridService: PostGridServiceProtocol {
     
     func fetchPost() async throws -> [Post] {
-        return []
+        let savedPostsIDs = try await fetchPostIDs()
+        
+        var result = [Post]()
+        
+        try await withThrowingTaskGroup(of: Post.self) { group in
+            for savedPostsId in savedPostsIDs {
+                group.addTask {
+                    return try await PostService.fetchPost(savedPostsId)
+                }
+            }
+            
+            for try await post in group {
+                result.append(post)
+            }
+        }
+        
+        return result.sorted(by: {$0.timestamp > $1.timestamp})
+    }
+    
+    private func fetchPostIDs() async throws -> [String] {
+        guard let uid = Auth.auth().currentUser?.uid else { return [] }
+        
+        let snapshot = try await FirebaseConstant
+            .UserSavedPostCollection(uid: uid)
+            .getDocuments()
+        
+        return snapshot.documents.map { $0.documentID }
     }
 }
