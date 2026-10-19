@@ -8,13 +8,24 @@
 import SwiftUI
 
 struct ProfileView: View {
-    
     let user: User
+    @State private var gridViewModel: PostGridViewModel
+    
+    init(user: User) {
+        self.user = user
+        _gridViewModel = State(
+            wrappedValue: PostGridViewModel(
+                service: ProfilePostGridService(
+                    user: user
+                )
+            )
+        )
+    }
     
     var body: some View {
         ScrollView {
             ProfileHeaderView(user: user)
-            PostGridView(user: user)
+            PostGridView(viewModel: gridViewModel)
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)

@@ -11,8 +11,8 @@ import Kingfisher
 struct PostGridView: View {
     @State var viewModel: PostGridViewModel
 
-    init(user: User) {
-        _viewModel = State(initialValue: PostGridViewModel(user: user))
+    init(viewModel: PostGridViewModel) {
+        self.viewModel = viewModel
     }
 
     private let gridItems = Array(
@@ -30,5 +30,11 @@ struct PostGridView: View {
 }
 
 #Preview {
-    PostGridView(user: MockData.users[0])
+    PostGridView(
+        viewModel: PostGridViewModel(
+            service: ProfilePostGridService(
+                user: MockData.users[0]
+            )
+        )
+    )
 }

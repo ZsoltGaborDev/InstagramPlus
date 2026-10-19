@@ -62,7 +62,7 @@ struct SettingsView: View {
         .navigationDestination(for: SettingsActivitySectionModel.self) { model in
             switch model {
             case .savedPosts:
-                Text("Saved posts view...")
+                SavedPostsView()
             case .likedPosts:
                 Text("Liked posts view...")
             }

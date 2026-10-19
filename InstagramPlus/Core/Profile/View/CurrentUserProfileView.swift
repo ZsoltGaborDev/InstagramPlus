@@ -15,13 +15,15 @@ struct CurrentUserProfileView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     
+    @State private var gridViewModel = PostGridViewModel(service: ProfilePostGridService())
+    
     var body: some View {
         NavigationStack {
             ScrollView {
                 if let user = userManager.currentUser {
                     ProfileHeaderView(user: user)
                     
-                    PostGridView(user: user)
+                    PostGridView(viewModel: gridViewModel)
                 }
             }
             .navigationTitle("Profile")
