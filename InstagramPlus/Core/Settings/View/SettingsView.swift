@@ -77,4 +77,5 @@ struct SettingsView: View {
         SettingsView()
     }
     .environment(UserManager(service: MockUserService()))
+    .environment(AuthManager(service: MockAuthService()))
 }
