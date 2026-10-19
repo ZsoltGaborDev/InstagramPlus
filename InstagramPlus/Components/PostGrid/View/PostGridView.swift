@@ -8,11 +8,19 @@
 import SwiftUI
 import Kingfisher
 
+enum PostGridViewConfiguration {
+    case profile
+    case likedPosts
+    case savedPosts
+}
+
 struct PostGridView: View {
     @State var viewModel: PostGridViewModel
+    private let configuration: PostGridViewConfiguration
 
-    init(viewModel: PostGridViewModel) {
+    init(viewModel: PostGridViewModel, configuration: PostGridViewConfiguration) {
         self.viewModel = viewModel
+        self.configuration = configuration
     }
 
     private let gridItems = Array(
@@ -21,12 +29,61 @@ struct PostGridView: View {
     )
 
     var body: some View {
-        LazyVGrid(columns: gridItems, spacing: 1) {
-            ForEach(viewModel.posts, id: \.id) { post in
-                PostGridCellView(post: post)
+        Group {
+            switch viewModel.loadingState {
+            case .empty:
+                EmptyStateView(emptyStateTitle, systemImage: emptyStateImageName, description: emptyStateDescription)
+                    .frame(height: 400)
+            case .error:
+                Text("Failed to load posts..")
+            case .loading:
+                ProgressView()
+                    .containerRelativeFrame(.vertical)
+            case .complete:
+                LazyVGrid(columns: gridItems, spacing: 1) {
+                    ForEach(viewModel.posts, id: \.id) { post in
+                        PostGridCellView(post: post)
+                    }
+                }
             }
         }
     }
+}
+
+private extension PostGridView {
+    var emptyStateTitle: String {
+        switch configuration {
+        case .profile:
+            "No Posts Yet"
+        case .likedPosts:
+            "No Liked Posts"
+        case .savedPosts:
+            "No Saved Posts."
+        }
+    }
+    
+    var emptyStateImageName: String {
+        switch configuration {
+        case .profile:
+            "camera.circle"
+        case .likedPosts:
+            "heart.circle"
+        case .savedPosts:
+            "bookmark.circle"
+        }
+    }
+    
+    var emptyStateDescription: String? {
+        switch configuration {
+        case .profile:
+            nil
+        case .likedPosts:
+            "Your liked posts will appear here. Tap the heart button on a post to save it."
+        case .savedPosts:
+            "Your saved posts will appear here. Tap the bookmark button on a post to save it."
+        }
+    }
+
 }
 
 #Preview {
@@ -35,6 +92,6 @@ struct PostGridView: View {
             service: ProfilePostGridService(
                 user: MockData.users[0]
             )
-        )
+        ), configuration: .profile
     )
 }

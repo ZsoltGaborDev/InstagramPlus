@@ -12,7 +12,7 @@ struct SavedPostsView: View {
     
     var body: some View {
         ScrollView {
-            PostGridView(viewModel: gridViewModel)
+            PostGridView(viewModel: gridViewModel, configuration: .savedPosts)
         }
         .navigationTitle("Saved Posts")
     }

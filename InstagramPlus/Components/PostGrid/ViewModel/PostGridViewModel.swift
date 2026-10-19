@@ -12,7 +12,7 @@ import Combine
 @Observable
 class PostGridViewModel {
     var posts = [Post]()
-    
+    var loadingState: ContentLoadingState = .loading
     private let service: PostGridServiceProtocol
     
     init(service: PostGridServiceProtocol) {
@@ -23,8 +23,10 @@ class PostGridViewModel {
     func fetchPosts() async  {
         do {
             self.posts = try await service.fetchPost()
+            loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             print("DEBUG: Failed fetching posts with error: \(error) ")
+            loadingState = .error
         }
     }
 }

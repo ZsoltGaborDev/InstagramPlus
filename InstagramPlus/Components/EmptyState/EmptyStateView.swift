@@ -10,9 +10,9 @@ import SwiftUI
 struct EmptyStateView: View {
     private let title: String
     private let systemImage: String
-    private let description: String
+    private let description: String?
     
-    init(_ title: String, systemImage: String, description: String) {
+    init(_ title: String, systemImage: String, description: String? = nil) {
         self.title = title
         self.systemImage = systemImage
         self.description = description
@@ -29,7 +29,7 @@ struct EmptyStateView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text(description)
+            Text(description ?? "")
                 .foregroundStyle(.gray)
                 .font(.subheadline)
                 .padding(.horizontal, 32)

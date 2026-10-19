@@ -23,7 +23,7 @@ struct CurrentUserProfileView: View {
                 if let user = userManager.currentUser {
                     ProfileHeaderView(user: user)
                     
-                    PostGridView(viewModel: gridViewModel)
+                    PostGridView(viewModel: gridViewModel, configuration: .profile)
                 }
             }
             .navigationTitle("Profile")

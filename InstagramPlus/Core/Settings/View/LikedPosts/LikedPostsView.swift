@@ -13,7 +13,7 @@ struct LikedPostsView: View {
     
     var body: some View {
         ScrollView {
-            PostGridView(viewModel: gridViewModel)
+            PostGridView(viewModel: gridViewModel, configuration: .likedPosts)
         }
         .navigationTitle("Liked Posts")
     }

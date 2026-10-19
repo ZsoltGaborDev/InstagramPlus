@@ -25,7 +25,7 @@ struct ProfileView: View {
     var body: some View {
         ScrollView {
             ProfileHeaderView(user: user)
-            PostGridView(viewModel: gridViewModel)
+            PostGridView(viewModel: gridViewModel, configuration: .profile)
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
