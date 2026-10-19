@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct CurrentUserProfileView: View {
+    private enum Destination: Hashable {
+        case settings
+    }
+
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     
@@ -24,11 +28,15 @@ struct CurrentUserProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        Task { try await authManager.signOut() }
-                    } label: {
+                    NavigationLink(value: Destination.settings) {
                         Image(systemName: "line.horizontal.3")
                     }
+                }
+            }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .settings:
+                    SettingsView()
                 }
             }
         }
