@@ -15,7 +15,11 @@ struct CurrentUserProfileView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     
-    @State private var gridViewModel = PostGridViewModel(service: ProfilePostGridService())
+    @State private var gridViewModel = PostGridViewModel(
+        service: ProfilePostGridService(),
+        likePostService: LikePostService(),
+        savePostsService: SavedPostsService()
+    )
     
     var body: some View {
         NavigationStack {

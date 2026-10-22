@@ -10,13 +10,21 @@ import SwiftUI
 import Combine
 
 @Observable
-class PostGridViewModel {
+class PostGridViewModel: FeedViewModelProtocol {
+    
     var posts = [Post]()
     var loadingState: ContentLoadingState = .loading
     private let service: PostGridServiceProtocol
+    private(set) var likePostService: LikePostServiceProtocol
+    private(set) var savePostsService: SavedPostsServiceProtocol
     
-    init(service: PostGridServiceProtocol) {
+    init(service: PostGridServiceProtocol,
+         likePostService: LikePostServiceProtocol,
+         savePostsService: SavedPostsServiceProtocol
+    ) {
         self.service = service
+        self.likePostService = likePostService
+        self.savePostsService = savePostsService
         Task { await fetchPosts() }
     }
     

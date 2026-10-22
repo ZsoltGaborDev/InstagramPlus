@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SavedPostsView: View {
-    @State private var gridViewModel = PostGridViewModel(service: SavedPostsGridService())
+    @State private var gridViewModel = PostGridViewModel(service: SavedPostsGridService(), likePostService: LikePostService(), savePostsService: SavedPostsService())
     
     var body: some View {
         ScrollView {

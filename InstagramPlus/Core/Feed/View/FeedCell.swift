@@ -8,15 +8,15 @@
 import SwiftUI
 import Kingfisher
 
-struct FeedCell: View {
-    let viewModel: FeedViewModel
+struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
+    let viewModel: ViewModel
     
     @State private var showComments = false
     @State private var showPostOptionsMenu = false
 
     private let post: Post
     
-    init(post: Post, viewModel: FeedViewModel) {
+    init(post: Post, viewModel: ViewModel) {
         self.post = post
         self.viewModel = viewModel
     }
@@ -118,8 +118,8 @@ struct FeedCell: View {
                 .padding(.leading, 10)
                 .padding(.top, 1)
         }
-        .task { await viewModel.checkIfUserLikedPost(post) }
-        .task { await viewModel.checkIfUserSavedPost(post) }
+        .task { await viewModel.didLike(post) }
+        .task { await viewModel.didSave(post) }
         .confirmationDialog("Post Options", isPresented: $showPostOptionsMenu, titleVisibility: .visible) {
             Button("Report", role: .destructive) {
                 print("DEBUG: Show report sheet here..")

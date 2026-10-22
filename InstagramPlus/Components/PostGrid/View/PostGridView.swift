@@ -16,6 +16,7 @@ enum PostGridViewConfiguration {
 
 struct PostGridView: View {
     @State var viewModel: PostGridViewModel
+    @State var selectedPost: Post?
     private let configuration: PostGridViewConfiguration
 
     init(viewModel: PostGridViewModel, configuration: PostGridViewConfiguration) {
@@ -43,10 +44,12 @@ struct PostGridView: View {
                 LazyVGrid(columns: gridItems, spacing: 1) {
                     ForEach(viewModel.posts, id: \.id) { post in
                         PostGridCellView(post: post)
-                            .onAppear {
-                                loadMorePosts(post)
-                            }
+                            .onAppear { loadMorePosts(post) }
+                            .onTapGesture { selectedPost = post }
                     }
+                }
+                .fullScreenCover(item: $selectedPost) { post in
+                    PostGridFeedView(viewModel: viewModel)
                 }
             }
         }
@@ -101,9 +104,9 @@ private extension PostGridView {
 #Preview {
     PostGridView(
         viewModel: PostGridViewModel(
-            service: ProfilePostGridService(
-                user: MockData.users[0]
-            )
+            service: ProfilePostGridService(user: MockData.users[0]),
+            likePostService: MockLikePostService(),
+            savePostsService: MockSavedPostsService()
         ), configuration: .profile
     )
 }

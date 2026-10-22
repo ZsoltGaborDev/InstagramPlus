@@ -15,9 +15,9 @@ struct ProfileView: View {
         self.user = user
         _gridViewModel = State(
             wrappedValue: PostGridViewModel(
-                service: ProfilePostGridService(
-                    user: user
-                )
+                service: SavedPostsGridService(),
+                likePostService: LikePostService(),
+                savePostsService: SavedPostsService()
             )
         )
     }

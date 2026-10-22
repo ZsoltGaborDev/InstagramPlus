@@ -9,15 +9,15 @@ import Foundation
 import SwiftUI
 
 @Observable
-class FeedViewModel {
+class FeedViewModel: FeedViewModelProtocol {
 
     var posts = [Post]()
     var loadingState: ContentLoadingState = .loading
     
     private let feedService: FeedServiceProtocol
     private let userService: UserServiceProtocol
-    private let likePostService: LikePostServiceProtocol
-    let savePostsService: SavedPostsServiceProtocol
+    private(set) var likePostService: LikePostServiceProtocol
+    private(set) var savePostsService: SavedPostsServiceProtocol
     
     init(
         feedService: FeedServiceProtocol,
@@ -75,88 +75,5 @@ class FeedViewModel {
         }
         
         return result
-    }
-}
-
-extension FeedViewModel {
-    
-    func like(_ post: Post) async {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            if let likes = self.posts[index].likes {
-                self.posts[index].likes = likes + 1
-            } else {
-                self.posts[index].likes = 1
-            }
-            self.posts[index].didLike = true
-            try await likePostService.likePost(post)
-        } catch {
-            posts[index].didLike = false
-            if posts[index].likes ?? 0 > 0 {
-                posts[index].likes! -= 1
-            }
-        }
-    }
-    
-    func unlike(_ post: Post) async {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            if posts[index].likes ?? 0 > 0 {
-                posts[index].likes! -= 1
-            }
-            self.posts[index].didLike = false
-            try await likePostService.unlikePost(post)
-        } catch {
-            posts[index].didLike = true
-            if let _ = post.likes {
-                posts[index].likes! += 1
-            }
-        }
-    }
-    
-    func checkIfUserLikedPost(_ post: Post) async  {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            self.posts[index].didLike = try await likePostService.checkIfUserLikedPost(post)
-        } catch {
-            print("DEBUG: Failed check if user liked the post with error \(error)")
-        }
-    }
-    
-    func save(_ post: Post) async {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            self.posts[index].didSave = true
-            try await savePostsService.savePost(post)
-        } catch {
-            self.posts[index].didSave = false
-            print("DEBUG: Failed save post with error: \(error)")
-        }
-    }
-    
-    func unsave(_ post: Post) async {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            self.posts[index].didSave = false
-            try await savePostsService.unsavePost(post)
-        } catch {
-            self.posts[index].didSave = true
-            print("DEBUG: Failed unsave post with error: \(error)")
-        }
-    }
-    
-    func checkIfUserSavedPost(_ post: Post) async {
-        guard let index = posts.firstIndex(where: { $0.id == post.id }) else {return}
-        
-        do {
-            self.posts[index].didSave = try await savePostsService.checkIfUserSavedPost(post)
-        } catch {
-            print("DEBUG: Failed check if user saved the post with error \(error)")
-        }
     }
 }

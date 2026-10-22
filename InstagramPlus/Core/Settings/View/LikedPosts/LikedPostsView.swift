@@ -9,7 +9,11 @@
 import SwiftUI
 
 struct LikedPostsView: View {
-    @State private var gridViewModel = PostGridViewModel(service: LikedPostsGridService())
+    @State private var gridViewModel = PostGridViewModel(
+        service: LikedPostsGridService(),
+        likePostService: LikePostService(),
+        savePostsService: SavedPostsService()
+    )
     
     var body: some View {
         ScrollView {
