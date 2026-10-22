@@ -9,8 +9,9 @@ import Foundation
 
 class SavedPostsCache: UserActivityCache {
     private var refreshInterval: TimeInterval = 60 * 60 * 24 //24 hours
+    static let shared = SavedPostsCache()
     
-    init() {
+    private init() {
         super.init(refreshInterval: refreshInterval, cacheIdentifier: "saved-posts")
     }
 }

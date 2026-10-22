@@ -9,8 +9,9 @@ import Foundation
 
 class LikesCache: UserActivityCache {
     private var refreshInterval: TimeInterval = 60 * 60 * 24 //24 hours
+    static let shared = LikesCache()
     
-    init() {
+    private init() {
         super.init(refreshInterval: refreshInterval, cacheIdentifier: "user-likes")
     }
 }
