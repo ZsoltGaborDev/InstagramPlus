@@ -48,7 +48,8 @@ struct PostGridFeedView: View {
         viewModel: PostGridViewModel(
             service: SavedPostsGridService(),
             likePostService: MockLikePostService(),
-            savePostsService: MockSavedPostsService()
+            savePostsService: MockSavedPostsService(),
+            userService: MockUserService()
         )
     )
 }

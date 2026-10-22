@@ -12,7 +12,8 @@ struct LikedPostsView: View {
     @State private var gridViewModel = PostGridViewModel(
         service: LikedPostsGridService(),
         likePostService: LikePostService(),
-        savePostsService: SavedPostsService()
+        savePostsService: SavedPostsService(),
+        userService: UserService()
     )
     
     var body: some View {

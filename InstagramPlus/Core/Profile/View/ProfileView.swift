@@ -17,7 +17,8 @@ struct ProfileView: View {
             wrappedValue: PostGridViewModel(
                 service: SavedPostsGridService(),
                 likePostService: LikePostService(),
-                savePostsService: SavedPostsService()
+                savePostsService: SavedPostsService(),
+                userService: UserService()
             )
         )
     }

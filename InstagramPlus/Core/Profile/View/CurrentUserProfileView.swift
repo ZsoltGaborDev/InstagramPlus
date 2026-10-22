@@ -18,7 +18,8 @@ struct CurrentUserProfileView: View {
     @State private var gridViewModel = PostGridViewModel(
         service: ProfilePostGridService(),
         likePostService: LikePostService(),
-        savePostsService: SavedPostsService()
+        savePostsService: SavedPostsService(),
+        userService: UserService()
     )
     
     var body: some View {

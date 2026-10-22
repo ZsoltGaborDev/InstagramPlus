@@ -106,7 +106,8 @@ private extension PostGridView {
         viewModel: PostGridViewModel(
             service: ProfilePostGridService(user: MockData.users[0]),
             likePostService: MockLikePostService(),
-            savePostsService: MockSavedPostsService()
+            savePostsService: MockSavedPostsService(),
+            userService: MockUserService()
         ), configuration: .profile
     )
 }
