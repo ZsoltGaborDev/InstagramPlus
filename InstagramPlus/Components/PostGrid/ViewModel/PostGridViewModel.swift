@@ -22,7 +22,8 @@ class PostGridViewModel {
     
     func fetchPosts() async  {
         do {
-            self.posts = try await service.fetchPost()
+            let result = try await service.fetchPost()
+            posts.append(contentsOf: result)
             loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             print("DEBUG: Failed fetching posts with error: \(error) ")

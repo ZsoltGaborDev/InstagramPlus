@@ -9,10 +9,14 @@ import Foundation
 import FirebaseAuth
 import Firebase
 
-struct SavedPostsGridService: PostGridServiceProtocol {
+class SavedPostsGridService: PostGridServiceProtocol {
+    private let fetchLimit = 21
+    private var shouldLoadMoreData = true
+    private var lastDoc: QueryDocumentSnapshot?
     
     func fetchPost() async throws -> [Post] {
         let savedPostsIDs = try await fetchPostIDs()
+        if savedPostsIDs.isEmpty { return [] }
         
         var result = [Post]()
         
@@ -32,12 +36,22 @@ struct SavedPostsGridService: PostGridServiceProtocol {
     }
     
     private func fetchPostIDs() async throws -> [String] {
-        guard let uid = Auth.auth().currentUser?.uid else { return [] }
+        guard let uid = Auth.auth().currentUser?.uid, shouldLoadMoreData else { return [] }
+        let query = FirebaseConstant.UserSavedPostCollection(uid: uid)
+        let snapshot: QuerySnapshot
         
-        let snapshot = try await FirebaseConstant
-            .UserSavedPostCollection(uid: uid)
-            .getDocuments()
+        if let lastDoc {
+            // pagination
+            snapshot = try await query.start(afterDocument: lastDoc).getDocuments()
+            
+        } else {
+            // first pull
+            snapshot = try await query.getDocuments()
+            lastDoc = snapshot.documents.last
+        }
         
-        return snapshot.documents.map { $0.documentID }
+        let result = snapshot.documents.map { $0.documentID }
+        shouldLoadMoreData = result.count == fetchLimit
+        return result
     }
 }

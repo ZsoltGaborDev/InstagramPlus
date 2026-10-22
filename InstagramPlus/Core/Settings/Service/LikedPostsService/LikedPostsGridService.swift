@@ -10,10 +10,14 @@ import Foundation
 import FirebaseAuth
 import Firebase
 
-struct LikedPostsGridService: PostGridServiceProtocol {
+class LikedPostsGridService: PostGridServiceProtocol {
+    private let fetchLimit = 21
+    private var shouldLoadMoreData = true
+    private var lastDoc: QueryDocumentSnapshot?
     
     func fetchPost() async throws -> [Post] {
         let likedPostsIDs = try await fetchPostIDs()
+        if likedPostsIDs.isEmpty { return [] }
         
         var result = [Post]()
         
@@ -35,10 +39,21 @@ struct LikedPostsGridService: PostGridServiceProtocol {
     private func fetchPostIDs() async throws -> [String] {
         guard let uid = Auth.auth().currentUser?.uid else { return [] }
         
-        let snapshot = try await FirebaseConstant
-            .UserLikesCollection(uid: uid)
-            .getDocuments()
+        let query = FirebaseConstant.UserLikesCollection(uid: uid)
+        let snapshot: QuerySnapshot
         
-        return snapshot.documents.map { $0.documentID }
+        if let lastDoc {
+            // pagination
+            snapshot = try await query.start(afterDocument: lastDoc).getDocuments()
+            
+        } else {
+            // first pull
+            snapshot = try await query.getDocuments()
+            lastDoc = snapshot.documents.last
+        }
+        
+        let result = snapshot.documents.map { $0.documentID }
+        shouldLoadMoreData = result.count == fetchLimit
+        return result
     }
 }

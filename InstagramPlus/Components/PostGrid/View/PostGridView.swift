@@ -38,14 +38,26 @@ struct PostGridView: View {
                 Text("Failed to load posts..")
             case .loading:
                 ProgressView()
-                    .containerRelativeFrame(.vertical)
+                    .frame(height: 400)
             case .complete:
                 LazyVGrid(columns: gridItems, spacing: 1) {
                     ForEach(viewModel.posts, id: \.id) { post in
                         PostGridCellView(post: post)
+                            .onAppear {
+                                loadMorePosts(post)
+                            }
                     }
                 }
             }
+        }
+    }
+}
+
+private extension PostGridView {
+    func loadMorePosts(_ lastPost: Post) {
+        Task {
+            guard lastPost == viewModel.posts.last else {return}
+            await viewModel.fetchPosts()
         }
     }
 }
