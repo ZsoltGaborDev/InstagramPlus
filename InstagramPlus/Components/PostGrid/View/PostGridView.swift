@@ -49,7 +49,7 @@ struct PostGridView: View {
                     }
                 }
                 .fullScreenCover(item: $selectedPost) { post in
-                    PostGridFeedView(viewModel: viewModel)
+                    PostGridFeedView(selectedPost: post, viewModel: viewModel)
                 }
             }
         }

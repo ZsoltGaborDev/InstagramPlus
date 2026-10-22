@@ -10,6 +10,12 @@ import SwiftUI
 struct PostGridFeedView: View {
     @Environment(\.dismiss) private var dismiss
     @State var viewModel: PostGridViewModel
+    @State private var scrollPosition: String?
+    
+    init(selectedPost: Post, viewModel: PostGridViewModel) {
+        _scrollPosition = State(initialValue: selectedPost.id)
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         NavigationStack {
@@ -17,9 +23,12 @@ struct PostGridFeedView: View {
                 LazyVStack(spacing: 32) {
                     ForEach(viewModel.posts) { post in
                         FeedCell(post: post, viewModel: viewModel)
+                            .id(post.id)
                     }
                 }
+                .scrollTargetLayout()
             }
+            .scrollPosition(id: $scrollPosition, anchor: .top)
             .navigationTitle("Posts")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -35,6 +44,7 @@ struct PostGridFeedView: View {
 
 #Preview {
     PostGridFeedView(
+        selectedPost: MockData.posts[0],
         viewModel: PostGridViewModel(
             service: SavedPostsGridService(),
             likePostService: MockLikePostService(),
