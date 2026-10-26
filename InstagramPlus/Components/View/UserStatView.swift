@@ -21,6 +21,7 @@ struct UserStatView: View {
                 .font(.footnote)
         }
         .opacity(value == 0 ? 0.5 : 1.0)
+        .foregroundStyle(.primaryText)
         .frame(width: 76)
     }
 }

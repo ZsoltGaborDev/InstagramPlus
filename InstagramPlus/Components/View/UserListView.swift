@@ -34,7 +34,7 @@ struct UserListView: View {
                                 }
                             }
                             .font(.footnote)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primaryText)
                             
                             Spacer()
                         }

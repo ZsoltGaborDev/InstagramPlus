@@ -48,7 +48,7 @@ struct MainTabView: View {
                     Image(systemName: "person")
                 }.tag(4)
         }
-        .accentColor(.black)
+        .accentColor(Color(.primaryText))
     }
 }
 

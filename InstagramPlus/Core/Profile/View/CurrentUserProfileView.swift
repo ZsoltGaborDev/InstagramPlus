@@ -31,6 +31,13 @@ struct CurrentUserProfileView: View {
                     PostGridView(viewModel: gridViewModel, configuration: .profile)
                 }
             }
+            .refreshable {
+                await userManager.fetchCurrentUser()
+                await userManager.fetchUserStats()
+            }
+            .task {
+                await userManager.fetchUserStats()
+            }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

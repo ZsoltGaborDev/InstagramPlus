@@ -32,6 +32,7 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                         Text(user.username)
                             .font(.footnote)
                             .fontWeight(.semibold)
+                            .foregroundStyle(.primaryText)
                     }
                 }
                 
@@ -41,6 +42,7 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                     showPostOptionsMenu.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
+                        .foregroundStyle(.primaryText)
                 }
             }
             .padding(.horizontal, 8)
@@ -59,7 +61,7 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                 } label: {
                     Image(systemName: post.didLike ? "heart.fill" : "heart")
                         .imageScale(.large)
-                        .foregroundColor(post.didLike ? .red : .black)
+                        .foregroundColor(post.didLike ? .red : .primaryText)
                 }
                 
                 Button {
@@ -67,7 +69,6 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                 } label: {
                     Image(systemName: "bubble.right")
                         .imageScale(.large)
-                        .foregroundColor(.black)
                 }
                 
                 Button {
@@ -75,7 +76,6 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                 } label: {
                     Image(systemName: "paperplane")
                         .imageScale(.large)
-                        .foregroundColor(.black)
                 }
 
                 Spacer()
@@ -85,11 +85,11 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
                 } label: {
                     Image(systemName: post.didSave ? "bookmark.fill" : "bookmark")
                         .imageScale(.large)
-                        .foregroundColor(.black)
                 }
             }
             .padding(.horizontal, 8)
             .padding(.top, 4)
+            .foregroundStyle(.primaryText)
             
             //likes label
             if likes > 0 {

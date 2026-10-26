@@ -24,4 +24,14 @@ class UserManager {
             print ("DEBUG: Error fetching current user: \(error.localizedDescription)")
         }
     }
+    
+    func fetchUserStats() async {
+        guard let uid = currentUser?.id, currentUser?.stats == nil else { return }
+        
+        do {
+            self.currentUser?.stats = try await UserService.fetchUserStats(uid: uid)
+        } catch {   
+            print("DEBUG: Failed fetcing user stats")
+        }
+    }
 }

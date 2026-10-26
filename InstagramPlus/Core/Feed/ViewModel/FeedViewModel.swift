@@ -15,7 +15,7 @@ class FeedViewModel: FeedViewModelProtocol {
     var loadingState: ContentLoadingState = .loading
     
     private let feedService: FeedServiceProtocol
-    private let userService: UserServiceProtocol
+    private(set) var userService: UserServiceProtocol
     private(set) var likePostService: LikePostServiceProtocol
     private(set) var savePostsService: SavedPostsServiceProtocol
     
@@ -55,25 +55,5 @@ class FeedViewModel: FeedViewModelProtocol {
         } catch {
             print("DEBUG: Failed to refresh posts with error: \(error)")
         }
-    }
-    
-    private func fetchPostUserData(posts: [Post]) async throws -> [Post] {
-        var result = posts
-        
-        try await withThrowingTaskGroup(of: (Int, User).self) { [weak self] group in
-            guard let self else {return}
-            for (index, post) in posts.enumerated() {
-                group.addTask {
-                    let user = try await self.userService.fetchUser(withUid: post.ownerUid)
-                    return (index, user)
-                }
-            }
-            
-            for try await (index, user) in group {
-                result[index].user = user
-            }
-        }
-        
-        return result
     }
 }

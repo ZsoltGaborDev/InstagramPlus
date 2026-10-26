@@ -28,6 +28,11 @@ struct PostGridFeedView: View {
                 }
                 .scrollTargetLayout()
             }
+            .navigationDestination(for: FeedRouter.self) { route in
+                if case .profile(let user) = route {
+                    ProfileView(user: user)
+                }
+            }
             .scrollPosition(id: $scrollPosition, anchor: .top)
             .navigationTitle("Posts")
             .navigationBarTitleDisplayMode(.inline)
@@ -35,6 +40,7 @@ struct PostGridFeedView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
+                            .foregroundStyle(.primaryText)
                     }
                 }
             }

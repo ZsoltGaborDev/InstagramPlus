@@ -12,6 +12,7 @@ protocol FeedViewModelProtocol: AnyObject, Observable {
     var posts: [Post] { get set }
     var likePostService: LikePostServiceProtocol { get }
     var savePostsService: SavedPostsServiceProtocol { get }
+    var userService: UserServiceProtocol { get }
     
     func like(_ post: Post) async
     func unlike(_ post: Post) async
@@ -103,5 +104,27 @@ extension FeedViewModelProtocol {
         } catch {
             print("DEBUG: Failed check if user saved the post with error \(error)")
         }
+    }
+}
+
+extension FeedViewModelProtocol {
+    func fetchPostUserData(posts: [Post]) async throws -> [Post] {
+        var result = posts
+        
+        try await withThrowingTaskGroup(of: (Int, User).self) { [weak self] group in
+            guard let self else {return}
+            for (index, post) in posts.enumerated() {
+                group.addTask {
+                    let user = try await self.userService.fetchUser(withUid: post.ownerUid)
+                    return (index, user)
+                }
+            }
+            
+            for try await (index, user) in group {
+                result[index].user = user
+            }
+        }
+        
+        return result
     }
 }
