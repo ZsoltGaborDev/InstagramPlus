@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct ProfileHeaderView: View {
-    @State var viewModel: ProfileViewModel
     @State private var isEditing: Bool = false
     
-    private var user: User {
-        return viewModel.user
+    private var user: User
+    private var actionHandler: (() -> Void)
+    
+    init(user: User, actionHandler: @escaping (() -> Void)) {
+        self.user = user
+        self.actionHandler = actionHandler
     }
     
     private var isFollowed: Bool {
@@ -47,10 +50,6 @@ struct ProfileHeaderView: View {
     
     private var stats: UserStats {
         return user.stats ?? .init(followingCount: 0, followersCount: 0, postsCount: 0)
-    }
-    
-    init(user: User) {
-        self.viewModel = ProfileViewModel(user: user)
     }
     
     var body: some View {
@@ -93,11 +92,7 @@ struct ProfileHeaderView: View {
             
             //action button
             Button {
-                if user.isCurrentUser {
-                    isEditing.toggle()
-                } else {
-                    handleFollowTapped()
-                }
+                actionHandler()
             } label: {
                 Text(buttonTitle)
                     .font(.subheadline)
@@ -112,10 +107,6 @@ struct ProfileHeaderView: View {
             }
             Divider()
         }
-        .onAppear {
-            viewModel.checkIfUserIsFollowed()
-            viewModel.fetchUserStats()
-        }
         .navigationDestination(for: UserListConfig.self, destination: { config in
             UserListView(config: config)
         })
@@ -123,14 +114,10 @@ struct ProfileHeaderView: View {
             EditProfileView(user: user)
         }
     }
-    
-    func handleFollowTapped() {
-        isFollowed ?
-        viewModel.unfollow() :
-        viewModel.follow()
-    }
 }
 
+
+
 #Preview {
-    ProfileHeaderView(user: MockData.users[0])
+    ProfileHeaderView(user: MockData.users[0], actionHandler: {})
 }

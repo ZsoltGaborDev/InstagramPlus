@@ -34,16 +34,21 @@ extension ProfileViewModel {
         }
     }
     
-    func checkIfUserIsFollowed() {
-        Task {
+    func checkIfUserIsFollowed() async {
+        do {
             self.user.isFollowed = try await UserService.checkIfUserIsFollowed(uid: user.id)
+        } catch {
+            print("DEBUG: Failed check user followed value with error: \(error)")
         }
     }
     
-    func fetchUserStats() {
+    func fetchUserStats() async {
         guard user.stats == nil else { return }
-        Task {
+        
+        do {
             self.user.stats = try await UserService.fetchUserStats(uid: user.id)
+        } catch {
+            print("DEBUG: Failed to fetch user stats with error: \(error)")
         }
     }
 }

@@ -10,9 +10,11 @@ import SwiftUI
 struct ProfileView: View {
     let user: User
     @State private var gridViewModel: PostGridViewModel
+    @State private var profileViewModel: ProfileViewModel
     
     init(user: User) {
         self.user = user
+        _profileViewModel = State(wrappedValue: ProfileViewModel(user: user))
         _gridViewModel = State(
             wrappedValue: PostGridViewModel(
                 service: SavedPostsGridService(),
@@ -25,11 +27,28 @@ struct ProfileView: View {
     
     var body: some View {
         ScrollView {
-            ProfileHeaderView(user: user)
+            //header
+            ProfileHeaderView(user: profileViewModel.user, actionHandler: handleFollowTapped)
+            // post grid view
             PostGridView(viewModel: gridViewModel, configuration: .profile)
+        }
+        .task {
+            await profileViewModel.checkIfUserIsFollowed()
+        }
+        .task {
+            await profileViewModel.fetchUserStats()
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private extension ProfileView {
+    func handleFollowTapped() {
+        guard let isFollowed = profileViewModel.user.isFollowed else { return }
+        isFollowed ?
+        profileViewModel.unfollow() :
+        profileViewModel.follow()
     }
 }
 

@@ -29,9 +29,12 @@ class UserManager {
         guard let uid = currentUser?.id, currentUser?.stats == nil else { return }
         
         do {
-            self.currentUser?.stats = try await UserService.fetchUserStats(uid: uid)
-        } catch {   
-            print("DEBUG: Failed fetcing user stats")
+            let stats = try await UserService.fetchUserStats(uid: uid)
+            guard currentUser?.id == uid else { return }
+            self.currentUser?.stats = stats
+        } catch {
+            let fetchError = error as NSError
+            print("DEBUG: Failed fetching user stats for \(uid): \(fetchError.domain) (\(fetchError.code)): \(fetchError.localizedDescription)")
         }
     }
 }
