@@ -30,7 +30,12 @@ struct ProfileView: View {
             //header
             ProfileHeaderView(user: profileViewModel.user, actionHandler: handleFollowTapped)
             // post grid view
-            PostGridView(viewModel: gridViewModel, configuration: .profile)
+            if user.isPrivate {
+                IGContentUnavailableView("This account is private.", systemImage: "lock.circle", description: "Request to follow this account to see their content")
+                    .frame(height: 400)
+            } else {
+                PostGridView(viewModel: gridViewModel, configuration: .profile)
+            }
         }
         .task {
             await profileViewModel.checkIfUserIsFollowed()

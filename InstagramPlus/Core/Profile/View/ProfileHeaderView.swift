@@ -32,20 +32,20 @@ struct ProfileHeaderView: View {
     
     private var backgroundColor: Color {
         user.isCurrentUser || isFollowed ?
-            .white :
-            .black
+            .secondaryBackground :
+            .primaryBackground
     }
     
     private var foregroundColor: Color {
         user.isCurrentUser || isFollowed ?
-            .black :
-            .white
+            .primaryBackground :
+            .secondaryBackground
     }
     
     private var buttonBorderColor: Color {
         user.isCurrentUser || isFollowed ?
             .gray :
-            .clear
+            .secondaryBackground
     }
     
     private var stats: UserStats {

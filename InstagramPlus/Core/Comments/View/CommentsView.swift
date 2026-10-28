@@ -35,7 +35,7 @@ struct CommentsView: View {
             ScrollView {
                 switch viewModel.loadingState {
                 case .empty:
-                    EmptyStateView("No comment yet.", systemImage: "bubble.circle", description: "Be the first to comment and add yours below")
+                    IGContentUnavailableView("No comment yet.", systemImage: "bubble.circle", description: "Be the first to comment and add yours below")
                         .frame(height: 400)
                 case .error:
                     Text("An error occured")

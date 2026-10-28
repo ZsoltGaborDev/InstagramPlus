@@ -33,7 +33,7 @@ struct PostGridView: View {
         Group {
             switch viewModel.loadingState {
             case .empty:
-                EmptyStateView(emptyStateTitle, systemImage: emptyStateImageName, description: emptyStateDescription)
+                IGContentUnavailableView(emptyStateTitle, systemImage: emptyStateImageName, description: emptyStateDescription)
                     .frame(height: 400)
             case .error:
                 Text("Failed to load posts..")

@@ -1,5 +1,5 @@
 //
-//  EmptyStateView.swift
+//  IGContentUnavailableView.swift
 //  InstagramPlus
 //
 //  Created by Zsolt Gabor on 07/10/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct EmptyStateView: View {
+struct IGContentUnavailableView: View {
     private let title: String
     private let systemImage: String
     private let description: String?
@@ -19,7 +19,7 @@ struct EmptyStateView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             Image(systemName: systemImage)
                 .resizable()
                 .frame(width: 100, height: 100)
@@ -39,7 +39,7 @@ struct EmptyStateView: View {
 }
 
 #Preview {
-    EmptyStateView(
+    IGContentUnavailableView(
         "No comments yet",
         systemImage: "bubble.circle",
         description: "Nothing to see here"
