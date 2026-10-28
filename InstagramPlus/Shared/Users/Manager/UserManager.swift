@@ -34,7 +34,17 @@ class UserManager {
             self.currentUser?.stats = stats
         } catch {
             let fetchError = error as NSError
-            print("DEBUG: Failed fetching user stats for \(uid): \(fetchError.domain) (\(fetchError.code)): \(fetchError.localizedDescription)")
+            print("DEBUG: Failed to fetch current user stats for \(uid): \(fetchError.domain) (\(fetchError.code)): \(fetchError.localizedDescription)")
+        }
+    }
+    
+    func updateAccountPrivacy(_ isPrivate: Bool) async {
+        do {
+            self.currentUser?.isPrivate = isPrivate
+            try await service.updateUserAccountPrivacy(isPrivate)
+        } catch {
+            self.currentUser?.isPrivate.toggle()
+            print("DEBUG: Failed to update user account privacy with error: \(error)")
         }
     }
 }

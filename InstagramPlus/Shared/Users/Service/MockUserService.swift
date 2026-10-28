@@ -8,6 +8,10 @@
 import Foundation
 
 class MockUserService: UserServiceProtocol {
+    func updateUserAccountPrivacy(_ isPrivate: Bool) async throws {
+        MockData.users[0].isPrivate.toggle()
+    }
+    
     func fetchUser(withUid uid: String) async throws -> User {
         return User(
             id: uid,

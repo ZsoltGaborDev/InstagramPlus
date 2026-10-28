@@ -12,11 +12,18 @@ import FirebaseAuth
 protocol UserServiceProtocol {
     func fetchCurrentUser() async throws -> User?
     func fetchUser(withUid uid: String) async throws -> User
+    func updateUserAccountPrivacy(_ isPrivate: Bool) async throws
 }
 
 class UserService: UserServiceProtocol {
-    
-    var currentUser: User?
+    func updateUserAccountPrivacy(_ isPrivate: Bool) async throws {
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        try await FirebaseConstant
+            .UsersCollection
+            .document(currentUid)
+            .updateData(["isPrivate": isPrivate])
+    }
     
     func fetchCurrentUser() async throws -> User? {
         guard let uid = Auth.auth().currentUser?.uid else { return nil }
