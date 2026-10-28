@@ -54,6 +54,12 @@ class UserActivityCache {
         guard let items = cache.object(forKey: uid as NSString) else { return false }
         return items.contains(item)
     }
+    
+    func getData() -> [String] {
+        guard let uid = Auth.auth().currentUser?.uid else { return [] }
+        guard let items = cache.object(forKey: uid as NSString) as? [String] else { return [] }
+        return items
+    }
 }
 
 private extension UserActivityCache {

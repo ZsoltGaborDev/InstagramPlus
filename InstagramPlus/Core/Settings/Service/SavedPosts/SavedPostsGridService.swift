@@ -6,16 +6,15 @@
 //
 
 import Foundation
-import FirebaseAuth
-import Firebase
 
 class SavedPostsGridService: PostGridServiceProtocol {
     private let fetchLimit = 21
     private var shouldLoadMoreData = true
-    private var lastDoc: QueryDocumentSnapshot?
+    private var indexOfLastFetchedPost = 0
+    private lazy var postIds = SavedPostsCache.shared.getData()
     
     func fetchPost() async throws -> [Post] {
-        let savedPostsIDs = try await fetchPostIDs()
+        let savedPostsIDs = fetchPostIdsFromCache()
         if savedPostsIDs.isEmpty { return [] }
         
         var result = [Post]()
@@ -35,23 +34,14 @@ class SavedPostsGridService: PostGridServiceProtocol {
         return result.sorted(by: {$0.timestamp > $1.timestamp})
     }
     
-    private func fetchPostIDs() async throws -> [String] {
-        guard let uid = Auth.auth().currentUser?.uid, shouldLoadMoreData else { return [] }
-        let query = FirebaseConstant.UserSavedPostCollection(uid: uid)
-        let snapshot: QuerySnapshot
+    private func fetchPostIdsFromCache() -> [String] {
+        guard shouldLoadMoreData else { return [] }
         
-        if let lastDoc {
-            // pagination
-            snapshot = try await query.start(afterDocument: lastDoc).getDocuments()
-            
-        } else {
-            // first pull
-            snapshot = try await query.getDocuments()
-            lastDoc = snapshot.documents.last
-        }
+        let startIndex = indexOfLastFetchedPost
+        let endIndex = min(startIndex + fetchLimit, postIds.count) // min(0 + 3 = 3, 10) = 3 the minimum between the 3 and 10
+        indexOfLastFetchedPost = endIndex
+        shouldLoadMoreData = endIndex < postIds.count
         
-        let result = snapshot.documents.map { $0.documentID }
-        shouldLoadMoreData = result.count == fetchLimit
-        return result
+        return Array(postIds[startIndex ..< endIndex])
     }
 }
