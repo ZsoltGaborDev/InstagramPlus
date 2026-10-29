@@ -67,4 +67,17 @@ extension ProfileViewModel {
             print("DEBUG: Failed to fetch user stats with error: \(error)")
         }
     }
+    
+    func sendFollowRequest() {
+        Task {
+            let prevState = user.userRelationState
+            do {
+                user.userRelationState = .requestedToFollow
+                try await followService.sendFollowRequest(to: user.id)
+            } catch {
+                user.userRelationState = prevState
+                print("DEBUG: Failed to send request with error: \(error)")
+            }
+        }
+    }
 }

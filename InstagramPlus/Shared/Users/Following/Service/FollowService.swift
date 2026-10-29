@@ -7,12 +7,13 @@
 
 import Foundation
 import FirebaseAuth
-import Firebase
+import FirebaseFirestore
 
 protocol FollowServiceProtocol {
     func follow(uid: String) async throws
     func unfollow(uid: String) async throws
     func fetchUserRelationState(uid: String) async throws -> UserRelationState
+    func sendFollowRequest(to uid: String) async throws
 }
 
 struct FollowService: FollowServiceProtocol {
@@ -72,5 +73,23 @@ struct FollowService: FollowServiceProtocol {
             .exists
         
         return isFollowed ? .followed : .notFollowed
+    }
+    
+    func sendFollowRequest(to uid: String) async throws {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        let requestRef = FirebaseConstant.FollowRequestsCollection(uid: uid).document()
+        let followRequest = FollowRequest(
+            id: requestRef.documentID,
+            toUserId: uid,
+            fromUserId: currentUid,
+            timestamp: Date()
+        )
+        let data = try Firestore.Encoder().encode(followRequest)
+        try await requestRef.setData(data)
+    }
+    
+    func removeFollowRequest (_ request: FollowRequest) async throws {
+        
     }
 }

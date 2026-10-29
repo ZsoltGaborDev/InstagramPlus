@@ -40,21 +40,21 @@ struct ProfileHeaderView: View {
     }
     
     private var backgroundColor: Color {
-        user.isCurrentUser || isFollowed ?
-            .secondaryBackground :
-            .primaryBackground
+        user.userRelationState == .notFollowed ?
+            .secondaryButtonBackground :
+            .primaryButtonBackground
     }
     
     private var foregroundColor: Color {
-        user.isCurrentUser || isFollowed ?
-            .primaryBackground :
-            .secondaryBackground
+        user.userRelationState == .notFollowed ?
+            .secondaryText :
+            .primaryText
     }
     
     private var buttonBorderColor: Color {
-        user.isCurrentUser || isFollowed ?
+        user.userRelationState == .notFollowed ?
             .gray :
-            .secondaryBackground
+            .primaryText
     }
     
     private var stats: UserStats {
