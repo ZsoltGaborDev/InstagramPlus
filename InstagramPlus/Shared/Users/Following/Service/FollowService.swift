@@ -12,7 +12,7 @@ import Firebase
 protocol FollowServiceProtocol {
     func follow(uid: String) async throws
     func unfollow(uid: String) async throws
-    func checkIfUserIsFollowed(uid: String) async throws -> Bool
+    func fetchUserRelationState(uid: String) async throws -> UserRelationState
 }
 
 struct FollowService: FollowServiceProtocol {
@@ -60,14 +60,17 @@ struct FollowService: FollowServiceProtocol {
         try await batch.commit()
     }
     
-    func checkIfUserIsFollowed(uid: String) async throws -> Bool {
-        guard let currentUid = Auth.auth().currentUser?.uid else { return false }
-        return try await FirebaseConstant
+    func fetchUserRelationState(uid: String) async throws -> UserRelationState {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return .unknown }
+        
+        let isFollowed = try await FirebaseConstant
             .FollowingCollection
             .document(currentUid)
             .collection("user-following")
             .document(uid)
             .getDocument()
             .exists
+        
+        return isFollowed ? .followed : .notFollowed
     }
 }

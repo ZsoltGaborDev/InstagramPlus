@@ -23,12 +23,13 @@ class ProfileViewModel {
 extension ProfileViewModel {
     func follow() {
         Task {
+            let prevState = user.userRelationState
             do {
-                user.isFollowed = true
+                user.userRelationState = .followed
                 try await followService.follow(uid: user.id)
                 IGNotificationsManager.shared.uploadFollowNotification(to: user.id)
             } catch {
-                user.isFollowed = false
+                user.userRelationState = prevState
                 print("DEBUG: Failed follow user")
             }
         }
@@ -36,21 +37,22 @@ extension ProfileViewModel {
     
     func unfollow() {
         Task {
+            let prevState = user.userRelationState
             do {
-                user.isFollowed = false
+                user.userRelationState = .notFollowed
                 try await followService.unfollow(uid: user.id)
                 await IGNotificationsManager.shared.deleteFollowNotification(notificationOwnerUid: user.id)
             } catch {
-                user.isFollowed = true
+                user.userRelationState = prevState
                 print("DEBUG: Failed unFollow user")
             }
         }
     }
     
     func checkIfUserIsFollowed() async {
-        guard user.isFollowed == nil else { return }
+        guard user.userRelationState == .unknown else { return }
         do {
-            self.user.isFollowed = try await followService.checkIfUserIsFollowed(uid: user.id)
+            self.user.userRelationState = try await followService.fetchUserRelationState(uid: user.id)
         } catch {
             print("DEBUG: Failed check user followed value with error: \(error)")
         }

@@ -55,10 +55,11 @@ struct ProfileView: View {
 
 private extension ProfileView {
     func handleFollowTapped() {
-        guard let isFollowed = profileViewModel.user.isFollowed else { return }
-        isFollowed ?
-        profileViewModel.unfollow() :
-        profileViewModel.follow()
+        if profileViewModel.user.userRelationState == .followed {
+            profileViewModel.unfollow()
+        } else if profileViewModel.user.userRelationState == .notFollowed {
+            profileViewModel.follow()
+        }
     }
 }
 

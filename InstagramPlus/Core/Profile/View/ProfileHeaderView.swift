@@ -19,7 +19,7 @@ struct ProfileHeaderView: View {
     }
     
     private var isFollowed: Bool {
-        return user.isFollowed ?? false
+        return user.userRelationState == .followed
     }
     
     private var buttonTitle: String {
