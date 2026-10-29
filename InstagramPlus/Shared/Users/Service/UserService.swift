@@ -42,10 +42,9 @@ class UserService: UserServiceProtocol {
     }
     
     static func fetchAllUsers() async throws -> [User] {
-        let snapshot = try await FirebaseConstant
+        return try await FirebaseConstant
             .UsersCollection
-            .getDocuments()
-        return snapshot.documents.compactMap({ try? $0.data(as: User.self) })
+            .getDocuments(as: User.self)
     }
     
     static func fetchUsers(withConfig config: UserListConfig) async throws -> [User] {

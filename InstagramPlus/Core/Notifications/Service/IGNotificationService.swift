@@ -15,12 +15,10 @@ class IGNotificationService {
     func fetchNotifications() async throws -> [IGNotification] {
         guard let currentUid = Auth.auth().currentUser?.uid else { return [] }
         
-        let snapshot = try await FirebaseConstant
+        return try await FirebaseConstant
             .UserNotificationCollection(uid: currentUid)
             .order(by: "timestamp", descending: true)
-            .getDocuments()
-        
-        return snapshot.documents.compactMap({ try? $0.data(as: IGNotification.self) })
+            .getDocuments(as: IGNotification.self)
     }
     
     func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post? = nil) {
@@ -38,12 +36,10 @@ class IGNotificationService {
     func deleteNotification(toUid uid: String, type: IGNotificationType, post: Post? = nil) async throws {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        let snapshot = try await FirebaseConstant
+        let notifications = try await FirebaseConstant
             .UserNotificationCollection(uid: uid)
             .whereField("notificationSenderUid", isEqualTo: currentUid)
-            .getDocuments()
-        
-        let notifications = snapshot.documents.compactMap({ try? $0.data(as: IGNotification.self) })
+            .getDocuments(as: IGNotification.self)
         
         let filteredByType = notifications.filter({ $0.type == type }) // gets all notifications by type
         
