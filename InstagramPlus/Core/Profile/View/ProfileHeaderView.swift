@@ -23,10 +23,19 @@ struct ProfileHeaderView: View {
     }
     
     private var buttonTitle: String {
-        if user.isCurrentUser {
-            return "Edit Profile"
-        } else {
-            return isFollowed ? "Unfollow" : "Follow"
+        switch user.userRelationState {
+        case .unknown:
+            "Loading"
+        case .isCurrentUser:
+            "Edit Profile"
+        case .notFollowed:
+            "Follow"
+        case .followed:
+            "Following"
+        case .requestedToFollow:
+            "Requested"
+        case .blocked:
+            "Blocked"
         }
     }
     
@@ -105,6 +114,8 @@ struct ProfileHeaderView: View {
                         RoundedRectangle(cornerRadius: 6).stroke(buttonBorderColor, lineWidth: 1)
                     )
             }
+            .disabled(user.userRelationState == .unknown)
+            
             Divider()
         }
         .navigationDestination(for: UserListConfig.self, destination: { config in

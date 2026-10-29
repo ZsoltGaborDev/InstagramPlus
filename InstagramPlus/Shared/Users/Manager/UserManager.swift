@@ -20,6 +20,7 @@ class UserManager {
     func fetchCurrentUser() async {
         do {
             self.currentUser = try await service.fetchCurrentUser()
+            self.currentUser?.userRelationState = .isCurrentUser
         } catch {
             print ("DEBUG: Error fetching current user: \(error.localizedDescription)")
         }
