@@ -11,32 +11,46 @@ import Foundation
 class ProfileViewModel {
 
     var user: User
+    private let followService: FollowServiceProtocol
     
-    init(user: User) {
+    init(user: User, followService: FollowServiceProtocol) {
         self.user = user
+        self.followService = followService
     }
 }
 
 //MARK: - Following
 extension ProfileViewModel {
     func follow() {
-        Task { try await UserService.follow(uid: user.id) }
-        user.isFollowed = true
-        
-        IGNotificationsManager.shared.uploadFollowNotification(to: user.id)
+        Task {
+            do {
+                user.isFollowed = true
+                try await followService.follow(uid: user.id)
+                IGNotificationsManager.shared.uploadFollowNotification(to: user.id)
+            } catch {
+                user.isFollowed = false
+                print("DEBUG: Failed follow user")
+            }
+        }
     }
     
     func unfollow() {
-        Task { try await UserService.unfollow(uid: user.id)
-            user.isFollowed = false
-        
-            await IGNotificationsManager.shared.deleteFollowNotification(notificationOwnerUid: user.id)
+        Task {
+            do {
+                user.isFollowed = false
+                try await followService.unfollow(uid: user.id)
+                await IGNotificationsManager.shared.deleteFollowNotification(notificationOwnerUid: user.id)
+            } catch {
+                user.isFollowed = true
+                print("DEBUG: Failed unFollow user")
+            }
         }
     }
     
     func checkIfUserIsFollowed() async {
+        guard user.isFollowed == nil else { return }
         do {
-            self.user.isFollowed = try await UserService.checkIfUserIsFollowed(uid: user.id)
+            self.user.isFollowed = try await followService.checkIfUserIsFollowed(uid: user.id)
         } catch {
             print("DEBUG: Failed check user followed value with error: \(error)")
         }

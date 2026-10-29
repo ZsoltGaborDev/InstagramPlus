@@ -14,10 +14,15 @@ struct ProfileView: View {
     
     init(user: User) {
         self.user = user
-        _profileViewModel = State(wrappedValue: ProfileViewModel(user: user))
+        _profileViewModel = State(
+            wrappedValue: ProfileViewModel(
+                user: user,
+                followService: FollowService()
+            )
+        )
         _gridViewModel = State(
             wrappedValue: PostGridViewModel(
-                service: SavedPostsGridService(),
+                service: ProfilePostGridService(user: user),
                 likePostService: LikePostService(),
                 savePostsService: SavedPostsService(),
                 userService: UserService()
