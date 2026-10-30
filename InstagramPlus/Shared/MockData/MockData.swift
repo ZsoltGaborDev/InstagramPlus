@@ -60,4 +60,8 @@ struct MockData {
         .init(id: UUID().uuidString, commentOwnerUid: users[5].id, text: "Instant favorite.", postId: posts[11].id, postOwnerUid: posts[11].ownerUid, timestamp: Date(), user: users[5]),
         .init(id: UUID().uuidString, commentOwnerUid: users[0].id, text: "This belongs in a frame.", postId: posts[12].id, postOwnerUid: posts[12].ownerUid, timestamp: Date(), user: users[0])
     ]
+    
+    static var followRequests: [FollowRequest] = [
+        .init(id: UUID().uuidString, toUserId: users[0].id, fromUserId: users[1].id, timestamp: Date(), user: users[0])
+    ]
 }
