@@ -43,7 +43,7 @@ struct ProfileView: View {
             }
         }
         .task {
-            await profileViewModel.checkIfUserIsFollowed()
+            await profileViewModel.fetchUserRelationState()
         }
         .task {
             await profileViewModel.fetchUserStats()

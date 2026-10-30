@@ -70,9 +70,17 @@ struct FollowService: FollowServiceProtocol {
             .collection("user-following")
             .document(uid)
             .getDocument()
-            .exists
         
-        return isFollowed ? .followed : .notFollowed
+        if isFollowed.exists { return .followed }
+        
+        let pendingRequest =  try await FirebaseConstant.FollowRequestsCollection(uid: uid)
+            .whereField("fromUserId", isEqualTo: currentUid)
+            .limit(to: 1)
+            .getDocuments(as:  FollowRequest.self)
+        
+        if !pendingRequest.isEmpty { return .requestedToFollow}
+    
+        return .notFollowed
     }
     
     func sendFollowRequest(to uid: String) async throws {

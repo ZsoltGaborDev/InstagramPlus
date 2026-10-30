@@ -49,7 +49,7 @@ extension ProfileViewModel {
         }
     }
     
-    func checkIfUserIsFollowed() async {
+    func fetchUserRelationState() async {
         guard user.userRelationState == .unknown else { return }
         do {
             self.user.userRelationState = try await followService.fetchUserRelationState(uid: user.id)
