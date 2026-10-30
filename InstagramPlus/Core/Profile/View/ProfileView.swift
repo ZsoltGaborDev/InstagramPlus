@@ -65,7 +65,7 @@ private extension ProfileView {
         case .followed:
             profileViewModel.unfollow()
         case .requestedToFollow:
-            print("DEBUG: Remove follow request")
+            profileViewModel.removeFollowRequest()
         case .blocked:
             print("DEBUG: Unblock user..")
         default:

@@ -76,7 +76,20 @@ extension ProfileViewModel {
                 try await followService.sendFollowRequest(to: user.id)
             } catch {
                 user.userRelationState = prevState
-                print("DEBUG: Failed to send request with error: \(error)")
+                print("DEBUG: Failed to send follow request with error: \(error)")
+            }
+        }
+    }
+    
+    func removeFollowRequest() {
+        Task {
+            let prevState = user.userRelationState
+            do {
+                user.userRelationState = .notFollowed
+                try await followService.removeFollowRequest(to: user.id)
+            } catch {
+                user.userRelationState = prevState
+                print("DEBUG: Failed to remove follow request with error: \(error)")
             }
         }
     }

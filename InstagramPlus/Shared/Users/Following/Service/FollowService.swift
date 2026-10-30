@@ -14,9 +14,12 @@ protocol FollowServiceProtocol {
     func unfollow(uid: String) async throws
     func fetchUserRelationState(uid: String) async throws -> UserRelationState
     func sendFollowRequest(to uid: String) async throws
+    func removeFollowRequest (to uid: String) async throws
 }
 
-struct FollowService: FollowServiceProtocol {
+class FollowService: FollowServiceProtocol {
+    private var pendingFollowRequest: FollowRequest?
+    
     func follow(uid: String) async throws {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         let batch = Firestore.firestore().batch()
@@ -73,12 +76,15 @@ struct FollowService: FollowServiceProtocol {
         
         if isFollowed.exists { return .followed }
         
-        let pendingRequest =  try await FirebaseConstant.FollowRequestsCollection(uid: uid)
+        let pendingRequests =  try await FirebaseConstant.FollowRequestsCollection(uid: uid)
             .whereField("fromUserId", isEqualTo: currentUid)
             .limit(to: 1)
             .getDocuments(as:  FollowRequest.self)
         
-        if !pendingRequest.isEmpty { return .requestedToFollow}
+        if !pendingRequests.isEmpty {
+            self.pendingFollowRequest = pendingRequests.first
+            return .requestedToFollow
+        }
     
         return .notFollowed
     }
@@ -97,7 +103,12 @@ struct FollowService: FollowServiceProtocol {
         try await requestRef.setData(data)
     }
     
-    func removeFollowRequest (_ request: FollowRequest) async throws {
+    func removeFollowRequest (to uid: String) async throws {
+        guard let pendingFollowRequest else { return }
         
+        try await FirebaseConstant
+            .FollowRequestsCollection(uid: uid)
+            .document(pendingFollowRequest.id)
+            .delete()
     }
 }
