@@ -62,22 +62,16 @@ private extension UserListService {
     
     func fetchFollowers(uid: String) async throws -> [User] {
         let query = FirebaseConstant
-            .FollowersCollection
-            .document(uid)
-            .collection("user-followers")
+            .UserFollowerCollection(uid: uid)
             .limit(to: fetchLimit)
-        
         return try await fetchUsers(withQuery: query)
         
     }
     
     func fetchFollowing(uid: String) async throws -> [User] {
         let query = FirebaseConstant
-            .FollowingCollection
-            .document(uid)
-            .collection("user-following")
+            .UserFollowingCollection(uid: uid)
             .limit(to: fetchLimit)
-        
         return try await fetchUsers(withQuery: query)
     }
     
