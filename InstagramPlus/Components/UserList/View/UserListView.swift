@@ -33,7 +33,7 @@ struct UserListView: View {
                     .containerRelativeFrame(.vertical)
             case .complete:
                 LazyVStack(spacing: 12) {
-                    ForEach(viewModel.users) { user in
+                    ForEach(filteredUsers) { user in
                         NavigationLink(value: user) {
                             UserCell(user: user)
                         }
@@ -64,6 +64,16 @@ struct UserListView: View {
 }
 
 private extension UserListView {
+    var filteredUsers: [User] {
+        let query  = searchText.lowercased()
+        
+        if searchText.isEmpty {
+            return viewModel.users
+        } else {
+            return viewModel.users.filter { $0.username.lowercased().contains(query) }
+        }
+    }
+    
     func loadMoreDataIfNecessary(_ activeScrollId: String?) {
         guard activeScrollId == viewModel.users.last?.id else { return }
         
