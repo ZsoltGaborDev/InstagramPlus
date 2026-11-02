@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FollowRequestCell: View {
+    @Environment(FollowRequestViewModel.self) private var viewModel
     let request: FollowRequest
     
     var body: some View {
@@ -19,6 +20,7 @@ struct FollowRequestCell: View {
                     if let user = request.user {
                         Text(user.username)
                             .fontWeight(.semibold)
+                            .foregroundStyle(.primaryText)
                         if let fullname = user.fullname {
                             Text(fullname)
                                 .foregroundStyle(.gray)
@@ -32,7 +34,7 @@ struct FollowRequestCell: View {
             
             HStack {
                 Button {
-                    print("DEBUG: Accept follow request tapped..")
+                    Task { await viewModel.accept(request) }
                 } label: {
                     Text("Accept")
                         .font(.subheadline)
@@ -44,7 +46,7 @@ struct FollowRequestCell: View {
                 }
                 
                 Button {
-                    print("DEBUG: Reject follow request tapped..")
+                    Task { await viewModel.reject(request) }
                 } label: {
                     Text("Reject")
                         .font(.subheadline)

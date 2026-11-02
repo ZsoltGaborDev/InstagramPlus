@@ -8,14 +8,28 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @State var viewModel = IGNotificationsViewModel(
-        service: IGNotificationService(),
-        userService: UserService()
-    )
+    @Environment(UserManager.self) private var userManager
+    @State private var viewModel: IGNotificationsViewModel
+    @State private var followRequestViewModel: FollowRequestViewModel
+    
+    init() {
+        let userService = UserService()
+        
+        _viewModel = State(wrappedValue: IGNotificationsViewModel(
+            service: IGNotificationService(),
+            userService: userService))
+        
+        _followRequestViewModel = State(wrappedValue: FollowRequestViewModel(followRequestService: FollowRequestService(), userService: userService))
+    }
     
     var body: some View {
         NavigationStack {
             ScrollView {
+                if isPrivateProfile {
+                    FollowrequestNotificationCell()
+                        .environment(followRequestViewModel)
+                }
+                
                 LazyVStack(spacing: 20) {
                     ForEach(viewModel.notifications) { notification in
                         NotificationsCell(notification: notification)
@@ -23,18 +37,33 @@ struct NotificationsView: View {
                     }
                 }
             }
-            .refreshable {
-                Task { await viewModel.fetchNotifications() }
+            .task {
+                await fetchFollowReqests()
             }
-            .navigationDestination(for: Post.self, destination: { post in
-                // TODO: FeedCell(post: post)
-            })
+            .refreshable {
+                await viewModel.fetchNotifications()
+            }
+//            .navigationDestination(for: Post.self, destination: { post in
+//                FeedCell(post: post)
+//            })
             .navigationDestination(for: User.self, destination: { user in
                 ProfileView(user: user)
             })
             .navigationTitle("Notifications")
             .navigationBarTitleDisplayMode(.inline)
         }
+    }
+}
+
+private extension NotificationsView {
+    private var isPrivateProfile: Bool {
+        return userManager.currentUser?.isPrivate ?? false
+    }
+    
+    func fetchFollowReqests() async {
+        guard isPrivateProfile else { return }
+        
+        await followRequestViewModel.fetchRequest()
     }
 }
 
