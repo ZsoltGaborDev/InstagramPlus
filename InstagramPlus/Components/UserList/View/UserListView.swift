@@ -35,22 +35,7 @@ struct UserListView: View {
                 LazyVStack(spacing: 12) {
                     ForEach(viewModel.users) { user in
                         NavigationLink(value: user) {
-                            HStack {
-                                CircularProfileImageView(user: user, size: .xSmall)
-                                VStack(alignment: .leading) {
-                                    Text(user.username)
-                                        .fontWeight(.semibold)
-                                    
-                                    if let fullname = user.fullname {
-                                        Text(fullname)
-                                    }
-                                }
-                                .font(.footnote)
-                                .foregroundStyle(.primaryText)
-                                
-                                Spacer()
-                            }
-                            .padding(.horizontal)
+                            UserCell(user: user)
                         }
                         .id(user.id)
                     }
@@ -86,6 +71,31 @@ private extension UserListView {
             paginating = true
             await viewModel.fetchUsers(forConfig: config)
             paginating = false
+        }
+    }
+}
+
+private extension UserListView {
+    struct UserCell: View {
+        let user: User
+        
+        var body: some View {
+            HStack {
+                CircularProfileImageView(user: user, size: .xSmall)
+                VStack(alignment: .leading) {
+                    Text(user.username)
+                        .fontWeight(.semibold)
+                    
+                    if let fullname = user.fullname {
+                        Text(fullname)
+                    }
+                }
+                .font(.footnote)
+                .foregroundStyle(.primaryText)
+                
+                Spacer()
+            }
+            .padding(.horizontal)
         }
     }
 }
