@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct UserListView: View {
-    
     @State var viewModel = UserListViewModel(service: UserListService(userService: UserService()))
     @State private var searchText = ""
+    
+    @State private var activeScrollId: String?
+    @State private var paginating = false
     
     private let config: UserListConfiguration
     
@@ -50,12 +52,21 @@ struct UserListView: View {
                             }
                             .padding(.horizontal)
                         }
+                        .id(user.id)
+                    }
+                    if paginating {
+                        ProgressView()
                     }
                 }
+                .scrollTargetLayout()
                 .padding(.top, 8)
                 .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search...")
             }
         }
+        .scrollPosition(id: $activeScrollId, anchor: .bottom)
+        .onChange(of: activeScrollId, { oldValue, newValue in
+            loadMoreDataIfNecessary(newValue)
+        })
         .navigationDestination(for: User.self, destination: { user in
             ProfileView(user: user)
         })
@@ -63,6 +74,18 @@ struct UserListView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.fetchUsers(forConfig: config)
+        }
+    }
+}
+
+private extension UserListView {
+    func loadMoreDataIfNecessary(_ activeScrollId: String?) {
+        guard activeScrollId == viewModel.users.last?.id else { return }
+        
+        Task {
+            paginating = true
+            await viewModel.fetchUsers(forConfig: config)
+            paginating = false
         }
     }
 }

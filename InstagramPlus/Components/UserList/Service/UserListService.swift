@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 protocol UserListServiceProtocol {
     func fetchUsers(withConfig config: UserListConfiguration) async throws -> [User]
@@ -14,6 +15,10 @@ protocol UserListServiceProtocol {
 
 class UserListService: UserListServiceProtocol {
     private let userService: UserServiceProtocol
+    
+    private var lastDoc: QueryDocumentSnapshot?
+    private let fetchLimit = 20
+    private var shouldLoadMoreData = true
     
     init(userService: UserServiceProtocol) {
         self.userService = userService
@@ -36,45 +41,78 @@ class UserListService: UserListServiceProtocol {
 
 private extension UserListService {
     func fetchAllUsers() async throws -> [User] {
-        return try await FirebaseConstant
-            .UsersCollection
-            .getDocuments(as: User.self)
+        guard shouldLoadMoreData else { return [] }
+        guard let currentUid = Auth.auth().currentUser?.uid else { return [] }
+        let snapshot: QuerySnapshot
+        let query = FirebaseConstant.UsersCollection.limit(to: fetchLimit)
+        
+        if let lastDoc {
+            snapshot = try await query.start(afterDocument: lastDoc).getDocuments()
+            if let last = snapshot.documents.last { self.lastDoc = last }
+        } else {
+            snapshot = try await query.getDocuments()
+            lastDoc = snapshot.documents.last
+        }
+        shouldLoadMoreData = snapshot.documents.count == fetchLimit
+        
+        return snapshot.documents
+            .compactMap { try? $0.data(as: User.self) }
+            .filter { $0.id != currentUid }
     }
     
     func fetchFollowers(uid: String) async throws -> [User] {
-        let snapshot = try await FirebaseConstant
+        let query = FirebaseConstant
             .FollowersCollection
             .document(uid)
             .collection("user-followers")
-            .getDocuments() //this gives back a list of ids
+            .limit(to: fetchLimit)
         
-        return try await fetchUsers(snapshot)
+        return try await fetchUsers(withQuery: query)
         
     }
     
     func fetchFollowing(uid: String) async throws -> [User] {
-        let snapshot = try await FirebaseConstant
+        let query = FirebaseConstant
             .FollowingCollection
             .document(uid)
             .collection("user-following")
-            .getDocuments() //this gives back a list of ids
+            .limit(to: fetchLimit)
         
-        return try await fetchUsers(snapshot)
+        return try await fetchUsers(withQuery: query)
     }
     
     func fetchPostLikesUsers(postId: String) async throws -> [User] {
-        let snapshot = try await FirebaseConstant
+        let query = FirebaseConstant
             .PostLikesCollection(postId: postId)
-            .getDocuments()
-        return try await fetchUsers(snapshot)
+            .limit(to: fetchLimit)
+        return try await fetchUsers(withQuery: query)
     }
     
-    func fetchUsers(_ snapshot: QuerySnapshot) async throws -> [User] {
+    func fetchUsers(withQuery query: Query) async throws -> [User] {
+        guard let snapshots = try await paginatedSnapshot(withQuery: query) else { return [] }
         var users = [User]()
-
-        for doc in snapshot.documents {
+        
+        for doc in snapshots.documents {
             users.append(try await userService.fetchUser(withUid: doc.documentID))
         }
         return users
     }
+    
+    // returns paginated list of user ids
+    func paginatedSnapshot(withQuery query: Query) async throws -> QuerySnapshot? {
+        guard shouldLoadMoreData else { return nil }
+        let snapshot: QuerySnapshot
+        
+        if let lastDoc {
+            snapshot = try await query.start(afterDocument: lastDoc).getDocuments()
+            if let last = snapshot.documents.last { self.lastDoc = last }
+        } else {
+            snapshot = try await query.getDocuments()
+            lastDoc = snapshot.documents.last
+        }
+        
+        shouldLoadMoreData = snapshot.documents.count == fetchLimit
+        return snapshot
+    }
 }
+
