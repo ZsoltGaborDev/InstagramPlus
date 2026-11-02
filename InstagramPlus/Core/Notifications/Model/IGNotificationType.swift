@@ -11,12 +11,14 @@ enum IGNotificationType: Int, Codable {
     case like
     case comment
     case follow
+    case followRequestAccepted
     
     var notificationMessage: String {
         switch self {
         case .like: return "liked one of your posts."
         case .comment: return "commented one of your posts."
         case .follow: return "started to follow you."
+        case .followRequestAccepted: return " accepted your follow request."
         }
     }
 }

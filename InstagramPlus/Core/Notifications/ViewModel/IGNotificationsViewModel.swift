@@ -11,6 +11,7 @@ import SwiftUI
 class IGNotificationsViewModel {
     
     var notifications = [IGNotification]()
+    var loadingState: ContentLoadingState = .loading
     
     private let service: IGNotificationService
     private let userService: UserServiceProtocol
@@ -28,7 +29,9 @@ class IGNotificationsViewModel {
         do {
             self.notifications = try await service.fetchNotifications()
             try await updateNotifications()
+            loadingState = notifications.isEmpty ? .empty : .complete
         } catch {
+            loadingState = .error
             print("DEBUG: Failed to fetch notifications with error \(error.localizedDescription)")
         }
     }

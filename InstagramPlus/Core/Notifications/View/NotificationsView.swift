@@ -29,11 +29,25 @@ struct NotificationsView: View {
                     FollowrequestNotificationCell()
                         .environment(followRequestViewModel)
                 }
-                
-                LazyVStack(spacing: 20) {
-                    ForEach(viewModel.notifications) { notification in
-                        NotificationsCell(notification: notification)
-                            .padding(.top)
+                switch viewModel.loadingState {
+                case .empty:
+                    IGContentUnavailableView(
+                        "Nothing to see here",
+                        systemImage: "bell.circle",
+                        description: "Your notifications will appear here when users interact with you."
+                    )
+                    .containerRelativeFrame(.vertical)
+                case .error:
+                    Text("An error occurred..")
+                case .loading:
+                    ProgressView()
+                        .containerRelativeFrame(.vertical)
+                case .complete:
+                    LazyVStack(spacing: 20) {
+                        ForEach(viewModel.notifications) { notification in
+                            NotificationsCell(notification: notification)
+                                .padding(.top)
+                        }
                     }
                 }
             }
