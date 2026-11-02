@@ -40,6 +40,10 @@ struct FirebaseConstant {
         return UsersCollection.document(uid).collection("follow-requests")
     }
     
+    static func PostLikesCollection(postId: String) -> CollectionReference {
+        return PostsCollection.document(postId).collection("post-likes")
+    }
+    
     static let MessageCollection = Root.collection("messages")
     
     

@@ -11,6 +11,7 @@ import SwiftUI
 enum FeedRouter: Hashable {
     case inbox
     case profile(User)
+    case postLikes(postId: String)
     
     @ViewBuilder
     var view: some View {
@@ -19,6 +20,8 @@ enum FeedRouter: Hashable {
             Text("Inbox view")
         case.profile(let user):
             ProfileView(user: user)
+        case .postLikes(postId: let postId):
+            UserListView(config: .likes(postId: postId))
         }
     }
 }

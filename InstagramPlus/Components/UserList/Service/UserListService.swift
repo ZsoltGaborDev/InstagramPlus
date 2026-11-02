@@ -63,7 +63,10 @@ private extension UserListService {
     }
     
     func fetchPostLikesUsers(postId: String) async throws -> [User] {
-        return []
+        let snapshot = try await FirebaseConstant
+            .PostLikesCollection(postId: postId)
+            .getDocuments()
+        return try await fetchUsers(snapshot)
     }
     
     func fetchUsers(_ snapshot: QuerySnapshot) async throws -> [User] {

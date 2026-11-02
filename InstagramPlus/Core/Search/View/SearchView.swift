@@ -14,11 +14,6 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             UserListView(config: .explore)
-            .navigationDestination(for: User.self, destination: { user in
-                ProfileView(user: user)
-            })
-            .navigationTitle("Explore")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
