@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SearchView: View {
     
-    init(config: UserListConfig) {}
+    init(config: UserListConfiguration) {}
     
     var body: some View {
         NavigationStack {

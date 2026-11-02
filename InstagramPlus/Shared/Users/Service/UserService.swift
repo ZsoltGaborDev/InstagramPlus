@@ -40,61 +40,6 @@ class UserService: UserServiceProtocol {
             .getDocument()
         return try snapshot.data(as: User.self)
     }
-    
-    static func fetchAllUsers() async throws -> [User] {
-        return try await FirebaseConstant
-            .UsersCollection
-            .getDocuments(as: User.self)
-    }
-    
-    static func fetchUsers(withConfig config: UserListConfig) async throws -> [User] {
-        switch config {
-            
-        case .followers(uid: let uid):
-            return try await fetchFollowers(uid: uid)
-        case .following(uid: let uid):
-            return try await fetchFollowing(uid: uid)
-        case .likes(postId: let postId):
-            return try await fetchPostLikesUsers(postId: postId)
-        case .explore:
-            return try await fetchAllUsers()
-        }
-    }
-    
-    private static func fetchFollowers(uid: String) async throws -> [User] {
-        let snapshot = try await FirebaseConstant
-            .FollowersCollection
-            .document(uid)
-            .collection("user-followers")
-            .getDocuments() //this gives back a list of ids
-        
-        return try await fetchUsers(snapshot)
-        
-    }
-    
-    private static func fetchFollowing(uid: String) async throws -> [User] {
-        let snapshot = try await FirebaseConstant
-            .FollowingCollection
-            .document(uid)
-            .collection("user-following")
-            .getDocuments() //this gives back a list of ids
-        
-        return try await fetchUsers(snapshot)
-    }
-    
-    private static func fetchPostLikesUsers(postId: String) async throws -> [User] {
-        return []
-    }
-    
-    private static func fetchUsers(_ snapshot: QuerySnapshot) async throws -> [User] {
-//        var users = [User]()
-//        
-//        for doc in snapshot.documents {
-//            users.append(try await fetchUser(withUid: doc.documentID))
-//        }
-//        return users
-        return []
-    }
 }
 
 //MARK: - User Stats

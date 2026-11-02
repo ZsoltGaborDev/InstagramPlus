@@ -11,15 +11,15 @@ import Foundation
 class UserListViewModel {
     var users = [User]()
     
-    init() {}
+    private let service: UserListServiceProtocol
     
-    func fetchAllUsers() async throws {
-        self.users = try await UserService.fetchAllUsers()
+    init(service: UserListServiceProtocol) {
+        self.service = service
     }
     
-    func fetchUsers(forConfig config: UserListConfig) async {
+    func fetchUsers(forConfig config: UserListConfiguration) async {
         do {
-            self.users = try await UserService.fetchUsers(withConfig: config)
+            self.users = try await service.fetchUsers(withConfig: config)
         } catch {
             print("DEBUG: Error fetching users: \(error.localizedDescription)")
         }

@@ -1,5 +1,5 @@
 //
-//  UserListConfig.swift
+//  UserListConfiguration.swift
 //  InstagramPlus
 //
 //  Created by Zsolt Gabor on 29/09/2026.
@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum UserListConfig: Hashable {
+enum UserListConfiguration: Hashable {
     case followers(uid: String)
     case following(uid: String)
     case likes(postId: String)

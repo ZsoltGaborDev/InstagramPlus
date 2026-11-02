@@ -9,12 +9,12 @@ import SwiftUI
 
 struct UserListView: View {
     
-    @State var viewModel = UserListViewModel()
+    @State var viewModel = UserListViewModel(service: UserListService(userService: UserService()))
     @State private var searchText = ""
     
-    private let config: UserListConfig
+    private let config: UserListConfiguration
     
-    init(config: UserListConfig) {
+    init(config: UserListConfiguration) {
         self.config = config
     }
     

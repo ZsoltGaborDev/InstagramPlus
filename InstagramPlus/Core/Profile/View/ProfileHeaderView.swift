@@ -72,11 +72,11 @@ struct ProfileHeaderView: View {
                 HStack{
                     UserStatView(value: stats.postsCount, title: "Posts")
                     
-                    NavigationLink(value: UserListConfig.followers(uid: user.id)) {
+                    NavigationLink(value: UserListConfiguration.followers(uid: user.id)) {
                         UserStatView(value: stats.followersCount, title: "Followers")
                     }
                     
-                    NavigationLink(value: UserListConfig.following(uid: user.id)) {
+                    NavigationLink(value: UserListConfiguration.following(uid: user.id)) {
                         UserStatView(value: stats.followingCount, title: "Following")
                     }
                 }
@@ -118,7 +118,7 @@ struct ProfileHeaderView: View {
             
             Divider()
         }
-        .navigationDestination(for: UserListConfig.self, destination: { config in
+        .navigationDestination(for: UserListConfiguration.self, destination: { config in
             UserListView(config: config)
         })
         .fullScreenCover(isPresented: $isEditing) {
