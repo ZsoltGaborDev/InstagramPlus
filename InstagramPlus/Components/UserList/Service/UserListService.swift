@@ -86,8 +86,17 @@ private extension UserListService {
         guard let snapshots = try await paginatedSnapshot(withQuery: query) else { return [] }
         var users = [User]()
         
-        for doc in snapshots.documents {
-            users.append(try await userService.fetchUser(withUid: doc.documentID))
+        try await withThrowingTaskGroup(of: User.self) { [weak self] group in
+            guard let self = self else {return}
+            for doc in snapshots.documents {
+                group.addTask {
+                    return try await self.userService.fetchUser(withUid: doc.documentID)
+                }
+            }
+            
+            for try await user in group {
+                users.append(user)
+            }
         }
         return users
     }
