@@ -27,8 +27,9 @@ class IGNotificationsViewModel {
     
     func fetchNotifications() async {
         do {
-            self.notifications = try await service.fetchNotifications()
-            try await updateNotifications()
+            let result = try await service.fetchNotifications()
+            let completeNotifications = try await updateNotifications(result)
+            self.notifications = completeNotifications
             loadingState = notifications.isEmpty ? .empty : .complete
         } catch {
             loadingState = .error
@@ -36,29 +37,35 @@ class IGNotificationsViewModel {
         }
     }
     
-    private func updateNotifications() async throws {
-        for index in notifications.indices {
-            var notification = notifications[index]
-            
-            let senderUid = notification.notificationSenderUid
-            let postId = notification.postId
-
-            async let fetchedUser: User? = try? await userService.fetchUser(
-                withUid: senderUid
-            )
-
-            async let fetchedPost: Post? = {
-                guard let postId = postId else { return nil }
-                return try? await PostService.fetchPost(postId)
-            }()
-
-            let (user, post) = await (fetchedUser, fetchedPost)
-
-            notification.user = user
-            notification.post = post
-            notification.post?.user = self.currentUser
-
-            notifications[index] = notification
+    private func updateNotifications(_ notifications: [IGNotification]) async throws -> [IGNotification] {
+        var result = notifications
+        
+        try await withThrowingTaskGroup(of: (Int, IGNotification).self) { [weak self] group in
+            guard let self = self else {return}
+            for (index, notification) in notifications.enumerated() {
+                group.addTask {
+                    var updatedNotification = notification
+                    let user = try await self.userService.fetchUser(withUid: notification.notificationSenderUid)
+                    updatedNotification.user = user
+                    
+                    if let postId = notification.postId {
+                        let post = try await PostService.fetchPost(postId)
+                        updatedNotification.post = post
+                    }
+                    
+                    if notification.type == .follow {
+                        
+                    }
+                    
+                    return (index, updatedNotification)
+                }
+                
+                for try await (index, notification) in group {
+                    result[index] = notification
+                }
+            }
         }
+        
+        return result
     }
 }
