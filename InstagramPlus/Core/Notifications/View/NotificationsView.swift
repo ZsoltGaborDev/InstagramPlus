@@ -55,7 +55,7 @@ struct NotificationsView: View {
                 await fetchFollowReqests()
             }
             .refreshable {
-                await viewModel.fetchNotifications()
+                await viewModel.refreshNotifications()
             }
 //            .navigationDestination(for: Post.self, destination: { post in
 //                FeedCell(post: post)

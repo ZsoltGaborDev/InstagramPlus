@@ -13,6 +13,8 @@ class IGNotificationsViewModel {
     var notifications = [IGNotification]()
     var loadingState: ContentLoadingState = .loading
     
+    private var isInitialLoad = true
+    
     private let service: IGNotificationService
     private let userService: UserServiceProtocol
     private let followService: FollowServiceProtocol
@@ -28,15 +30,23 @@ class IGNotificationsViewModel {
     }
     
     func fetchNotifications() async {
+        guard isInitialLoad else {return}
         do {
             let result = try await service.fetchNotifications()
             let completeNotifications = try await updateNotifications(result)
             self.notifications = completeNotifications
             loadingState = notifications.isEmpty ? .empty : .complete
+            isInitialLoad.toggle()
         } catch {
             loadingState = .error
             print("DEBUG: Failed to fetch notifications with error \(error.localizedDescription)")
         }
+    }
+    
+    func refreshNotifications() async {
+        isInitialLoad = true
+        loadingState = .loading
+        await fetchNotifications()
     }
     
     private func updateNotifications(_ notifications: [IGNotification]) async throws -> [IGNotification] {
@@ -47,17 +57,20 @@ class IGNotificationsViewModel {
             for (index, notification) in notifications.enumerated() {
                 group.addTask {
                     var updatedNotification = notification
-                    var user = try await self.userService.fetchUser(withUid: notification.notificationSenderUid)
-                    updatedNotification.user = user
                     
-                    if notification.type == .follow {
-                        user.userRelationState = try await self.followService.fetchUserRelationState(uid: user.id)
-                    }
+                    async let user = self.userService.fetchUser(withUid: notification.notificationSenderUid)
                     
-                    if let postId = notification.postId {
-                        let post = try await PostService.fetchPost(postId)
-                        updatedNotification.post = post
-                    }
+                    async let relationState = notification.type == .follow
+                    ? self.followService.fetchUserRelationState(uid: notification.notificationSenderUid)
+                    : nil
+                    
+                    async let post = notification.postId != nil
+                    ? PostService.fetchPost(notification.postId!)
+                    : nil
+                    
+                    updatedNotification.user = try await user
+                    updatedNotification.post = try await post
+                    updatedNotification.user?.userRelationState = try await relationState ?? .unknown
                     
                     return (index, updatedNotification)
                 }
