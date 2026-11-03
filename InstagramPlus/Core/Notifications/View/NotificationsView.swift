@@ -17,7 +17,7 @@ struct NotificationsView: View {
         
         _viewModel = State(wrappedValue: IGNotificationsViewModel(
             service: IGNotificationService(),
-            userService: userService))
+            userService: userService, followService: FollowService()))
         
         _followRequestViewModel = State(wrappedValue: FollowRequestViewModel(followRequestService: FollowRequestService(), userService: userService))
     }

@@ -15,11 +15,13 @@ class IGNotificationsViewModel {
     
     private let service: IGNotificationService
     private let userService: UserServiceProtocol
+    private let followService: FollowServiceProtocol
     private var currentUser: User?
     
-    init(service: IGNotificationService, userService: UserServiceProtocol) {
+    init(service: IGNotificationService, userService: UserServiceProtocol, followService: FollowServiceProtocol) {
         self.service = service
         self.userService = userService
+        self.followService = followService
         Task { await fetchNotifications() }
         
         self.currentUser = nil
@@ -45,16 +47,16 @@ class IGNotificationsViewModel {
             for (index, notification) in notifications.enumerated() {
                 group.addTask {
                     var updatedNotification = notification
-                    let user = try await self.userService.fetchUser(withUid: notification.notificationSenderUid)
+                    var user = try await self.userService.fetchUser(withUid: notification.notificationSenderUid)
                     updatedNotification.user = user
+                    
+                    if notification.type == .follow {
+                        user.userRelationState = try await self.followService.fetchUserRelationState(uid: user.id)
+                    }
                     
                     if let postId = notification.postId {
                         let post = try await PostService.fetchPost(postId)
                         updatedNotification.post = post
-                    }
-                    
-                    if notification.type == .follow {
-                        
                     }
                     
                     return (index, updatedNotification)
