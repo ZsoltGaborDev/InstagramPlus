@@ -84,3 +84,34 @@ class IGNotificationsViewModel {
         return result
     }
 }
+
+extension IGNotificationsViewModel {
+    func follow(for notification: IGNotification, index: Int?) {
+        guard let index = index else {return}
+        Task {
+            let previousState = notifications[index].user?.userRelationState ?? .unknown
+            do {
+                notifications[index].user?.userRelationState = .followed
+                try await followService.follow(uid: notification.notificationSenderUid)
+            } catch {
+                notifications[index].user?.userRelationState = previousState
+                print("DEBUG: Failed follow user for notification with error: \(error)")
+            }
+        }
+    }
+    
+    func unfollow(for notification: IGNotification, index: Int?) {
+        guard let index = index else {return}
+        Task {
+            let previousState = notifications[index].user?.userRelationState ?? .unknown
+            
+            do {
+                notifications[index].user?.userRelationState = .notFollowed
+                try await followService.unfollow(uid: notification.notificationSenderUid)
+            } catch {
+                notifications[index].user?.userRelationState = previousState
+                print("DEBUG: Failed unfollow user for notification with error: \(error)")
+            }
+        }
+    }
+}

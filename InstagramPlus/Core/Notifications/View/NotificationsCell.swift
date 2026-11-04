@@ -9,7 +9,13 @@ import SwiftUI
 import Kingfisher
 
 struct NotificationsCell: View {
-    let notification: IGNotification
+    @Environment(IGNotificationsViewModel.self) var viewModel
+    
+    private let notification: IGNotification
+    
+    init(notification: IGNotification) {
+        self.notification = notification
+    }
     
     var body: some View {
         let username = Text(notification.user?.username ?? "")
@@ -38,16 +44,19 @@ struct NotificationsCell: View {
             
             if notification.type == .follow {
                 Button {
-                    print("DEBUG: Handle follow...")
+                    followedButtonTapped()
                 } label: {
-                    Text("Follow")
+                    Text(buttonTitle)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 20)
-                        .background(Color(.systemBlue))
-                        .foregroundStyle(.white)
-                        .cornerRadius(10)
+                        .frame(width: 100, height: 34)
+                        .background(buttonBackgroundColor)
+                        .foregroundStyle(buttonForegroundColor)
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(buttonBorderColor, lineWidth: 1)
+                        )
                 }
 
             } else {
@@ -68,6 +77,81 @@ struct NotificationsCell: View {
             }
         }
         .padding(.horizontal)
+    }
+}
+
+private extension NotificationsCell {
+    var notificationIndex: Int? {
+        return viewModel.notifications.firstIndex(where: {$0.id == notification.id})
+    }
+    
+    private func followedButtonTapped() {
+        guard let relationState = notification.user?.userRelationState else {return}
+        
+        switch relationState {
+        case .notFollowed:
+            viewModel.follow(for: notification, index: notificationIndex)
+        case .followed:
+            viewModel.unfollow(for: notification, index: notificationIndex)
+        case .requestedToFollow:
+            print("DEBUG: Remove follow request here..")
+        default:
+            break
+        }
+    }
+}
+
+//TODO: make reusable component
+extension NotificationsCell {
+    
+    private var buttonTitle: String {
+        let relationState = notification.user?.userRelationState ?? .unknown
+        
+        switch relationState {
+        case .unknown:
+            return "Loading"
+        case .notFollowed:
+            return "Follow"
+        case .followed:
+            return "Unfollow"
+        case .requestedToFollow:
+            return "Requested"
+        case .blocked:
+            return "Blocked"
+        default:
+            return "Loading"
+        }
+    }
+    
+    private var buttonBackgroundColor: Color {
+        guard let relationState = notification.user?.userRelationState else { return .secondaryButtonBackground}
+        switch relationState {
+        case .followed:
+            return .primaryButtonBackground
+        default:
+            return .secondaryButtonBackground
+        }
+    }
+    
+    private var buttonForegroundColor: Color {
+        guard let relationState = notification.user?.userRelationState else { return .secondaryText }
+        
+        switch relationState {
+        case .followed:
+            return .primaryText
+        default:
+            return .secondaryText
+        }
+    }
+    
+    private var buttonBorderColor: Color {
+        guard let relationState = notification.user?.userRelationState else { return .clear }
+        switch relationState {
+        case .followed:
+            return .secondaryButtonBackground
+        default:
+            return .clear
+        }
     }
 }
 

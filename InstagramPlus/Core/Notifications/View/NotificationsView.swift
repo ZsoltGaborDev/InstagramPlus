@@ -46,6 +46,7 @@ struct NotificationsView: View {
                     LazyVStack(spacing: 20) {
                         ForEach(viewModel.notifications) { notification in
                             NotificationsCell(notification: notification)
+                                .environment(viewModel)
                                 .padding(.top)
                         }
                     }
