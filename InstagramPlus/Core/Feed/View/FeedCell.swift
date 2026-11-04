@@ -176,7 +176,8 @@ private extension FeedCell {
             feedService: FeedService(),
             userService: MockUserService(),
             likePostService: LikePostService(),
-            savePostsService: SavedPostsService()
+            savePostsService: SavedPostsService(),
+            notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
         )
     )
 }

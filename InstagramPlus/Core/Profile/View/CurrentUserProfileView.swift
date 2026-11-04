@@ -22,7 +22,8 @@ struct CurrentUserProfileView: View {
         service: ProfilePostGridService(),
         likePostService: LikePostService(),
         savePostsService: SavedPostsService(),
-        userService: UserService()
+        userService: UserService(),
+        notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
     )
     
     var body: some View {

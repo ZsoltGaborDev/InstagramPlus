@@ -55,7 +55,8 @@ struct PostGridFeedView: View {
             service: SavedPostsGridService(),
             likePostService: MockLikePostService(),
             savePostsService: MockSavedPostsService(),
-            userService: MockUserService()
+            userService: MockUserService(),
+            notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
         )
     )
 }

@@ -12,7 +12,8 @@ struct FeedView: View {
         feedService: FeedService(),
         userService: UserService(),
         likePostService: LikePostService(),
-        savePostsService: SavedPostsService())
+        savePostsService: SavedPostsService(),
+        notificationManager: IGNotificationsManager(service: IGNotificationManagementService()))
     
     @State private var activeScrollId: String?
     @State private var paginating = false

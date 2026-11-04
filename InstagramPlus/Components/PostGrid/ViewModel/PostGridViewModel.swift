@@ -18,17 +18,20 @@ class PostGridViewModel: FeedViewModelProtocol {
     private(set) var userService: UserServiceProtocol
     private(set) var likePostService: LikePostServiceProtocol
     private(set) var savePostsService: SavedPostsServiceProtocol
+    private(set) var notificationManager: IGNotificationsManager
                      
     
     init(service: PostGridServiceProtocol,
          likePostService: LikePostServiceProtocol,
          savePostsService: SavedPostsServiceProtocol,
-         userService: UserServiceProtocol
+         userService: UserServiceProtocol,
+         notificationManager: IGNotificationsManager
     ) {
         self.service = service
         self.likePostService = likePostService
         self.savePostsService = savePostsService
         self.userService = userService
+        self.notificationManager = notificationManager
         Task { await fetchPosts() }
     }
     

@@ -26,7 +26,8 @@ struct ProfileView: View {
                 service: ProfilePostGridService(user: user),
                 likePostService: LikePostService(),
                 savePostsService: SavedPostsService(),
-                userService: UserService()
+                userService: UserService(),
+                notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
             )
         )
     }

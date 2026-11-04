@@ -107,7 +107,8 @@ private extension PostGridView {
             service: ProfilePostGridService(user: MockData.users[0]),
             likePostService: MockLikePostService(),
             savePostsService: MockSavedPostsService(),
-            userService: MockUserService()
+            userService: MockUserService(),
+            notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
         ), configuration: .profile
     )
 }

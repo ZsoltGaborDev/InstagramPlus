@@ -13,6 +13,7 @@ protocol FeedViewModelProtocol: AnyObject, Observable {
     var likePostService: LikePostServiceProtocol { get }
     var savePostsService: SavedPostsServiceProtocol { get }
     var userService: UserServiceProtocol { get }
+    var notificationManager: IGNotificationsManager { get }
     
     func like(_ post: Post) async
     func unlike(_ post: Post) async
@@ -37,6 +38,7 @@ extension FeedViewModelProtocol {
             }
             self.posts[index].didLike = true
             try await likePostService.likePost(post)
+            try await notificationManager.uploadLikeNotification(to: post.ownerUid, post: post)
         } catch {
             posts[index].didLike = false
             if posts[index].likes ?? 0 > 0 {
@@ -54,6 +56,7 @@ extension FeedViewModelProtocol {
             }
             self.posts[index].didLike = false
             try await likePostService.unlikePost(post)
+            await notificationManager.deleteLikeNotification(notificationOwnerUid: post.ownerUid, post: post)
         } catch {
             posts[index].didLike = true
             if let _ = post.likes {
