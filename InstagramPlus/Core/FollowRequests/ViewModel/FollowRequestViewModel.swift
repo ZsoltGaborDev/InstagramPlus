@@ -14,10 +14,12 @@ class FollowRequestViewModel {
     
     private let followRequestService: FollowRequestService
     private let userService: UserServiceProtocol
+    private let notificationManager: IGNotificationsManager
     
-    init(followRequestService: FollowRequestService, userService: UserServiceProtocol) {
+    init(followRequestService: FollowRequestService, userService: UserServiceProtocol, notificationManager: IGNotificationsManager) {
         self.followRequestService = followRequestService
         self.userService = userService
+        self.notificationManager = notificationManager
     }
     
     func fetchRequest() async {
@@ -34,6 +36,7 @@ class FollowRequestViewModel {
         guard let index = removeRequestOptimistically(request) else { return }
         do {
             try await followRequestService.accept(request)
+            try await notificationManager.uploadFollowRequestAcceptedNotification(toUid: request.fromUserId)
         } catch {
             requests.insert(contentsOf: requests, at: index)
             print("DEBUG: Failed to accept follow request with error : \(error)")

@@ -17,11 +17,13 @@ class CommentViewModel {
     private let post: Post
     private let commentService: CommentServiceProtocol
     private let userService: UserServiceProtocol
+    private let notificationManager: IGNotificationsManager
     
-    init(post: Post, commentService: CommentServiceProtocol, userService: UserServiceProtocol) {
+    init(post: Post, commentService: CommentServiceProtocol, userService: UserServiceProtocol, notificationManager: IGNotificationsManager) {
         self.post = post
         self.userService = userService
         self.commentService = commentService
+        self.notificationManager = notificationManager
     }
     
     func uploadComment(text: String, currentUser: User) async {
@@ -39,7 +41,7 @@ class CommentViewModel {
             }
             
             Task {
-                IGNotificationsManager.shared.uploadCommentNotification(to: post.ownerUid, post: post)
+                try await notificationManager.uploadCommentNotification(to: post.ownerUid, post: post)
             }
         } catch {
             loadingState = .error

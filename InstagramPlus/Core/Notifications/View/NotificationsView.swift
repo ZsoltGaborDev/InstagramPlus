@@ -16,10 +16,18 @@ struct NotificationsView: View {
         let userService = UserService()
         
         _viewModel = State(wrappedValue: IGNotificationsViewModel(
-            service: IGNotificationService(),
+            service: IGNotificationFetchingService(),
             userService: userService, followService: FollowService()))
         
-        _followRequestViewModel = State(wrappedValue: FollowRequestViewModel(followRequestService: FollowRequestService(), userService: userService))
+        _followRequestViewModel = State(
+            wrappedValue: FollowRequestViewModel(
+                followRequestService: FollowRequestService(),
+                userService: userService,
+                notificationManager: IGNotificationsManager(
+                    service: IGNotificationManagementService()
+                )
+            )
+        )
     }
     
     var body: some View {

@@ -17,8 +17,13 @@ struct CommentsView: View {
         self._viewModel = State(
             initialValue: CommentViewModel(
                 post: post,
-                commentService: CommentService(postId: post.id),
-                userService: UserService()
+                commentService: CommentService(
+                    postId: post.id
+                ),
+                userService: UserService(),
+                notificationManager: IGNotificationsManager(
+                    service: IGNotificationManagementService()
+                )
             )
         )
     }

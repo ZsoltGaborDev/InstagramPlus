@@ -1,27 +1,23 @@
 //
-//  IGNotificationServoce.swift
+//  IGNotificationManagementService.swift
 //  InstagramPlus
 //
-//  Created by Zsolt Gabor on 30/09/2026.
+//  Created by Zsolt Gabor on 04/11/2026.
 //
 
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import Firebase
 
-class IGNotificationService {
+
+protocol IGNotificationManagementServiceProtocol {
+    func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post?) async throws
+    func deleteNotification(toUid uid: String, type: IGNotificationType, post: Post?) async throws
+}
+
+struct IGNotificationManagementService: IGNotificationManagementServiceProtocol {
     
-    func fetchNotifications() async throws -> [IGNotification] {
-        guard let currentUid = Auth.auth().currentUser?.uid else { return [] }
-        
-        return try await FirebaseConstant
-            .UserNotificationCollection(uid: currentUid)
-            .order(by: "timestamp", descending: true)
-            .getDocuments(as: IGNotification.self)
-    }
-    
-    func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post? = nil) {
+    func uploadNotifications(toUid uid: String, type: IGNotificationType, post: Post? = nil) async throws {
         guard let currentUid = Auth.auth().currentUser?.uid, currentUid != uid else { return }
         let ref = FirebaseConstant.UserNotificationCollection(uid: uid).document()
         let notification = IGNotification(id: ref.documentID,
@@ -30,7 +26,7 @@ class IGNotificationService {
                                           notificationSenderUid: currentUid,
                                           type: type)
         guard let notificationData = try? Firestore.Encoder().encode(notification) else { return }
-        ref.setData(notificationData)
+        try await ref.setData(notificationData)
     }
     
     func deleteNotification(toUid uid: String, type: IGNotificationType, post: Post? = nil) async throws {

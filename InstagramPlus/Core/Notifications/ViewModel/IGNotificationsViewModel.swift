@@ -15,12 +15,12 @@ class IGNotificationsViewModel {
     
     private var isInitialLoad = true
     
-    private let service: IGNotificationService
+    private let service: IGNotificationFetchingService
     private let userService: UserServiceProtocol
     private let followService: FollowServiceProtocol
     private var currentUser: User?
     
-    init(service: IGNotificationService, userService: UserServiceProtocol, followService: FollowServiceProtocol) {
+    init(service: IGNotificationFetchingService, userService: UserServiceProtocol, followService: FollowServiceProtocol) {
         self.service = service
         self.userService = userService
         self.followService = followService

@@ -12,10 +12,12 @@ class ProfileViewModel {
 
     var user: User
     private let followService: FollowServiceProtocol
+    private let notificationManager: IGNotificationsManager
     
-    init(user: User, followService: FollowServiceProtocol) {
+    init(user: User, followService: FollowServiceProtocol, notificationManager: IGNotificationsManager) {
         self.user = user
         self.followService = followService
+        self.notificationManager = notificationManager
     }
 }
 
@@ -27,7 +29,7 @@ extension ProfileViewModel {
             do {
                 user.userRelationState = .followed
                 try await followService.follow(uid: user.id)
-                IGNotificationsManager.shared.uploadFollowNotification(to: user.id)
+                try await notificationManager.uploadFollowNotification(to: user.id)
             } catch {
                 user.userRelationState = prevState
                 print("DEBUG: Failed follow user")
@@ -41,7 +43,7 @@ extension ProfileViewModel {
             do {
                 user.userRelationState = .notFollowed
                 try await followService.unfollow(uid: user.id)
-                await IGNotificationsManager.shared.deleteFollowNotification(notificationOwnerUid: user.id)
+                await notificationManager.deleteFollowNotification(notificationOwnerUid: user.id)
             } catch {
                 user.userRelationState = prevState
                 print("DEBUG: Failed unFollow user")

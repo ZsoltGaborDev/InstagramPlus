@@ -17,7 +17,8 @@ struct ProfileView: View {
         _profileViewModel = State(
             wrappedValue: ProfileViewModel(
                 user: user,
-                followService: FollowService()
+                followService: FollowService(),
+                notificationManager: IGNotificationsManager(service: IGNotificationManagementService())
             )
         )
         _gridViewModel = State(
