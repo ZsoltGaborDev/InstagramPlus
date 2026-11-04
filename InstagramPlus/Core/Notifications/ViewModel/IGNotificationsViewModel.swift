@@ -31,12 +31,20 @@ class IGNotificationsViewModel {
     
     func fetchNotifications() async {
         guard isInitialLoad else {return}
+        await fetchAndUpdateNotifications()
+        isInitialLoad.toggle()
+    }
+    
+    func loadMoreNotifications() async {
+        await fetchAndUpdateNotifications()
+    }
+    
+    func fetchAndUpdateNotifications() async {
         do {
             let result = try await service.fetchNotifications()
             let completeNotifications = try await updateNotifications(result)
-            self.notifications = completeNotifications
+            self.notifications.append(contentsOf: completeNotifications)
             loadingState = notifications.isEmpty ? .empty : .complete
-            isInitialLoad.toggle()
         } catch {
             loadingState = .error
             print("DEBUG: Failed to fetch notifications with error \(error.localizedDescription)")
@@ -44,38 +52,50 @@ class IGNotificationsViewModel {
     }
     
     func refreshNotifications() async {
-        isInitialLoad = true
-        loadingState = .loading
-        await fetchNotifications()
+        do {
+            loadingState = .loading
+            let result = try await service.refreshNotifications()
+            self.notifications = try await updateNotifications(result)
+            loadingState = self.notifications.isEmpty ? .empty : .complete
+        } catch {
+            loadingState = .error
+            print("DEBUG: Failed to refresh notifications with error \(error.localizedDescription)")
+        }
     }
     
     private func updateNotifications(_ notifications: [IGNotification]) async throws -> [IGNotification] {
         var result = notifications
         
-        try await withThrowingTaskGroup(of: (Int, IGNotification).self) { [weak self] group in
+        try await withThrowingTaskGroup(of: (Int, IGNotification?).self) { [weak self] group in
             guard let self = self else {return}
             for (index, notification) in notifications.enumerated() {
                 group.addTask {
-                    var updatedNotification = notification
-                    
-                    async let user = self.userService.fetchUser(withUid: notification.notificationSenderUid)
-                    
-                    async let relationState = notification.type == .follow
-                    ? self.followService.fetchUserRelationState(uid: notification.notificationSenderUid)
-                    : nil
-                    
-                    async let post = notification.postId != nil
-                    ? PostService.fetchPost(notification.postId!)
-                    : nil
-                    
-                    updatedNotification.user = try await user
-                    updatedNotification.post = try await post
-                    updatedNotification.user?.userRelationState = try await relationState ?? .unknown
-                    
-                    return (index, updatedNotification)
+                    do {
+                        var updatedNotification = notification
+                        
+                        async let user = self.userService.fetchUser(withUid: notification.notificationSenderUid)
+                        
+                        async let relationState = notification.type == .follow
+                        ? self.followService.fetchUserRelationState(uid: notification.notificationSenderUid)
+                        : nil
+                        
+                        async let post = notification.postId != nil
+                        ? PostService.fetchPost(notification.postId!)
+                        : nil
+                        
+                        updatedNotification.user = try await user
+                        updatedNotification.post = try await post
+                        updatedNotification.user?.userRelationState = try await relationState ?? .unknown
+                        
+                        return (index, updatedNotification)
+                    } catch {
+                        print("DEBUG: Failed update some of notifications with error: \(error)")
+                        return (index, nil)
+                    }
                 }
                 
                 for try await (index, notification) in group {
+                    guard let notification else { continue }
                     result[index] = notification
                 }
             }

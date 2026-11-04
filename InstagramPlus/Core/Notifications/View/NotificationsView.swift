@@ -9,8 +9,11 @@ import SwiftUI
 
 struct NotificationsView: View {
     @Environment(UserManager.self) private var userManager
+    
+    @State private var activeScrollId: String?
     @State private var viewModel: IGNotificationsViewModel
     @State private var followRequestViewModel: FollowRequestViewModel
+    @State private var paginating = false
     
     init() {
         let userService = UserService()
@@ -55,11 +58,22 @@ struct NotificationsView: View {
                         ForEach(viewModel.notifications) { notification in
                             NotificationsCell(notification: notification)
                                 .environment(viewModel)
+                                .id(notification.id)
                                 .padding(.top)
                         }
+                        if paginating {
+                            ProgressView()
+                        }
                     }
+                    .scrollTargetLayout()
                 }
             }
+            .scrollPosition(id: $activeScrollId, anchor: .bottom)
+            .onChange(of: activeScrollId) { oldValue, newValue in
+                loadMoreNotificationsIfNecessary(newValue)
+            }
+            .navigationTitle("Notifications")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 await fetchFollowReqests()
             }
@@ -72,8 +86,6 @@ struct NotificationsView: View {
             .navigationDestination(for: User.self, destination: { user in
                 ProfileView(user: user)
             })
-            .navigationTitle("Notifications")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -85,8 +97,16 @@ private extension NotificationsView {
     
     func fetchFollowReqests() async {
         guard isPrivateProfile else { return }
-        
         await followRequestViewModel.fetchRequest()
+    }
+    
+    func loadMoreNotificationsIfNecessary(_ activeScrollId: String?) {
+        guard activeScrollId == viewModel.notifications.last?.id else {return}
+        Task {
+            self.paginating = true
+            await viewModel.loadMoreNotifications()
+            self.paginating = false
+        }
     }
 }
 
