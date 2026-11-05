@@ -18,7 +18,7 @@ struct UploadPostView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(alignment: .leading) {
                 //post image and caption
                 HStack {
                     if let image = viewModel.postImage {
@@ -26,17 +26,37 @@ struct UploadPostView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 100, height: 100)
+                            .clipShape(.rect(cornerRadius: 10))
                             .clipped()
+                    } else {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(.secondarySystemFill))
+                                .frame(width: 100, height: 100)
+                            
+                            Image(systemName: "photo.fill")
+                                .resizable()
+                                .frame(width: 32, height: 32)
+                        }
+                        .onTapGesture {
+                            imagePicketIsPresened.toggle()
+                        }
                     }
                     
                     TextField("Enter your caption...", text: $caption, axis: .vertical)
                         .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
                     Spacer()
                 }
-                .padding(.horizontal)
+                
+                if viewModel.postImage == nil {
+                    Text("You must select an image to upload a post.")
+                        .foregroundStyle(.red)
+                        .font(.caption)
+                }
                 
                 Spacer()
             }
+            .padding()
             .onAppear() {
                 self.imagePicketIsPresened.toggle()
             }
@@ -65,6 +85,7 @@ struct UploadPostView: View {
                             }
                         }
                     }
+                    .disabled(viewModel.loadingState == .loading || viewModel.postImage == nil)
                 }
             }
         }
