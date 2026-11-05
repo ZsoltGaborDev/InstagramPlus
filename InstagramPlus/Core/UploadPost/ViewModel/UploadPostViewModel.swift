@@ -16,10 +16,17 @@ import FirebaseFirestore
 @Observable
 final class UploadPostViewModel {
     
+    private let service: UploadPostServiceProtocol
+    
+    init(service: UploadPostServiceProtocol) {
+        self.service = service
+    }
+    
     var selectedImage: PhotosPickerItem? {
         didSet { Task { await loadImage(fromItem: selectedImage) } }
     }
     var postImage: Image?
+    var loadingState: ContentLoadingState?
     private var uiImage: UIImage?
     
     func loadImage(fromItem item: PhotosPickerItem?) async {
@@ -31,22 +38,15 @@ final class UploadPostViewModel {
         self.postImage = Image(uiImage: uiImage)
     }
     
-    func uploadPost(caption: String) async throws {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let uiImage = self.uiImage else { return }
-        
-        let postRef = FirebaseConstant
-            .PostsCollection
-            .document()
-        guard let imageUrl = try? await ImageUploader.uploadPostImage(uiImage) else { return }
-        let post = Post(
-            id: postRef.documentID,
-            ownerUid: uid,
-            caption: caption,
-            imageUrl: imageUrl,
-            timestamp: Date(), 
-        )
-        let encodedPost = try Firestore.Encoder().encode(post)
-        try await postRef.setData(encodedPost)
+    func uploadPost(caption: String) async {
+        guard let uiImage = uiImage else {return}
+        loadingState = .loading
+        do {
+            try await service.uploadPost(caption: caption, image: uiImage)
+            loadingState = .complete
+        } catch {
+            loadingState = .error
+            print("DEBUG: Failed to upload post with error: \(error)")
+        }
     }
 }

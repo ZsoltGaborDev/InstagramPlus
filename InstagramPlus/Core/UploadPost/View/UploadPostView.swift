@@ -13,7 +13,7 @@ struct UploadPostView: View {
     @State private var caption = ""
     @State private var imagePicketIsPresened = false
     @State private var imageItem: PhotosPickerItem?
-    @State var viewModel = UploadPostViewModel()
+    @State var viewModel = UploadPostViewModel(service: UploadPostService())
     @Binding var tabIndex: Int
     
     var body: some View {
@@ -35,14 +35,21 @@ struct UploadPostView: View {
                 
                 Button {
                     Task {
-                        try await viewModel.uploadPost(caption: caption)
+                        await viewModel.uploadPost(caption: caption)
                         clearPostData()
                         returnToFeed()
                     }
                 } label: {
-                    Text("Upload")
-                        .fontWeight(.semibold)
+                    ZStack {
+                        if let loadingState = viewModel.loadingState, loadingState == .loading {
+                            ProgressView()
+                        } else {
+                            Text("Upload")
+                                .fontWeight(.semibold)
+                        }
+                    }
                 }
+                .disabled(viewModel.loadingState == .loading)
             }
             .padding(.horizontal)
             
@@ -70,7 +77,9 @@ struct UploadPostView: View {
         .photosPicker(isPresented: $imagePicketIsPresened, selection: $viewModel.selectedImage)
         
     }
-    
+}
+
+private extension UploadPostView {
     func clearPostData(){
         caption = ""
         viewModel.selectedImage = nil
