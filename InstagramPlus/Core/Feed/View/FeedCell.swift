@@ -51,8 +51,9 @@ struct FeedCell<ViewModel>: View where ViewModel: FeedViewModelProtocol{
             KFImage(URL(string: post.imageUrl))
                 .resizable()
                 .scaledToFill()
+                .containerRelativeFrame(.horizontal)
                 .frame(height: 400)
-                .clipShape(.rect)
+                .clipped()
             
             //action buttons
             HStack(spacing:16) {

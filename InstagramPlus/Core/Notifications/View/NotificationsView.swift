@@ -11,9 +11,10 @@ struct NotificationsView: View {
     @Environment(UserManager.self) private var userManager
     
     @State private var activeScrollId: String?
+    @State private var paginating = false
+    
     @State private var viewModel: IGNotificationsViewModel
     @State private var followRequestViewModel: FollowRequestViewModel
-    @State private var paginating = false
     
     init() {
         let userService = UserService()
@@ -74,19 +75,17 @@ struct NotificationsView: View {
             }
             .navigationTitle("Notifications")
             .navigationBarTitleDisplayMode(.inline)
-            .task {
-                await fetchFollowReqests()
-            }
             .refreshable {
                 await viewModel.refreshNotifications()
             }
-//            .navigationDestination(for: Post.self, destination: { post in
-//                FeedCell(post: post)
-//            })
+            .navigationDestination(for: Post.self, destination: { post in
+                NotificationsPostFeedView(post: post)
+            })
             .navigationDestination(for: User.self, destination: { user in
                 ProfileView(user: user)
             })
         }
+        .task { await fetchFollowReqests() }
     }
 }
 

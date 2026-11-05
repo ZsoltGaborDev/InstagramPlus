@@ -18,15 +18,12 @@ class IGNotificationsViewModel {
     private let service: IGNotificationFetchingService
     private let userService: UserServiceProtocol
     private let followService: FollowServiceProtocol
-    private var currentUser: User?
     
     init(service: IGNotificationFetchingService, userService: UserServiceProtocol, followService: FollowServiceProtocol) {
         self.service = service
         self.userService = userService
         self.followService = followService
         Task { await fetchNotifications() }
-        
-        self.currentUser = nil
     }
     
     func fetchNotifications() async {
