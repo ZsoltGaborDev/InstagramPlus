@@ -17,69 +17,69 @@ struct UploadPostView: View {
     @Binding var tabIndex: Int
     
     var body: some View {
-        VStack {
-            //action bar tool
-            HStack {
-                Button {
-                    clearPostData()
-                    returnToFeed()
-                } label: {
-                    Text("Cancel")
+        NavigationStack {
+            VStack {
+                //post image and caption
+                HStack {
+                    if let image = viewModel.postImage {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipped()
+                    }
+                    
+                    TextField("Enter your caption...", text: $caption, axis: .vertical)
+                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
+                    Spacer()
                 }
-                Spacer()
-                
-                Text("New Post")
-                    .fontWeight(.semibold)
+                .padding(.horizontal)
                 
                 Spacer()
-                
-                Button {
-                    Task {
-                        await viewModel.uploadPost(caption: caption)
+            }
+            .onAppear() {
+                self.imagePicketIsPresened.toggle()
+            }
+            .photosPicker(isPresented: $imagePicketIsPresened, selection: $viewModel.selectedImage)
+            .navigationTitle("New Posts")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
                         clearPostData()
                         returnToFeed()
+                    } label: {
+                        Text("Cancel")
                     }
-                } label: {
-                    ZStack {
-                        if let loadingState = viewModel.loadingState, loadingState == .loading {
-                            ProgressView()
-                        } else {
-                            Text("Upload")
-                                .fontWeight(.semibold)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        uploadPost()
+                    } label: {
+                        ZStack {
+                            if let loadingState = viewModel.loadingState, loadingState == .loading {
+                                ProgressView()
+                            } else {
+                                Text("Upload")
+                                    .fontWeight(.semibold)
+                            }
                         }
                     }
                 }
-                .disabled(viewModel.loadingState == .loading)
             }
-            .padding(.horizontal)
-            
-            //post image and caption
-            HStack {
-                if let image = viewModel.postImage {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 100, height: 100)
-                        .clipped()
-                }
-                
-                TextField("Enter your caption...", text: $caption, axis: .vertical)
-                    .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
-                Spacer()
-            }
-            .padding(.horizontal)
-            
-            Spacer()
         }
-        .onAppear() {
-            self.imagePicketIsPresened.toggle()
-        }
-        .photosPicker(isPresented: $imagePicketIsPresened, selection: $viewModel.selectedImage)
-        
     }
 }
 
 private extension UploadPostView {
+    func uploadPost() {
+        Task {
+            await viewModel.uploadPost(caption: caption)
+            clearPostData()
+            returnToFeed()
+        }
+    }
+    
     func clearPostData(){
         caption = ""
         viewModel.selectedImage = nil
