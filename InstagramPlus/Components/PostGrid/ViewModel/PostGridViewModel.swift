@@ -49,11 +49,12 @@ class PostGridViewModel: FeedViewModelProtocol {
     
     func refreshPosts() async {
         do {
-            let result = try await service.refreshPosts()
-            let completeResult = try await fetchPostUserData(posts: result)
-            self.posts = completeResult
+            self.posts = try await service.refreshPosts()
             if self.posts.isEmpty {
                 loadingState = .empty
+            }
+            if self.loadingState == .empty && posts.isEmpty {
+                loadingState = .complete
             }
         } catch {
             loadingState = .error

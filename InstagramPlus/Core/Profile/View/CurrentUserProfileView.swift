@@ -75,7 +75,6 @@ private extension CurrentUserProfileView {
                 await userManager.fetchCurrentUser()
                 await userManager.fetchUserStats()
             }
-            
             group.addTask {
                 await gridViewModel.refreshPosts()
             }
