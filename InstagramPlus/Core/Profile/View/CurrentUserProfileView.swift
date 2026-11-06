@@ -38,8 +38,7 @@ struct CurrentUserProfileView: View {
                 }
             }
             .refreshable {
-                await userManager.fetchCurrentUser()
-                await userManager.fetchUserStats()
+                await refresh()
             }
             .task(id: userManager.currentUser?.id) {
                 await userManager.fetchUserStats()
@@ -64,6 +63,21 @@ struct CurrentUserProfileView: View {
                         EditProfileView(user: user)
                     }
                 }
+            }
+        }
+    }
+}
+
+private extension CurrentUserProfileView {
+    func refresh() async {
+        await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await userManager.fetchCurrentUser()
+                await userManager.fetchUserStats()
+            }
+            
+            group.addTask {
+                await gridViewModel.refreshPosts()
             }
         }
     }

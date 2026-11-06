@@ -21,6 +21,9 @@ struct LikedPostsView: View {
         ScrollView {
             PostGridView(viewModel: gridViewModel, configuration: .likedPosts)
         }
+        .refreshable {
+            await gridViewModel.refreshPosts()
+        }
         .navigationTitle("Liked Posts")
     }
 }

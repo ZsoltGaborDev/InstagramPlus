@@ -46,4 +46,18 @@ class PostGridViewModel: FeedViewModelProtocol {
             loadingState = .error
         }
     }
+    
+    func refreshPosts() async {
+        do {
+            let result = try await service.refreshPosts()
+            let completeResult = try await fetchPostUserData(posts: result)
+            self.posts = completeResult
+            if self.posts.isEmpty {
+                loadingState = .empty
+            }
+        } catch {
+            loadingState = .error
+            print("DEBUG: Failed to refresh posts with error: \(error)")
+        }
+    }
 }

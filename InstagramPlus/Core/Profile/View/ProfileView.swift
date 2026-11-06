@@ -50,8 +50,19 @@ struct ProfileView: View {
         .task {
             await profileViewModel.fetchUserStats()
         }
+        .refreshable {
+            await refresh()
+        }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    func refresh() async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await profileViewModel.fetchUserStats() }
+            group.addTask { await profileViewModel.fetchUserRelationState() }
+            group.addTask { await gridViewModel.refreshPosts()}
+        }
     }
 }
 

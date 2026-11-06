@@ -39,6 +39,7 @@ private extension FeedService {
         
         let query = FirebaseConstant
             .UserFeedCollection(uid: uid)
+            .order(by: "timestamp", descending: true)
             .limit(to: fetchLimit)
         
         let snapshot: QuerySnapshot

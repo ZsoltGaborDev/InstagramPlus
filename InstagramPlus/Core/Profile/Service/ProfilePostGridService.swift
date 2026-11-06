@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class ProfilePostGridService: PostGridServiceProtocol {
+    
     private let fetchLimit = 21
     private var shouldLoadMoreData = true
     private var lastDoc: QueryDocumentSnapshot?
@@ -25,6 +26,7 @@ class ProfilePostGridService: PostGridServiceProtocol {
         let query = FirebaseConstant
             .PostsCollection
             .whereField("ownerUid", isEqualTo: uid)
+            .order(by: "timestamp", descending: true)
             .limit(to: fetchLimit)
         let snapshot: QuerySnapshot
         
@@ -56,5 +58,9 @@ class ProfilePostGridService: PostGridServiceProtocol {
         }
     }
     
-    
+    func refreshPosts() async throws -> [Post] {
+        lastDoc = nil
+        shouldLoadMoreData = true
+        return try await fetchPost()
+    }
 }
