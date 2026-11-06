@@ -22,7 +22,7 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
             const postId = doc.id;
             const postData = doc.data();
             const ownerUid = postData.ownerUid;
-            const timestamp = data.timestamp;
+            const timestamp = postData.timestamp;
 
             const data = {
                 ownerUid,
@@ -36,7 +36,7 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
         await batch.commit();
         return null;
     } catch (err) {
-        logger.error("Error updating feed after follow");
+        logger.error("Error updating feed after follow", err);
         throw err;
     }
 })
@@ -58,7 +58,7 @@ exports.updateUserFeedAfterUnfollow = onDocumentDeleted("/following/{currentUid}
 
         await batch.commit();
     } catch (err) {
-        logger.error("Error updating feed after unfollow");
+        logger.error("Error updating feed after unfollow", err);
         throw err;
     }
 })
