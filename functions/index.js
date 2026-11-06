@@ -20,8 +20,17 @@ exports.updateUserFeedAfterFollow = onDocumentCreated("/following/{currentUid}/u
 
         snapshot.forEach((doc) => {
             const postId = doc.id;
+            const postData = doc.data();
+            const ownerUid = postData.ownerUid;
+            const timestamp = data.timestamp;
+
+            const data = {
+                ownerUid,
+                timestamp
+            }
+
             const userFeedRef = db.collection("users").doc(currentUid).collection("user-feed").doc(postId);
-            batch.set(userFeedRef, {});
+            batch.set(userFeedRef, data);
         })
 
         await batch.commit();
@@ -56,26 +65,32 @@ exports.updateUserFeedAfterUnfollow = onDocumentDeleted("/following/{currentUid}
 
 exports.updateUserFeedAfterPost = onDocumentCreated("/posts/{postId}",async (event) => {
         const postId = event.params.postId;
+        const snapshot = event.data;
+        const data = snapshot.data();
+        const ownerUid = data.ownerUid;
+        const timestamp = data.timestamp;
         const db = getFirestore();
 
         try {
-            const data = event.data.data();
-            const ownerUid = data.ownerUid;
-            const batch = db.batch();
-
             const followerSnapshot = await db.collection("followers")
                 .doc(ownerUid).collection("user-followers").get();
+            const batch = db.batch();
+
+            const data = {
+                ownerUid,
+                timestamp
+            }
 
             followerSnapshot.docs.forEach((doc) => {
                 const usersFeedRef = db.collection("users").doc(doc.id)
                     .collection("user-feed").doc(postId);
 
-                batch.set(usersFeedRef, {});
+                batch.set(usersFeedRef, data);
             });
 
             const ownerFeedRef = db.collection("users")
                 .doc(ownerUid).collection("user-feed").doc(postId);
-            batch.set(ownerFeedRef, {});
+            batch.set(ownerFeedRef, data);
 
             await batch.commit();
         } catch (err) {
