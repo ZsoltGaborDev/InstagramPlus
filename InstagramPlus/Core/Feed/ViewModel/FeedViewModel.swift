@@ -39,9 +39,8 @@ class FeedViewModel: FeedViewModelProtocol {
     func fetchPosts() async {
         do {
             let result = try await feedService.fetchFeedPosts()
-            self.posts.append(contentsOf: result)
-            let resultWithUserdata = try await fetchPostUserData(posts: posts)
-            self.posts = resultWithUserdata
+            let resultWithUserData = try await fetchPostUserData(posts: result)
+            self.posts.append(contentsOf: resultWithUserData)
             self.loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             self.loadingState = .error
@@ -51,10 +50,10 @@ class FeedViewModel: FeedViewModelProtocol {
     
     func refreshPosts() async {
         do {
-            self.posts.removeAll()
             let result = try await feedService.refreshPosts()
             let resultWithUserdata = try await fetchPostUserData(posts: result)
             self.posts = resultWithUserdata
+            self.loadingState = posts.isEmpty ? .empty : .complete
         } catch {
             print("DEBUG: Failed to refresh posts with error: \(error)")
         }
